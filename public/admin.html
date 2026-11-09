@@ -9,7 +9,9 @@
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/crave.css">
 <style>
   body { font-size: 16px; }
   .shell { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
@@ -95,15 +97,14 @@
 </head>
 <body class="admin">
 <header class="top"><div class="shell adminbar">
-  <div><a class="brand" href="/admin"><span><b id="shopName" style="font-weight:inherit">Shop</b> · Inbox</span></a><div class="whoami" id="whoami"></div></div>
-  <nav id="nav" hidden><a href="/kitchen" id="viewToGo">Crave To Go orders</a><a href="#" id="viewReq">Catering requests</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewArt">Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
+  <div class="crave-staff-brand"><a class="brand crave-brand" href="/admin" aria-label="Crave staff"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="64" height="60"><span class="brand-sub">Staff<b id="shopName" hidden>Crave</b></span></a><div class="whoami" id="whoami"></div></div>
+  <nav id="nav" hidden><a href="#" id="viewToday">Today</a><a href="#" id="viewReq">Catering</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewArt" hidden>Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
 </div></header>
 
 <main class="shell" id="app">
   <p id="bootMsg" class="authbox" role="alert" hidden></p>
-  <a id="toGo" href="/kitchen" hidden style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 0;padding:14px 18px;border:1px solid #e6dccd;border-left:5px solid #a8582a;border-radius:8px;background:#fffdf9;color:#1c1814;text-decoration:none"><span><strong id="toGoHead">Crave To Go</strong> <span id="toGoDays" class="small muted"></span></span><span class="btn sm sign" style="background:#a8582a;color:#fff;border-color:#a8582a">Open the kitchen board</span></a>
   <form id="login" class="authbox" hidden>
-    <h1 style="font-size:44px">Shop inbox</h1>
+    <h1 style="font-size:44px">Good to see you.</h1>
     <p class="muted">Log in to see Crave To Go orders and catering requests.</p>
     <p class="notice small" id="setupHint" hidden>First time? Leave email blank and use the shop password. Then create everyone's login, yourself included, under <strong>Team</strong>.</p>
     <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" inputmode="email" spellcheck="false"></div>
@@ -138,6 +139,7 @@
     <p class="form-error" id="mcErr" role="alert" hidden></p>
     <p style="margin-top:20px"><button class="linkbtn" type="button" id="mcOut">Log out</button></p>
   </form>
+  <div id="todayView" hidden></div>
   <div id="inbox" hidden></div>
   <div id="artistsView" hidden></div>
   <div id="calView" hidden></div>
@@ -163,6 +165,7 @@
 <script src="/assets/common.js"></script>
 <script src="/assets/shop.js"></script>
 <script src="/assets/formbuilder.js"></script>
+<script src="/assets/kitchen.js"></script>
 <script>
 (() => {
   const { api, el, datetime, date } = BW;
@@ -191,12 +194,6 @@
     $("viewTeam").hidden = !["owner", "admin"].includes(ME.role);
     $("viewForm").hidden = !["owner", "admin"].includes(ME.role);
     $("viewArt").textContent = ME.role === "artist" ? "My books" : "Books and waitlist";
-    api("/api/orders?upcoming=1").then((u) => {
-      const busy = u.days.filter((d) => d.count);
-      $("toGoHead").textContent = u.total ? `Crave To Go: ${u.total} upcoming order${u.total === 1 ? "" : "s"}` : "Crave To Go: no upcoming orders";
-      $("toGoDays").textContent = busy.length ? busy.map((d) => `${d.label}: ${d.count}`).join(" · ") : (u.on ? "New orders show up on the kitchen board." : "Paused: customers can't order right now.");
-      $("toGo").hidden = false;
-    }).catch(() => {});
     await load();
     if (q.get("ig")) { // back from connecting Instagram
       const ok = q.get("ig") === "connected";
@@ -205,8 +202,8 @@
       return;
     }
     selected = location.hash.slice(1) || null;
-    if (selected) { const r = D.requests.find((x) => x.id === selected); if (r) tab = r.status; }
-    showRequests();
+    if (selected) { const r = D.requests.find((x) => x.id === selected); if (r) { tab = r.status; return showRequests(); } }
+    showToday();
   }
   let SHOP = "the shop";
   async function load() {
@@ -255,13 +252,63 @@
   }
   $("logout").addEventListener("click", async (e) => { e.preventDefault(); await api("/api/admin/login", { method: "DELETE" }); location.reload(); });
   $("viewReq").addEventListener("click", (e) => { e.preventDefault(); showRequests(); });
+  $("viewToday").addEventListener("click", (e) => { e.preventDefault(); showToday(); });
   $("viewArt").addEventListener("click", (e) => { e.preventDefault(); showArtists(); });
   $("viewCal").addEventListener("click", (e) => { e.preventDefault(); showCalendar(); });
   $("viewTeam").addEventListener("click", (e) => { e.preventDefault(); showTeam(); });
   $("viewAcct").addEventListener("click", (e) => { e.preventDefault(); showAccount(); });
   $("viewForm").addEventListener("click", (e) => { e.preventDefault(); showForm(); });
-  const views = ["inbox", "artistsView", "calView", "teamView", "acctView", "formView"];
-  function only(v) { for (const x of views) $(x).hidden = x !== v; window.scrollTo({ top: 0 }); }
+  const views = ["todayView", "inbox", "artistsView", "calView", "teamView", "acctView", "formView"];
+  function only(v) {
+    for (const x of views) $(x).hidden = x !== v;
+    const navFor = { todayView: "viewToday", inbox: "viewReq", calView: "viewCal", teamView: "viewTeam", acctView: "viewAcct", formView: "viewForm" };
+    document.querySelectorAll("#nav a").forEach((a) => a.removeAttribute("aria-current"));
+    if (navFor[v]) $(navFor[v]).setAttribute("aria-current", "page");
+    window.scrollTo({ top: 0 });
+  }
+
+  // ---------- Today: Crave To Go board + catering at a glance ----------
+  let board = null;
+  const HOURS = { 0: "9:30 AM – 3:30 PM", 1: "7:30 AM – 3:30 PM", 2: "7:30 AM – 3:30 PM", 3: null, 4: "7:30 AM – 3:30 PM", 5: "7:30 AM – 3:30 PM", 6: "9:30 AM – 3:30 PM" };
+  function showToday() {
+    only("todayView");
+    const v = $("todayView");
+    const now = new Date(), ak = (o) => new Intl.DateTimeFormat("en-US", { timeZone: "America/Anchorage", ...o }).format(now);
+    const hr = Number(ak({ hour: "numeric", hourCycle: "h23" })), wd = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(ak({ weekday: "short" }));
+    const hello = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+    const first = ME.shopKey ? "" : `, ${ME.name.split(" ")[0]}`;
+    const reqs = D.requests || [];
+    const count = (st) => reqs.filter((r) => st.includes(r.status)).length;
+    const attention = reqs.filter((r) => r.status === "new" || r.unread || r.status === "pending").slice(0, 5);
+    const slug = D.artists[0]?.slug, appts = ((D.calendar[slug] || {}).appts || []).filter((a) => a.end > Date.now()).slice(0, 4);
+    const tile = (label, n, st) => el("button", { type: "button", class: "dash-tile", onclick: () => { tab = st[0]; selected = null; showRequests(); } }, el("b", {}, String(n)), el("span", {}, label));
+    const go = (r) => { tab = r.status; selected = r.id; showRequests(); select(r.id); };
+    v.replaceChildren(
+      el("section", { class: "dash-hello" },
+        el("div", { class: "dash-hello-text" },
+          el("p", { class: "eyebrow" }, ak({ weekday: "long", month: "long", day: "numeric" })),
+          el("h1", {}, `${hello}${first}.`),
+          el("p", { class: `dash-open${HOURS[wd] ? "" : " shut"}` }, HOURS[wd] ? `Open today ${HOURS[wd]}` : "Closed today. Rest up."),
+          el("p", { class: "dash-quote" }, hr < 11 ? "Pots on, ovens warm, let's get those burritos rolling." : hr < 16 ? "Keep it hot, keep it moving." : "Tomorrow's orders are already lining up below.")),
+        el("img", { class: "dash-art", src: "/assets/good-morning.jpg", alt: "Good morning, with two Crave coffee cups as the O's", width: "900", height: "735" })),
+      el("div", { class: "dash-grid" },
+        el("section", { class: "dash-card dash-togo" },
+          el("header", {}, el("div", {}, el("p", { class: "eyebrow" }, "Crave To Go"), el("h2", {}, "Pickup orders")), el("span", { class: "dash-sum", id: "togoSum" })),
+          el("div", { id: "boardMount" })),
+        el("aside", { class: "dash-card dash-cater" },
+          el("header", {}, el("div", {}, el("p", { class: "eyebrow" }, "Catering"), el("h2", {}, "Events and requests"))),
+          el("div", { class: "dash-tiles" }, tile("New", count(["new"]), ["new"]), tile("Negotiating", count(["quoted", "agreed"]), ["quoted"]), tile("Booked", count(["booked"]), ["booked"])),
+          el("h3", {}, "Needs you"),
+          attention.length ? el("ul", { class: "dash-list" }, ...attention.map((r) => el("li", {}, el("button", { type: "button", onclick: () => go(r) },
+            el("strong", {}, r.client.name), el("span", {}, (r.details?.idea || "").slice(0, 70)), r.unread ? el("em", {}, "New message") : r.status === "pending" ? el("em", {}, "Confirm time") : el("em", {}, "New request")))))
+            : el("p", { class: "muted small" }, "Nothing waiting on you. New catering requests show up here."),
+          el("h3", {}, "Coming up"),
+          appts.length ? el("ul", { class: "dash-list" }, ...appts.map((a) => el("li", {}, el("div", { class: "dash-appt" }, el("strong", {}, a.dayLabel), el("span", {}, `${a.time} · ${a.clientName || a.title || "Catering"}`)))))
+            : el("p", { class: "muted small" }, "No catering events on the calendar yet."),
+          el("button", { class: "btn sm line", type: "button", style: "margin-top:14px", onclick: () => showRequests() }, "Open catering inbox"))));
+    const mountEl = $("boardMount");
+    board = CraveBoard.mount(mountEl, { kitchenLink: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = u.total ? `${u.total} upcoming` : "No upcoming orders"; } });
+  }
 
   // ---------- Requests ----------
   function showRequests() { only("inbox"); renderInbox(); }

@@ -3,30 +3,24 @@
 <head>
 <!--#head-->
 <meta name="robots" content="noindex">
-<title>Kitchen board | Crave</title>
+<title>Kitchen screen | Crave To Go</title>
 </head>
 <body class="admin kitchen">
 <main id="main">
-  <div class="page" style="max-width:1400px">
-    <div class="kb-top">
-      <div>
-        <a class="brand crave-brand" href="/"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="56" height="56"><span class="brand-sub">Kitchen board · Perfect Timing</span></a>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input type="date" id="day" aria-label="Day">
-        <button class="btn sm line" id="today" type="button">Today</button>
-        <button class="btn sm line" id="settingsBtn" type="button">Crave To Go settings</button>
-        <a class="btn sm line" href="/admin">Catering inbox</a>
-      </div>
-    </div>
-    <div class="kb-days" id="days" aria-label="Pick a day"></div>
-    <div id="msg"></div>
-    <div class="kb-load" id="load" aria-label="Orders per pickup window"></div>
-    <div class="kb-cols" id="cols"></div>
-    <div id="settings" hidden></div>
+  <div class="page" style="max-width:1500px">
+    <header class="k-head">
+      <a class="brand crave-brand" href="/admin"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="64" height="60"><span class="brand-sub">Crave To Go · Kitchen</span></a>
+      <span class="k-clock" id="clock"></span>
+    </header>
+    <div id="board"></div>
   </div>
 </main>
 <script src="/assets/common.js"></script>
 <script src="/assets/kitchen.js"></script>
+<script>
+  CraveBoard.mount(document.getElementById("board"));
+  const clock = () => { document.getElementById("clock").textContent = new Date().toLocaleTimeString("en-US", { timeZone: "America/Anchorage", hour: "numeric", minute: "2-digit" }); };
+  clock(); setInterval(clock, 15000);
+</script>
 </body>
 </html>
