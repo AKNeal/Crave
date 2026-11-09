@@ -12,7 +12,7 @@ const OUT = path.join(__dirname, "public");
 const S = shop.studio;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-// Dining-room hours (shown on the site). Order Ahead pickup hours are set on the kitchen board.
+// Dining-room hours (shown on the site). Crave To Go pickup hours are set on the kitchen board.
 const HOURS = [["Mon, Tue", "7:30 AM – 3:30 PM"], ["Wednesday", "Closed"], ["Thu, Fri", "7:30 AM – 3:30 PM"], ["Sat, Sun", "9:30 AM – 3:30 PM"]];
 const MAP = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(S.address)}`;
 
@@ -36,7 +36,7 @@ const header = (page) => `<a class="skip" href="#main">Skip to content</a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav class="nav" id="nav" aria-label="Main">
       ${NAV.map(([href, label, key]) => `<a href="${href}"${key === page || (key === "catering" && ["booking", "request", "schedule"].includes(page)) ? ' aria-current="page"' : ""}>${label}</a>`).join("\n      ")}
-      <a class="btn sign sm" href="/order"${page === "order" ? ' aria-current="page"' : ""}>Order ahead</a>
+      <a class="btn sign sm" href="/order"${page === "order" ? ' aria-current="page"' : ""}>Crave To Go</a>
     </nav>
   </div>
 </header>`;
@@ -58,7 +58,7 @@ const footer = () => `<footer class="site-footer crave-footer">
       </div>
       <div>
         <h4>Eat</h4>
-        <ul><li><a href="/order">Order ahead</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering</a></li><li><a href="/admin">Staff</a></li></ul>
+        <ul><li><a href="/order">Crave To Go</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering</a></li><li><a href="/admin">Staff</a></li></ul>
       </div>
     </div>
     <div class="footer-bottom">

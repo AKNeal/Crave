@@ -148,7 +148,7 @@ async function place(req, res, b) {
   if (str(b.website)) return send(res, 200, { ok: true }); // bots fill the hidden field
   if ((await store.hit(`rl:order:${ip(req)}`, 3600)) > 12) return send(res, 429, { error: "Too many orders from here in the last hour. Please call us." });
   const S = await settings();
-  if (!S.on) return send(res, 400, { error: "Order Ahead is paused right now. Please call us." });
+  if (!S.on) return send(res, 400, { error: "Crave To Go is paused right now. Please call us." });
   const name = str(b.name, 60), phone = str(b.phone, 30), email = str(b.email, 120).toLowerCase();
   const errors = {};
   if (name.length < 2) errors.name = "Enter the name for the order.";
@@ -245,7 +245,7 @@ async function setStatus(req, res, b) {
 
 async function saveSettings(req, res, b) {
   const me = await staff(req, res); if (!me) return;
-  if (!auth.isFull(me) && me.role !== "desk") return send(res, 403, { error: "Ask the owner to change Order Ahead settings." });
+  if (!auth.isFull(me) && me.role !== "desk") return send(res, 403, { error: "Ask the owner to change Crave To Go settings." });
   const S = await settings();
   const num = (v, lo, hi, d) => { const n = Math.floor(Number(v)); return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : d; };
   const next = { ...S };

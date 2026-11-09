@@ -4,6 +4,16 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/to-go",
+      "destination": "/order",
+      "permanent": false
+    },
+    {
+      "source": "/togo",
+      "destination": "/order",
+      "permanent": false
+    },
+    {
       "source": "/book",
       "destination": "/booking",
       "permanent": true

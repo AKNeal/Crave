@@ -20,7 +20,7 @@
       if (e.status === 401) { $("msg").replaceChildren(el("p", { class: "notice" }, "Log in first. ", el("a", { href: "/admin" }, "Open the inbox to log in"), ", then come back here.")); return; }
       $("msg").replaceChildren(el("p", { class: "notice" }, e.message)); timer = setTimeout(load, 30000); return;
     }
-    $("msg").replaceChildren(!data.settings.on ? el("p", { class: "notice" }, "Order Ahead is paused: customers can't place orders. Turn it back on in Order Ahead settings.") : "");
+    $("msg").replaceChildren(!data.settings.on ? el("p", { class: "notice" }, "Crave To Go is paused: customers can't place orders. Turn it back on in Crave To Go settings.") : "");
     draw();
     timer = setTimeout(load, 20000);
   }
@@ -77,7 +77,7 @@
     });
     const box = $("settings");
     box.replaceChildren(el("section", { class: "panel", style: "margin:30px 0 60px;background:#fff" },
-      el("h2", {}, "Order Ahead settings"),
+      el("h2", {}, "Crave To Go settings"),
       el("label", { class: "check", style: "margin-bottom:14px" }, el("input", { type: "checkbox", id: "sOn", checked: S.on }), " Take online orders"),
       el("div", { class: "field" }, el("label", { for: "sMsg" }, "Message on the order page"), el("input", { id: "sMsg", type: "text", maxlength: "200", value: S.message || "", placeholder: "e.g. Pie is sold out today" })),
       el("div", { class: "row" },

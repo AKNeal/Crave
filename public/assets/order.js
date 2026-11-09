@@ -38,9 +38,9 @@
   async function loadDays() {
     let d;
     try { d = await api("/api/orders"); }
-    catch (e) { $("days").replaceChildren(el("p", { class: "notice" }, "Order Ahead isn't available right now. Please call or stop in.")); return; }
+    catch (e) { $("days").replaceChildren(el("p", { class: "notice" }, "Crave To Go isn't available right now. Please call or stop in.")); return; }
     if (d.message) { $("pauseMsg").textContent = d.message; $("pauseMsg").hidden = false; }
-    if (!d.on) { $("pauseMsg").textContent = d.message || "Order Ahead is paused right now. Please stop in, we'd love to see you."; $("pauseMsg").hidden = false; $("days").replaceChildren(); return; }
+    if (!d.on) { $("pauseMsg").textContent = d.message || "Crave To Go is paused right now. Please stop in, we'd love to see you."; $("pauseMsg").hidden = false; $("days").replaceChildren(); return; }
     $("days").replaceChildren(...d.days.map((day) => el("button", { type: "button", class: "cchip", disabled: !day.open, "aria-pressed": "false", "data-date": day.date,
       onclick: (ev) => pickDay(day, ev.currentTarget) }, day.label.split(" ")[0], el("small", {}, day.label.includes(" ") ? day.label.split(" ").slice(1).join(" ") : (day.open ? fmtDate(day.date) : "Closed")))));
     const first = d.days.find((x) => x.open);
