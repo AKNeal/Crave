@@ -134,6 +134,11 @@
   }
   $("mobileCart").addEventListener("click", () => $("cart").scrollIntoView({ behavior: "smooth" }));
 
+  state.pickup = "inside";
+  document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => {
+    state.pickup = b.dataset.pick; document.querySelectorAll("[data-pick]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    $("carF").hidden = state.pickup !== "curbside";
+  }));
   document.querySelectorAll("[data-pay]").forEach((b) => b.addEventListener("click", () => {
     state.pay = b.dataset.pay; document.querySelectorAll("[data-pay]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   }));
@@ -144,14 +149,14 @@
     const btn = $("place"); btn.disabled = true; const label = btn.textContent; btn.textContent = "Locking it in…";
     try {
       const r = await api("/api/orders", { body: { action: "place", date: state.date, time: state.time, items: state.cart, pay: state.pay,
-        name: $("name").value, phone: $("phone").value, email: $("email").value, notes: $("notes").value, website: document.querySelector('#who [name="website"]').value } });
+        name: $("name").value, phone: $("phone").value, email: $("email").value, notes: $("notes").value, pickup: state.pickup, car: $("car").value, website: document.querySelector('#who [name="website"]').value } });
       state.cart = []; save();
       const o = r.order;
       $("orderView").replaceChildren(el("div", { class: "cconfirm", style: "grid-column:1/-1" },
         el("p", { class: "eyebrow", style: "justify-content:center" }, "Order locked in"),
         el("p", { class: "code" }, o.code),
         el("h2", {}, `${o.dayLabel}, ${o.window}`),
-        el("p", { class: "muted", style: "max-width:46ch;margin:10px auto 22px" }, `Give the counter your name (${o.name}) or the code above. Total ${money(o.total)}, pay by ${o.pay} at pickup.`),
+        el("p", { class: "muted", style: "max-width:46ch;margin:10px auto 22px" }, o.pickup === "curbside" ? `Pull up out front and call (907) 415-8499; we'll bring it out. Total ${money(o.total)}, pay by ${o.pay}.` : `Give the counter your name (${o.name}) or the code above. Total ${money(o.total)}, pay by ${o.pay} at pickup.`),
         el("a", { class: "btn sign", href: `/order?t=${r.track}` }, "Track my order"),
         el("p", { class: "small muted", style: "margin-top:16px" }, "Bookmark that page; it shows when your order hits the grill and when it's ready.")));
       $("mobileCart").hidden = true;

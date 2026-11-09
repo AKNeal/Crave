@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<!--#head-->
+<title>Thanksgiving preorders | Crave Coffee &amp; Bakery · North Pole, AK</title>
+<meta name="description" content="Preorder Thanksgiving from Crave Coffee & Bakery in North Pole, Alaska: cheesecakes, carrot cake, pumpkin roll, cinnamon rolls, deviled eggs and charcuterie. Order by Nov 20.">
+<meta property="og:image" content="https://crave.nealmedia.app/assets/food/cinnamon-roll-tray.jpg">
+</head>
+<body>
+<!--#header thanksgiving-->
+<main id="main">
+  <section class="pre-hero">
+    <div class="page pre-hero-grid">
+      <div>
+        <p class="eyebrow" id="preKicker">Holiday table</p>
+        <h1 id="preTitle">Thanksgiving preorders</h1>
+        <p class="lede" id="preBlurb"></p>
+        <p class="pre-dates"><span id="preBy"></span><span id="prePick"></span></p>
+      </div>
+      <div class="pre-photos" aria-hidden="true">
+        <img src="/assets/food/cinnamon-roll-tray.jpg" alt="" width="900" height="931">
+        <img src="/assets/food/pumpkin-whoopie.jpg" alt="" width="629" height="800">
+      </div>
+    </div>
+  </section>
+  <div class="page">
+    <p class="notice" id="preClosed" hidden></p>
+    <div class="order-shell" id="preView">
+      <div>
+        <section class="o-step">
+          <h2><span class="n">1</span> Pick your treats</h2>
+          <ul class="pre-items" id="preItems"></ul>
+          <p class="small muted" id="preExtra"></p>
+        </section>
+        <section class="o-step">
+          <h2><span class="n">2</span> Pickup</h2>
+          <div id="prePickups"></div>
+          <p class="small muted" id="prePickNote"></p>
+        </section>
+        <section class="o-step">
+          <h2><span class="n">3</span> Your details</h2>
+          <form id="who" class="form" novalidate>
+            <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <div class="row">
+              <div class="field" data-f="name"><label for="name">Name for the order</label><input id="name" type="text" autocomplete="name" maxlength="60" required><div class="err"></div></div>
+              <div class="field" data-f="phone"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required><div class="err"></div></div>
+            </div>
+            <div class="field" data-f="email"><label for="email">Email <span class="opt">(optional, for your receipt)</span></label><input id="email" type="email" autocomplete="email" maxlength="120"><div class="err"></div></div>
+            <div class="field"><label for="notes">Anything we should know? <span class="opt">(allergies, a different pickup time…)</span></label><textarea id="notes" rows="2" maxlength="300"></textarea></div>
+          </form>
+        </section>
+      </div>
+      <aside class="cart" aria-label="Your preorder">
+        <h2>Your preorder</h2>
+        <p class="when" id="when"></p>
+        <ul id="lines"></ul>
+        <p class="empty" id="emptyCart">Nothing yet. Add a treat or two.</p>
+        <div class="total"><span>Total</span><span id="total">$0.00</span></div>
+        <p class="small muted" style="margin:-6px 0 14px">Pay at pickup. We'll reach out to confirm your preorder.</p>
+        <button class="btn sign" style="width:100%" id="place" type="button" disabled>Send my preorder</button>
+        <p class="form-error" id="placeErr" role="alert" hidden></p>
+      </aside>
+    </div>
+  </div>
+</main>
+<!--#footer-->
+<script src="/assets/common.js"></script>
+<script src="/assets/menu-data.js"></script>
+<script src="/assets/specials.js"></script>
+<script src="/assets/preorder.js"></script>
+</body>
+</html>

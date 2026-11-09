@@ -12,10 +12,10 @@
     categories: [
       { id: "breakfast", prep: 10, name: "Breakfast", blurb: "Add your choice of 2 eggs for $2.00. Add your choice of protein for $2.00." },
       { id: "lunch", prep: 10, name: "Lunch", blurb: "* Comes with chips or an 8 oz soup." },
-      { id: "desserts", prep: 2, name: "Desserts", blurb: "Baked here." },
+      { id: "desserts", prep: 2, name: "Desserts", blurb: "Baked here, in small batches." },
     ],
     items: [
-      { id: "b1", cat: "breakfast", name: "Biscuits & Gravy", price: 12.5, tags: ["Favorite"], desc: "", choices: [EGGS, PROTEIN] },
+      { id: "b1", cat: "breakfast", name: "Biscuits & Gravy", price: 12.5, tags: ["Favorite"], photo: "/assets/food/breakfast-biscuits.jpg", desc: "", choices: [EGGS, PROTEIN] },
       { id: "b2", cat: "breakfast", name: "Breakfast Sammy", price: 8.55, desc: "Base price. Build it with eggs and protein.", choices: [EGGS, PROTEIN] },
       { id: "b3", cat: "breakfast", name: "Southwest Burrito", price: 11, desc: "", choices: [EGGS, PROTEIN] },
       { id: "b4", cat: "breakfast", name: "Crave Burrito", price: 12.75, tags: ["Favorite"], desc: "", choices: [EGGS, PROTEIN] },
@@ -27,8 +27,8 @@
       { id: "l5", cat: "lunch", name: "Grilled Cheese*", price: 7.79, desc: "", choices: [SIDE] },
       { id: "l6", cat: "lunch", name: "Turkey Pesto*", price: 9.78, desc: "", choices: [SIDE] },
       { id: "d1", cat: "desserts", name: "Cupcakes", price: 4.75, desc: "" },
-      { id: "d2", cat: "desserts", name: "Cinnamon Rolls", price: 6, tags: ["Favorite"], desc: "" },
-      { id: "d3", cat: "desserts", name: "Cookies", price: 4, desc: "" },
+      { id: "d2", cat: "desserts", name: "Cinnamon Rolls", price: 6, tags: ["Favorite"], photo: "/assets/food/caramel-crunch-rolls.jpg", desc: "Classic, caramel crunch, red velvet and seasonal flavors." },
+      { id: "d3", cat: "desserts", name: "Cookies", price: 4, photo: "/assets/food/cookies.jpg", desc: "" },
       { id: "d4", cat: "desserts", name: "Cream Pie", price: 4.15, desc: "" },
     ],
   };

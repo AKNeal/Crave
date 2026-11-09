@@ -17,6 +17,7 @@ const T = require("../lib/time");
 const auth = require("../lib/auth");
 const config = require("../config/studio");
 const MENU = require("../public/assets/menu-data.js");
+const SPECIAL = require("../public/assets/specials.js");
 const { sendEmail } = require("../lib/email");
 const { send, body, ip, id, str, baseUrl } = require("../lib/http");
 
@@ -85,6 +86,17 @@ function windowsFor(S, info, load) {
   return out;
 }
 
+// ----- Seasonal preorders (public/assets/specials.js) -----
+const specialPickup = (date) => SPECIAL.pickups.find((p) => p.date === date) || null;
+function specialWindows(p, load) {
+  const out = [];
+  for (let m = hmToMin(p.open); m <= hmToMin(p.close); m += 15) {
+    const time = minToHm(m);
+    out.push({ time, label: `${label12(time)}–${label12(minToHm(m + 15))}`, left: Math.max(0, SPECIAL.perWindow - (load[time] || 0)), preorder: true });
+  }
+  return out;
+}
+
 // Rebuild an order from the menu, ignoring any prices the browser sent.
 function priceItems(raw, S) {
   if (!Array.isArray(raw) || !raw.length) throw new Error("Add something to your order first.");
@@ -113,7 +125,7 @@ const pickupMs = (o) => { const d = T.parseDate(o.date), t = T.parseHM(o.time); 
 const fireMs = (o) => pickupMs(o) - Math.max(...o.items.map((i) => i.prep)) * 60000;
 function publicOrder(o) {
   return { id: o.id, code: o.code, date: o.date, time: o.time, window: o.window, dayLabel: o.dayLabel, items: o.items.map(({ prep, cat, ...i }) => i),
-    total: o.total, name: o.name, pay: o.pay, status: o.status, statusWord: STATUS_WORDS[o.status], notes: o.notes, updatedAt: o.updatedAt };
+    total: o.total, name: o.name, pay: o.pay, preorder: o.preorder || "", pickup: o.pickup || "inside", car: o.car || "", status: o.status, statusWord: STATUS_WORDS[o.status], notes: o.notes, updatedAt: o.updatedAt };
 }
 
 module.exports = async function handler(req, res) {
@@ -122,6 +134,11 @@ module.exports = async function handler(req, res) {
     if (req.method === "GET") {
       if (q.get("board")) return await board(req, res, q.get("board"));
       if (q.get("upcoming")) return await upcoming(req, res);
+      if (q.get("special")) {
+        const open = SPECIAL.isOpen(todayKey());
+        const pickups = await Promise.all(SPECIAL.pickups.map(async (p) => ({ ...p, windows: specialWindows(p, (await store.getJSON(`pt:load:${p.date}`)) || {}) })));
+        return send(res, 200, { open, today: todayKey(), special: { ...SPECIAL, pickups } });
+      }
       if (q.get("track")) return await track(res, q.get("track"));
       const S = await settings();
       const out = { on: S.on, message: S.message, days: days(S), windowMin: S.windowMin };
@@ -136,6 +153,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== "POST") return send(res, 405, { error: "Method not allowed" });
     const b = body(req);
     if (b.action === "place") return await place(req, res, b);
+    if (b.action === "preorder") return await preorder(req, res, b);
     if (b.action === "status") return await setStatus(req, res, b);
     if (b.action === "settings") return await saveSettings(req, res, b);
     return send(res, 400, { error: "Unknown action." });
@@ -171,6 +189,7 @@ async function place(req, res, b) {
     const n = await store.hit(`pt:seq:${info.date}`, 3 * 86400);
     const o = { id: id(6), token: id(9), code: `${DAY_NAMES[info.wd][0]}${String(n).padStart(2, "0")}`, date: info.date, time, window: w.label,
       dayLabel: info.label, items, total, name, phone, email, notes: str(b.notes, 300), pay: b.pay === "cash" ? "cash" : "card",
+      pickup: b.pickup === "curbside" ? "curbside" : "inside", car: b.pickup === "curbside" ? str(b.car, 60) : "",
       status: "new", createdAt: Date.now(), updatedAt: Date.now(), history: [{ at: Date.now(), status: "new" }] };
     await store.setJSON(`pt:order:${o.id}`, o);
     await store.indexAdd(`pt:day:${o.date}`, o.id, hmToMin(time));
@@ -184,13 +203,65 @@ async function place(req, res, b) {
         paragraphs: [`Hi ${name.split(" ")[0]},`, `We'll have it hot at ${when}. Pay at the counter (${o.pay}).`, lines.join("\n"), `Total: ${MENU.money(total)}`],
         button: { label: "Track your order", url: link } }),
       config.studio.contactEmail && sendEmail({ to: config.studio.contactEmail, subject: `New order ${o.code} — ${when}`, title: `Order ${o.code} for ${name}`,
-        paragraphs: [`Pickup ${when}. ${phone}`, lines.join("\n"), o.notes ? `Notes: ${o.notes}` : "", `Total ${MENU.money(total)}, paying ${o.pay}.`],
+        paragraphs: [`Pickup ${when}${o.pickup === "curbside" ? `, CURBSIDE${o.car ? ` (${o.car})` : ""}` : ""}. ${phone}`, lines.join("\n"), o.notes ? `Notes: ${o.notes}` : "", `Total ${MENU.money(total)}, paying ${o.pay}.`],
         button: { label: "Open the kitchen board", url: `${site}/kitchen` } }),
     ]);
     return send(res, 201, { ok: true, order: publicOrder(o), track: `${o.id}.${o.token}` });
   } finally {
     await store.unlock(`pt:${info.date}`);
   }
+}
+
+async function preorder(req, res, b) {
+  if (str(b.website)) return send(res, 200, { ok: true });
+  if ((await store.hit(`rl:order:${ip(req)}`, 3600)) > 12) return send(res, 429, { error: "Too many orders from here in the last hour. Please call us." });
+  if (!SPECIAL.isOpen(todayKey())) return send(res, 400, { error: `${SPECIAL.title} are closed. Thank you!` });
+  const name = str(b.name, 60), phone = str(b.phone, 30), email = str(b.email, 120).toLowerCase();
+  const errors = {};
+  if (name.length < 2) errors.name = "Enter the name for the order.";
+  if (phone.replace(/\D/g, "").length < 10) errors.phone = "Enter a phone number so we can confirm your preorder.";
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = "Check the email, or leave it blank.";
+  if (Object.keys(errors).length) return send(res, 400, { error: "Check the highlighted fields.", errors });
+  if (!Array.isArray(b.items) || !b.items.length) return send(res, 400, { error: "Pick at least one item." });
+  const items = b.items.slice(0, 20).map((x) => {
+    const item = SPECIAL.byId(String(x.id || ""));
+    if (!item) throw new Error("Something in your preorder isn't available anymore. Please reload the page.");
+    const qty = Math.max(1, Math.min(10, Math.floor(Number(x.qty) || 1)));
+    const groups = item.choices || [];
+    const picked = groups.map((g, i) => (Array.isArray(x.choices) && g.options.includes(x.choices[i]) ? x.choices[i] : g.options[0]));
+    return { id: item.id, name: item.name, qty, choices: groups.map((g, i) => `${g.name}: ${picked[i]}`), note: "", unit: item.price,
+      line: Math.round(item.price * qty * 100) / 100, prep: 0, cat: "preorder" };
+  });
+  const p = specialPickup(str(b.date, 10));
+  if (!p) return send(res, 400, { error: "Pick a pickup day.", pickAgain: true });
+  if (!(await store.lock(`pt:${p.date}`, 8000))) return send(res, 409, { error: "Lots of orders at once. Please try again." });
+  try {
+    const load = (await store.getJSON(`pt:load:${p.date}`)) || {};
+    const w = specialWindows(p, load).find((x) => x.time === str(b.time, 5));
+    if (!w) return send(res, 400, { error: "Pick a pickup time.", pickAgain: true });
+    if (w.left <= 0) return send(res, 409, { error: "That pickup time just filled up. Pick another.", pickAgain: true });
+    const total = Math.round(items.reduce((s2, i) => s2 + i.line, 0) * 100) / 100;
+    const d = T.parseDate(p.date), wd = T.weekdayOf(d);
+    const n = await store.hit(`pt:seq:pre:${SPECIAL.id}`, 60 * 86400);
+    const o = { id: id(6), token: id(9), code: `P${String(n).padStart(2, "0")}`, date: p.date, time: w.time, window: w.label, dayLabel: p.label,
+      items, total, name, phone, email, notes: str(b.notes, 300), pay: "at pickup", preorder: SPECIAL.title,
+      status: "new", createdAt: Date.now(), updatedAt: Date.now(), history: [{ at: Date.now(), status: "new" }] };
+    await store.setJSON(`pt:order:${o.id}`, o);
+    await store.indexAdd(`pt:day:${o.date}`, o.id, hmToMin(w.time));
+    load[w.time] = (load[w.time] || 0) + 1;
+    await store.setJSON(`pt:load:${o.date}`, load);
+    const site = baseUrl(req), link = `${site}/order?t=${o.id}.${o.token}`;
+    const lines = o.items.map((i) => `${i.qty} × ${i.name}${i.choices.length ? ` (${i.choices.map((c) => c.split(": ")[1]).join(", ")})` : ""}`);
+    await Promise.all([
+      email && sendEmail({ to: email, subject: `Preorder ${o.code} received — ${p.label}`, title: "We've got your preorder",
+        paragraphs: [`Hi ${name.split(" ")[0]},`, `Pickup ${p.label}, ${w.label}. We'll reach out to confirm.`, lines.join("\n"), `Total: ${MENU.money(total)}, paid at pickup.`],
+        button: { label: "See your preorder", url: link } }),
+      config.studio.contactEmail && sendEmail({ to: config.studio.contactEmail, subject: `New preorder ${o.code} — ${p.label}`, title: `${SPECIAL.title}: ${o.code} for ${name}`,
+        paragraphs: [`Pickup ${p.label}, ${w.label}. ${phone}${email ? ` · ${email}` : ""}`, lines.join("\n"), o.notes ? `Notes: ${o.notes}` : "", `Total ${MENU.money(total)}. Confirm with the customer.`],
+        button: { label: "Open the staff page", url: `${site}/admin` } }),
+    ]);
+    return send(res, 201, { ok: true, order: publicOrder(o), track: `${o.id}.${o.token}` });
+  } finally { await store.unlock(`pt:${p.date}`); }
 }
 
 async function track(res, t) {
@@ -215,8 +286,10 @@ async function board(req, res, date) {
     .map((o) => ({ ...publicOrder(o), phone: o.phone, email: o.email, pickupAt: pickupMs(o), fireAt: fireMs(o),
       fireLabel: T.timeLabel(fireMs(o)), items: o.items.map(({ cat, ...i }) => i), history: o.history }));
   const info = dayInfo(S, date);
+  const loadCache = (await store.getJSON(`pt:load:${date}`)) || {};
   return send(res, 200, { orders, settings: S, now: Date.now(), today: todayKey(), day: info,
-    windows: windowsFor({ ...S, leadMin: 0 }, info, (await store.getJSON(`pt:load:${date}`)) || {}) });
+    windows: (() => { const load = loadCache; const p = specialPickup(date);
+      return [...windowsFor({ ...S, leadMin: 0 }, info, load), ...(p ? specialWindows(p, load) : [])]; })(), special: specialPickup(date) ? SPECIAL.title : "" });
 }
 
 // Orders per day from today on (cancelled ones don't count), for the inbox banner and the board's day picker.
@@ -231,6 +304,12 @@ async function upcoming(req, res) {
     out.push({ date: info.date, label: i === 0 ? "Today" : i === 1 ? "Tomorrow" : info.label, open: info.open,
       count: Object.values(load).reduce((s, n) => s + n, 0) });
   }
+  for (const p of SPECIAL.pickups) {
+    if (p.date < todayKey() || out.some((d) => d.date === p.date)) continue;
+    const load = (await store.getJSON(`pt:load:${p.date}`)) || {};
+    out.push({ date: p.date, label: dayInfo(S, p.date).label, open: true, special: true, count: Object.values(load).reduce((s, n) => s + n, 0) });
+  }
+  for (const d of out) if (specialPickup(d.date)) d.special = true;
   return send(res, 200, { days: out, total: out.reduce((s, d) => s + d.count, 0), on: S.on });
 }
 

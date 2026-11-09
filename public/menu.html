@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="stylesheet" href="/assets/crave.css">
 <script src="/assets/shop.js"></script>
-<title>Menu | Crave · North Pole, Alaska</title>
+<title>Menu | Crave Coffee &amp; Bakery · North Pole, Alaska</title>
 <meta name="description" content="Crave's menu: breakfast burritos, biscuits and gravy, breakfast sammies, wraps, soup, grilled cheese, cupcakes and cinnamon rolls. North Pole, Alaska.">
 </head>
 <body>
@@ -23,7 +23,7 @@
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav class="nav" id="nav" aria-label="Main">
       <a href="/menu" aria-current="page">Menu</a>
-      <a href="/catering">Catering</a>
+      <a href="/catering">Catering & cakes</a>
       <a href="/visit">Visit</a>
       <a class="btn sign sm" href="/order">Crave To Go</a>
     </nav>
@@ -35,11 +35,17 @@
       <div><h1>The menu</h1><p class="intro">Prices include tax. Menu changes with the seasons; ask at the counter for today&#39;s soup and specials.</p></div>
       <a class="btn sign" href="/order">Crave To Go</a>
     </header>
-    <nav class="menu-jump" aria-label="Menu sections"><a href="#breakfast">Breakfast</a><a href="#lunch">Lunch</a><a href="#desserts">Desserts</a></nav>
+    <div class="menu-strip" aria-hidden="true">
+      <img src="/assets/food/breakfast-biscuits.jpg" alt="" width="834" height="1100">
+      <img src="/assets/food/caramel-crunch-rolls.jpg" alt="" width="900" height="1107">
+      <img src="/assets/food/cookies.jpg" alt="" width="751" height="900">
+      <img src="/assets/food/brownies-mousse.jpg" alt="" width="1100" height="771">
+    </div>
+    <nav class="menu-jump" aria-label="Menu sections"><a href="#breakfast">Breakfast</a><a href="#lunch">Lunch</a><a href="#desserts">Desserts</a><a href="#bakery">Bakery case</a><a href="#coffee">Coffee</a><a href="#cakes">Cakes</a></nav>
     <section class="menu-cat" id="breakfast">
       <header><h2>Breakfast</h2><p class="muted">Add your choice of 2 eggs for $2.00. Add your choice of protein for $2.00.</p></header>
       <ul class="menu-list">
-        <li><div class="mi-top"><h3>Biscuits &amp; Gravy <span class="tag">Favorite</span></h3><span class="leader" aria-hidden="true"></span><span class="price">$12.50</span></div>
+        <li class="has-photo"><img class="mi-photo" src="/assets/food/breakfast-biscuits.jpg" alt="" loading="lazy"><div class="mi-top"><h3>Biscuits &amp; Gravy <span class="tag">Favorite</span></h3><span class="leader" aria-hidden="true"></span><span class="price">$12.50</span></div>
           </li>
         <li><div class="mi-top"><h3>Breakfast Sammy</h3><span class="leader" aria-hidden="true"></span><span class="price">$8.55</span></div>
           <p>Base price. Build it with eggs and protein.</p></li>
@@ -67,18 +73,37 @@
           </li>
       </ul></section>
 <section class="menu-cat" id="desserts">
-      <header><h2>Desserts</h2><p class="muted">Baked here.</p></header>
+      <header><h2>Desserts</h2><p class="muted">Baked here, in small batches.</p></header>
       <ul class="menu-list">
         <li><div class="mi-top"><h3>Cupcakes</h3><span class="leader" aria-hidden="true"></span><span class="price">$4.75</span></div>
           </li>
-        <li><div class="mi-top"><h3>Cinnamon Rolls <span class="tag">Favorite</span></h3><span class="leader" aria-hidden="true"></span><span class="price">$6.00</span></div>
-          </li>
-        <li><div class="mi-top"><h3>Cookies</h3><span class="leader" aria-hidden="true"></span><span class="price">$4.00</span></div>
+        <li class="has-photo"><img class="mi-photo" src="/assets/food/caramel-crunch-rolls.jpg" alt="" loading="lazy"><div class="mi-top"><h3>Cinnamon Rolls <span class="tag">Favorite</span></h3><span class="leader" aria-hidden="true"></span><span class="price">$6.00</span></div>
+          <p>Classic, caramel crunch, red velvet and seasonal flavors.</p></li>
+        <li class="has-photo"><img class="mi-photo" src="/assets/food/cookies.jpg" alt="" loading="lazy"><div class="mi-top"><h3>Cookies</h3><span class="leader" aria-hidden="true"></span><span class="price">$4.00</span></div>
           </li>
         <li><div class="mi-top"><h3>Cream Pie</h3><span class="leader" aria-hidden="true"></span><span class="price">$4.15</span></div>
           </li>
       </ul></section>
-    <p class="muted small" style="margin:30px 0 60px">Tell us about allergies when you order. Consuming raw or undercooked eggs and meats may increase your risk of foodborne illness.</p>
+    <section class="menu-cat" id="bakery">
+      <header><h2>From the bakery case</h2><p class="muted">Rotating every day. What's in the case depends on the day, the season and how fast North Pole gets to it.</p></header>
+      <div class="case-grid">
+        <figure><img src="/assets/food/caramel-crunch-rolls.jpg" alt="Caramel crunch cinnamon roll" loading="lazy" width="900" height="1107"><figcaption><strong>Cinnamon rolls</strong> Classic, caramel crunch, red velvet and seasonal swirls</figcaption></figure>
+        <figure><img src="/assets/food/cookies.jpg" alt="Chocolate chip cookies" loading="lazy" width="751" height="900"><figcaption><strong>Cookies</strong> Big, chewy and baked in small batches</figcaption></figure>
+        <figure><img src="/assets/food/brownies-mousse.jpg" alt="Brownies with mousse cup" loading="lazy" width="1100" height="771"><figcaption><strong>Brownies &amp; mousse cups</strong> Chocolate and caramel, whipped cream on top</figcaption></figure>
+        <figure><img src="/assets/food/pumpkin-whoopie.jpg" alt="Pumpkin whoopie pie" loading="lazy" width="629" height="800"><figcaption><strong>Seasonal treats</strong> Like pumpkin whoopie pies, when they're in season</figcaption></figure>
+      </div>
+    </section>
+    <section class="menu-cat coffee-bar" id="coffee">
+      <header><h2>Coffee bar</h2><p class="muted">Drip coffee, espresso drinks and seasonal lattes, made the way you like them. Ask at the counter for today's flavors.</p></header>
+    </section>
+    <section class="menu-cat" id="cakes">
+      <div class="split2 cake-cta">
+        <img src="/assets/food/sunflower-cake-side.jpg" alt="Custom buttercream sunflower cake" loading="lazy" width="900" height="1200">
+        <div><h2>Custom cakes &amp; special orders</h2><p class="muted">Hand-piped cakes, dozens of cupcakes, pans of cinnamon rolls, cookie trays and holiday boxes. Tell us what you're celebrating.</p>
+          <a class="btn sign" href="/booking">Start a special order</a></div>
+      </div>
+    </section>
+    <p class="muted small" style="margin:30px 0 60px">Also on DoorDash when we're open and taking orders. Tell us about allergies when you order. Consuming raw or undercooked eggs and meats may increase your risk of foodborne illness.</p>
   </div>
 </main>
 <footer class="site-footer crave-footer">
@@ -86,11 +111,11 @@
     <div class="footer-grid">
       <div>
         <a class="brand crave-brand" href="/"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="96" height="96"></a>
-        <p style="margin-top:14px;max-width:32ch">Made-to-order breakfast, lunch and sweets in North Pole, Alaska.</p>
+        <p style="margin-top:14px;max-width:32ch">Family-run coffee and bakery in North Pole, Alaska. Breakfast, lunch and scratch-made sweets.</p>
       </div>
       <div>
         <h4>Visit</h4>
-        <ul><li><a href="https://www.google.com/maps/search/?api=1&query=235%20N%20Santa%20Claus%20Ln%2C%20Suite%208%2C%20North%20Pole%2C%20AK%2099705" rel="noopener">235 N Santa Claus Ln<br>Suite 8, North Pole, AK 99705</a></li></ul>
+        <ul><li><a href="tel:+19074158499">(907) 415-8499</a></li><li><a href="mailto:admin@mamamafiaco.com">admin@mamamafiaco.com</a></li><li><a href="https://www.instagram.com/crave.907/" rel="noopener">@crave.907</a></li><li><a href="https://www.google.com/maps/search/?api=1&query=235%20N%20Santa%20Claus%20Ln%2C%20Suite%208%2C%20North%20Pole%2C%20AK%2099705" rel="noopener">235 N Santa Claus Ln<br>Suite 8, North Pole, AK 99705</a></li></ul>
       </div>
       <div>
         <h4>Hours</h4>
@@ -98,11 +123,11 @@
       </div>
       <div>
         <h4>Eat</h4>
-        <ul><li><a href="/order">Crave To Go</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering</a></li><li><a href="/admin">Staff</a></li></ul>
+        <ul><li><a href="/order">Crave To Go</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering &amp; cakes</a></li><li><a href="/thanksgiving">Thanksgiving preorders</a></li><li><a href="https://craveprep.goprep.com" rel="noopener">Weekly meal prep ↗</a></li><li><a href="/admin">Staff</a></li></ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span data-shop="year">2026</span> Crave · North Pole, AK</span>
+      <span>© <span data-shop="year">2026</span> Crave Coffee &amp; Bakery · North Pole, AK</span>
       <a href="https://nealmedia.app" rel="noopener">Site by Neal Media &amp; Production</a>
     </div>
   </div>

@@ -43,6 +43,13 @@
             </div>
             <div class="field" data-f="email"><label for="email">Email <span class="opt">(optional, for your receipt and a "ready" note)</span></label><input id="email" type="email" autocomplete="email" maxlength="120"><div class="err"></div></div>
             <div class="field"><label for="notes">Notes for the kitchen <span class="opt">(allergies, extra napkins, curbside…)</span></label><textarea id="notes" rows="2" maxlength="300"></textarea></div>
+            <fieldset class="field" style="border:0;padding:0;margin:0 0 16px"><legend style="font-weight:600;margin-bottom:8px">How are you picking up?</legend>
+              <div class="pay-opts">
+                <button type="button" class="cchip" data-pick="inside" aria-pressed="true">Come inside<small>grab it at the counter</small></button>
+                <button type="button" class="cchip" data-pick="curbside" aria-pressed="false">Curbside<small>we'll bring it out</small></button>
+              </div>
+              <div class="field" id="carF" hidden style="margin-top:10px"><label for="car">Your car <span class="opt">(so we can find you)</span></label><input id="car" type="text" maxlength="60" placeholder="e.g. red Tacoma"></div>
+            </fieldset>
             <fieldset class="field" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:8px">Pay at pickup with</legend>
               <div class="pay-opts">
                 <button type="button" class="cchip" data-pay="card" aria-pressed="true">Card<small>at the counter</small></button>

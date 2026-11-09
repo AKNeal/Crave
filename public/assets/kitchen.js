@@ -15,9 +15,9 @@
       el("div", { class: "cb-top" },
         el("div", { class: "cb-days", "data-k": "days", role: "tablist", "aria-label": "Pick a day" }),
         el("div", { class: "cb-tools" },
-          el("input", { type: "date", "data-k": "date", "aria-label": "Any day", value: day, onchange: (e) => { day = e.target.value; load(); } }),
-          el("button", { class: "btn sm line", type: "button", onclick: toggleSettings }, "Settings"),
-          opts.kitchenLink ? el("a", { class: "btn sm line", href: "/kitchen", target: "_blank", rel: "noopener" }, "Kitchen screen ↗") : null)),
+          el("label", { class: "cb-other" }, "Other day ", el("input", { type: "date", "data-k": "date", value: day, onchange: (e) => { day = e.target.value; load(); } })),
+          el("button", { class: "linkbtn", type: "button", onclick: toggleSettings }, "Settings"),
+          opts.kitchenLink ? el("a", { class: "linkbtn", href: "/kitchen", target: "_blank", rel: "noopener" }, "Kitchen screen ↗") : null)),
       el("div", { "data-k": "msg" }),
       el("div", { class: "cb-load", "data-k": "load", "aria-label": "Orders per pickup window" }),
       el("div", { class: "cb-cols", "data-k": "cols" }),
@@ -28,8 +28,9 @@
       let u; try { u = await api("/api/orders?upcoming=1"); } catch (e) { return; }
       // First visit: if today is empty but an order is waiting later, open that day.
       if (first) { first = false; const t = u.days[0]; const next = u.days.find((d) => d.count); if (t && !t.count && next && day === t.date) { day = next.date; k("date").value = day; load(); return; } }
-      k("days").replaceChildren(...u.days.map((d) => el("button", { type: "button", role: "tab", "aria-selected": String(d.date === day), class: `cb-day${d.count ? " has" : ""}${!d.open && !d.count ? " shut" : ""}`,
-        onclick: () => { day = d.date; k("date").value = day; load(); } }, el("span", {}, d.label), el("b", {}, d.open || d.count ? String(d.count) : "closed"))));
+      const shown = u.days.filter((d, i) => i < 2 || d.count || d.date === day);
+      k("days").replaceChildren(...shown.map((d) => el("button", { type: "button", role: "tab", "aria-selected": String(d.date === day), class: `cb-day${d.count ? " has" : ""}${!d.open && !d.count && !d.special ? " shut" : ""}${d.special ? " special" : ""}`,
+        onclick: () => { day = d.date; k("date").value = day; load(); } }, el("span", {}, d.label), el("b", {}, d.open || d.count || d.special ? String(d.count) : "closed"))));
       if (opts.onSummary) opts.onSummary(u);
     }
 
@@ -50,36 +51,49 @@
 
     function draw() {
       const now = Date.now(), per = data.settings.perWindow;
+      k("load").hidden = Boolean(opts.compact);
       k("load").replaceChildren(...(data.windows || []).map((w) => {
         const used = per - w.left;
         return el("span", { class: `cb-w${w.left <= 0 ? " full" : used ? " some" : ""}`, title: `${w.label}: ${used} of ${per}` },
           /:00 /.test(w.label.split("–")[0]) ? w.label.split("–")[0].replace(":00", "").replace(" AM", "a").replace(" PM", "p") : "", el("i", { style: `height:${Math.round((used / per) * 100)}%` }));
       }));
-      if (!data.day || !data.day.open) k("load").replaceChildren(el("span", { class: "muted small" }, "Closed this day."));
-      const cols = [["new", "Up next"], ["cooking", "On the grill"], ["ready", "Ready for pickup"], ["done", "Picked up"]];
+      if (!(data.windows || []).length) k("load").replaceChildren(el("span", { class: "muted small" }, "Closed this day."));
+      if (data.special) k("load").prepend(el("span", { class: "cb-special" }, data.special));
+      const cols = [["new", "Up next"], ["cooking", "Cooking"], ["ready", "Ready for pickup"]];
       const by = (s) => data.orders.filter((o) => o.status === s).sort((a, b) => a.fireAt - b.fireAt);
       const cancelled = by("cancelled");
       k("cols").replaceChildren(...cols.map(([s, name]) => {
         const list = by(s);
         return el("section", { class: `cb-col s-${s}` }, el("h3", {}, el("span", {}, name), el("b", {}, String(list.length))),
           ...(list.length ? list.map((o) => card(o, now)) : [el("p", { class: "cb-empty" }, s === "new" ? "No orders waiting. Nice." : "—")]),
-          s === "done" && cancelled.length ? el("details", { class: "cb-cancelled" }, el("summary", {}, `Cancelled (${cancelled.length})`), ...cancelled.map((o) => card(o, now))) : null);
+          null);
       }));
+      const done = by("done");
+      const tail = el("div", { class: "cb-tail" },
+        done.length ? el("details", {}, el("summary", {}, `Picked up (${done.length})`), el("div", { class: "cb-tail-list" }, ...done.map((o) => card(o, now)))) : null,
+        cancelled.length ? el("details", {}, el("summary", {}, `Cancelled (${cancelled.length})`), el("div", { class: "cb-tail-list" }, ...cancelled.map((o) => card(o, now)))) : null);
+      const old = root.querySelector(".cb-tail"); if (old) old.remove();
+      k("cols").after(tail);
     }
 
     function card(o, now) {
       const today = data.today === day, fireIn = Math.round((o.fireAt - now) / 60000);
       const hot = o.status === "new" && today && fireIn <= 2;
       const fireText = o.status !== "new" ? `Pickup ${o.window.split("–")[0]}` : !today || fireIn > 2 ? `Start ${o.fireLabel.replace(" AM", "a").replace(" PM", "p")}` : fireIn >= -1 ? "Start now" : `${-fireIn} min late`;
-      const btn = (label, status, cls = "line") => el("button", { type: "button", class: `btn sm ${cls}`, onclick: () => setStatus(o, status) }, label);
-      const actions = { new: [btn("Start", "cooking", "sign"), btn("Cancel", "cancelled")], cooking: [btn("Ready", "ready", "sign"), btn("Back", "new")],
-        ready: [btn("Picked up", "done", "sign"), btn("Back", "cooking")], done: [btn("Undo", "ready")], cancelled: [btn("Restore", "new")] }[o.status];
+      const main = (label, status) => el("button", { type: "button", class: "btn sign cb-go", onclick: () => setStatus(o, status) }, label);
+      const small = (label, status) => el("button", { type: "button", class: "linkbtn cb-small", onclick: () => setStatus(o, status) }, label);
+      const actions = { new: [main(o.preorder ? "Start packing" : "Start cooking", "cooking"), small("Cancel order", "cancelled")],
+        cooking: [main("Ready for pickup", "ready"), small("Undo", "new")],
+        ready: [main("Picked up", "done"), small("Undo", "cooking")], done: [small("Undo", "ready")], cancelled: [small("Restore", "new")] }[o.status];
       return el("article", { class: `cb-card${hot ? " hot" : ""}` },
-        el("div", { class: "cb-h" }, el("span", { class: "cb-code" }, o.code), el("span", { class: "cb-fire" }, fireText)),
+        el("div", { class: "cb-h" }, el("span", { class: "cb-code" }, o.code), el("span", { class: "cb-fire" }, o.preorder && o.status === "new" ? `Pickup ${o.window.split("–")[0]}` : fireText)),
+        o.preorder ? el("span", { class: "cb-pre" }, "Preorder · call to confirm") : null,
         el("div", { class: "cb-who" }, el("strong", {}, o.name), " · ", el("a", { href: `tel:${o.phone}` }, o.phone)),
-        el("ul", {}, ...o.items.map((i) => el("li", {}, el("b", {}, `${i.qty}×`), ` ${i.name}`, (i.choices.length || i.note) ? el("small", {}, [...i.choices.map((c) => c.split(": ")[1]).filter((c) => !/^No /.test(c)), i.note ? `“${i.note}”` : ""].filter(Boolean).join(" · ")) : null))),
+        o.pickup === "curbside" ? el("span", { class: "cb-curb" }, `Curbside${o.car ? `: ${o.car}` : ""}`) : null,
+        el("ul", {}, ...o.items.map((i) => el("li", {}, el("b", {}, `${i.qty}×`), ` ${i.name.replace("*", "")}`, (i.choices.length || i.note) ? el("small", {}, [...i.choices.map((c) => c.split(": ")[1]).filter((c) => !/^No /.test(c)), i.note ? `“${i.note}”` : ""].filter(Boolean).join(" · ")) : null))),
         o.notes ? el("p", { class: "cb-note" }, o.notes) : null,
-        el("div", { class: "cb-foot" }, el("span", {}, `${money(o.total)} · ${o.pay}`), el("span", { class: "cb-actions" }, ...actions)));
+        el("div", { class: "cb-foot" }, el("span", {}, `${money(o.total)} · pays ${o.pay}`)),
+        el("div", { class: "cb-actions" }, ...actions));
     }
 
     async function setStatus(o, status) {

@@ -4,6 +4,16 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/preorder",
+      "destination": "/thanksgiving",
+      "permanent": false
+    },
+    {
+      "source": "/preorders",
+      "destination": "/thanksgiving",
+      "permanent": false
+    },
+    {
       "source": "/to-go",
       "destination": "/order",
       "permanent": false

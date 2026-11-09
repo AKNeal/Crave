@@ -104,7 +104,7 @@
 <main class="shell" id="app">
   <p id="bootMsg" class="authbox" role="alert" hidden></p>
   <form id="login" class="authbox" hidden>
-    <h1 style="font-size:44px">Good to see you.</h1>
+    <h1 style="font-size:40px">Staff login</h1>
     <p class="muted">Log in to see Crave To Go orders and catering requests.</p>
     <p class="notice small" id="setupHint" hidden>First time? Leave email blank and use the shop password. Then create everyone's login, yourself included, under <strong>Team</strong>.</p>
     <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" inputmode="email" spellcheck="false"></div>
@@ -275,39 +275,35 @@
     const v = $("todayView");
     const now = new Date(), ak = (o) => new Intl.DateTimeFormat("en-US", { timeZone: "America/Anchorage", ...o }).format(now);
     const hr = Number(ak({ hour: "numeric", hourCycle: "h23" })), wd = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(ak({ weekday: "short" }));
-    const hello = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
-    const first = ME.shopKey ? "" : `, ${ME.name.split(" ")[0]}`;
     const reqs = D.requests || [];
     const count = (st) => reqs.filter((r) => st.includes(r.status)).length;
     const attention = reqs.filter((r) => r.status === "new" || r.unread || r.status === "pending").slice(0, 5);
     const slug = D.artists[0]?.slug, appts = ((D.calendar[slug] || {}).appts || []).filter((a) => a.end > Date.now()).slice(0, 4);
-    const tile = (label, n, st) => el("button", { type: "button", class: "dash-tile", onclick: () => { tab = st[0]; selected = null; showRequests(); } }, el("b", {}, String(n)), el("span", {}, label));
-    const go = (r) => { tab = r.status; selected = r.id; showRequests(); select(r.id); };
+        const go = (r) => { tab = r.status; selected = r.id; showRequests(); select(r.id); };
+    const nNew = count(["new"]), nTalk = count(["quoted", "agreed", "scheduling", "pending"]), nBooked = count(["booked"]);
+    const jump = (label, n, st) => el("button", { type: "button", class: "linkbtn", onclick: () => { tab = st; selected = null; showRequests(); } }, `${n} ${label}`);
     v.replaceChildren(
-      el("section", { class: "dash-hello" },
-        el("div", { class: "dash-hello-text" },
-          el("p", { class: "eyebrow" }, ak({ weekday: "long", month: "long", day: "numeric" })),
-          el("h1", {}, `${hello}${first}.`),
-          el("p", { class: `dash-open${HOURS[wd] ? "" : " shut"}` }, HOURS[wd] ? `Open today ${HOURS[wd]}` : "Closed today. Rest up."),
-          el("p", { class: "dash-quote" }, hr < 11 ? "Pots on, ovens warm, let's get those burritos rolling." : hr < 16 ? "Keep it hot, keep it moving." : "Tomorrow's orders are already lining up below.")),
-        el("img", { class: "dash-art", src: "/assets/good-morning.jpg", alt: "Good morning, with two Crave coffee cups as the O's", width: "900", height: "735" })),
+      el("div", { class: "today-bar" },
+        el("h1", {}, "Today"),
+        el("span", { class: "today-date" }, ak({ weekday: "long", month: "long", day: "numeric" })),
+        el("span", { class: `dash-open${HOURS[wd] ? "" : " shut"}` }, HOURS[wd] ? `Open ${HOURS[wd]}` : "Closed today")),
       el("div", { class: "dash-grid" },
-        el("section", { class: "dash-card dash-togo" },
-          el("header", {}, el("div", {}, el("p", { class: "eyebrow" }, "Crave To Go"), el("h2", {}, "Pickup orders")), el("span", { class: "dash-sum", id: "togoSum" })),
+        el("section", { class: "dash-card" },
+          el("header", {}, el("h2", {}, "Crave To Go"), el("span", { class: "dash-sum", id: "togoSum" })),
           el("div", { id: "boardMount" })),
         el("aside", { class: "dash-card dash-cater" },
-          el("header", {}, el("div", {}, el("p", { class: "eyebrow" }, "Catering"), el("h2", {}, "Events and requests"))),
-          el("div", { class: "dash-tiles" }, tile("New", count(["new"]), ["new"]), tile("Negotiating", count(["quoted", "agreed"]), ["quoted"]), tile("Booked", count(["booked"]), ["booked"])),
+          el("header", {}, el("h2", {}, "Catering")),
+          el("p", { class: "dash-counts" }, jump("new", nNew, "new"), " · ", jump("in progress", nTalk, "quoted"), " · ", jump("booked", nBooked, "booked")),
           el("h3", {}, "Needs you"),
           attention.length ? el("ul", { class: "dash-list" }, ...attention.map((r) => el("li", {}, el("button", { type: "button", onclick: () => go(r) },
-            el("strong", {}, r.client.name), el("span", {}, (r.details?.idea || "").slice(0, 70)), r.unread ? el("em", {}, "New message") : r.status === "pending" ? el("em", {}, "Confirm time") : el("em", {}, "New request")))))
-            : el("p", { class: "muted small" }, "Nothing waiting on you. New catering requests show up here."),
+            el("strong", {}, r.client.name), el("span", {}, r.unread ? "New message" : r.status === "pending" ? "Confirm their time" : "New request · send an offer")))))
+            : el("p", { class: "muted small" }, "You're all caught up."),
           el("h3", {}, "Coming up"),
-          appts.length ? el("ul", { class: "dash-list" }, ...appts.map((a) => el("li", {}, el("div", { class: "dash-appt" }, el("strong", {}, a.dayLabel), el("span", {}, `${a.time} · ${a.clientName || a.title || "Catering"}`)))))
-            : el("p", { class: "muted small" }, "No catering events on the calendar yet."),
-          el("button", { class: "btn sm line", type: "button", style: "margin-top:14px", onclick: () => showRequests() }, "Open catering inbox"))));
+          appts.length ? el("ul", { class: "dash-list" }, ...appts.map((a) => el("li", {}, el("div", { class: "dash-appt" }, el("strong", {}, `${a.dayLabel}, ${a.time}`), el("span", {}, a.clientName || a.title || "Catering")))))
+            : el("p", { class: "muted small" }, "No catering events booked."),
+          el("p", { style: "margin:14px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showRequests() }, "Open the catering inbox →")))));
     const mountEl = $("boardMount");
-    board = CraveBoard.mount(mountEl, { kitchenLink: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = u.total ? `${u.total} upcoming` : "No upcoming orders"; } });
+    board = CraveBoard.mount(mountEl, { kitchenLink: true, compact: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = u.total ? `${u.total} upcoming` : ""; } });
   }
 
   // ---------- Requests ----------
