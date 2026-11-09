@@ -121,6 +121,7 @@ module.exports = async function handler(req, res) {
     const q = new URL(req.url, "http://x").searchParams;
     if (req.method === "GET") {
       if (q.get("board")) return await board(req, res, q.get("board"));
+      if (q.get("upcoming")) return await upcoming(req, res);
       if (q.get("track")) return await track(res, q.get("track"));
       const S = await settings();
       const out = { on: S.on, message: S.message, days: days(S), windowMin: S.windowMin };
@@ -216,6 +217,21 @@ async function board(req, res, date) {
   const info = dayInfo(S, date);
   return send(res, 200, { orders, settings: S, now: Date.now(), today: todayKey(), day: info,
     windows: windowsFor({ ...S, leadMin: 0 }, info, (await store.getJSON(`pt:load:${date}`)) || {}) });
+}
+
+// Orders per day from today on (cancelled ones don't count), for the inbox banner and the board's day picker.
+async function upcoming(req, res) {
+  if (!(await staff(req, res))) return;
+  const S = await settings();
+  const start = T.parseDate(todayKey());
+  const out = [];
+  for (let i = 0; i <= Math.max(S.daysAhead, 7); i++) {
+    const info = dayInfo(S, T.keyOf(T.addDays(start, i)));
+    const load = (await store.getJSON(`pt:load:${info.date}`)) || {};
+    out.push({ date: info.date, label: i === 0 ? "Today" : i === 1 ? "Tomorrow" : info.label, open: info.open,
+      count: Object.values(load).reduce((s, n) => s + n, 0) });
+  }
+  return send(res, 200, { days: out, total: out.reduce((s, d) => s + d.count, 0), on: S.on });
 }
 
 async function setStatus(req, res, b) {

@@ -221,3 +221,9 @@ body.kitchen { background: #f3f3f1; }
 [data-f="instagram"] { display: none; }
 #day { width: auto; }
 @media (max-width: 680px) { .ticket .stamp { display: none; } .site-header .brand-sub { display: none; } }
+
+.kb-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.kb-day { border: 1px solid #d9d8d3; background: #fff; border-radius: 8px; padding: 6px 10px; font: 600 .85rem var(--body); cursor: pointer; display: flex; gap: 8px; align-items: center; color: var(--ink); }
+.kb-day b { background: #eee; border-radius: 999px; padding: 1px 8px; font-size: .78rem; }
+.kb-day.has b { background: var(--sign); color: #fff; }
+.kb-day.on { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }

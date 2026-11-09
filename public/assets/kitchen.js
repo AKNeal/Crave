@@ -13,8 +13,15 @@
   $("today").addEventListener("click", () => { $("day").value = todayKey(); load(); });
   $("settingsBtn").addEventListener("click", () => { const s = $("settings"); s.hidden = !s.hidden; if (!s.hidden) drawSettings(); s.scrollIntoView({ behavior: "smooth" }); });
 
+  async function drawDays() {
+    let u; try { u = await api("/api/orders?upcoming=1"); } catch (e) { return; }
+    $("days").replaceChildren(...u.days.map((d) => el("button", { type: "button", class: `kb-day${d.date === $("day").value ? " on" : ""}${d.count ? " has" : ""}`,
+      onclick: () => { $("day").value = d.date; load(); } }, d.label, el("b", {}, d.open || d.count ? String(d.count) : "closed"))));
+  }
+
   async function load() {
     clearTimeout(timer);
+    drawDays();
     try { data = await api(`/api/orders?board=${$("day").value}`); }
     catch (e) {
       if (e.status === 401) { $("msg").replaceChildren(el("p", { class: "notice" }, "Log in first. ", el("a", { href: "/admin" }, "Open the inbox to log in"), ", then come back here.")); return; }

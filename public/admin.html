@@ -96,14 +96,15 @@
 <body class="admin">
 <header class="top"><div class="shell adminbar">
   <div><a class="brand" href="/admin"><span><b id="shopName" style="font-weight:inherit">Shop</b> · Inbox</span></a><div class="whoami" id="whoami"></div></div>
-  <nav id="nav" hidden><a href="#" id="viewReq">Requests</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewArt">Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="/kitchen">Kitchen board</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
+  <nav id="nav" hidden><a href="/kitchen" id="viewToGo">Crave To Go orders</a><a href="#" id="viewReq">Catering requests</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewArt">Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
 </div></header>
 
 <main class="shell" id="app">
   <p id="bootMsg" class="authbox" role="alert" hidden></p>
+  <a id="toGo" href="/kitchen" hidden style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0 0;padding:14px 18px;border:1px solid #e6dccd;border-left:5px solid #a8582a;border-radius:8px;background:#fffdf9;color:#1c1814;text-decoration:none"><span><strong id="toGoHead">Crave To Go</strong> <span id="toGoDays" class="small muted"></span></span><span class="btn sm sign" style="background:#a8582a;color:#fff;border-color:#a8582a">Open the kitchen board</span></a>
   <form id="login" class="authbox" hidden>
     <h1 style="font-size:44px">Shop inbox</h1>
-    <p class="muted">Log in to see tattoo requests.</p>
+    <p class="muted">Log in to see Crave To Go orders and catering requests.</p>
     <p class="notice small" id="setupHint" hidden>First time? Leave email blank and use the shop password. Then create everyone's login, yourself included, under <strong>Team</strong>.</p>
     <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" inputmode="email" spellcheck="false"></div>
     <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" required></div>
@@ -190,6 +191,12 @@
     $("viewTeam").hidden = !["owner", "admin"].includes(ME.role);
     $("viewForm").hidden = !["owner", "admin"].includes(ME.role);
     $("viewArt").textContent = ME.role === "artist" ? "My books" : "Books and waitlist";
+    api("/api/orders?upcoming=1").then((u) => {
+      const busy = u.days.filter((d) => d.count);
+      $("toGoHead").textContent = u.total ? `Crave To Go: ${u.total} upcoming order${u.total === 1 ? "" : "s"}` : "Crave To Go: no upcoming orders";
+      $("toGoDays").textContent = busy.length ? busy.map((d) => `${d.label}: ${d.count}`).join(" · ") : (u.on ? "New orders show up on the kitchen board." : "Paused: customers can't order right now.");
+      $("toGo").hidden = false;
+    }).catch(() => {});
     await load();
     if (q.get("ig")) { // back from connecting Instagram
       const ok = q.get("ig") === "connected";
