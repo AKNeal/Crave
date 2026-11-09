@@ -25,13 +25,13 @@ const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DEFAULTS = {
   on: true,
   // Pickup hours (last window starts before "close").
-  // Crave: Mon, Tue, Thu, Fri 7:30–3:30 · Wed closed · Sat, Sun 9:30–3:30 (last pickup window starts 3:15).
-  hours: { 0: { open: "09:30", close: "15:15" }, 1: { open: "07:30", close: "15:15" }, 2: { open: "07:30", close: "15:15" }, 3: null,
+  // Crave: Mon, Thu, Fri 7:30–3:30 · Tue and Wed closed · Sat, Sun 9:30–3:30 (last pickup window starts 3:15).
+  hours: { 0: { open: "09:30", close: "15:15" }, 1: { open: "07:30", close: "15:15" }, 2: null, 3: null,
     4: { open: "07:30", close: "15:15" }, 5: { open: "07:30", close: "15:15" }, 6: { open: "09:30", close: "15:15" } },
   windowMin: 15,     // length of a pickup window
   perWindow: 5,      // orders the line can take per window
   leadMin: 30,       // shortest notice for a same-day order
-  daysAhead: 7,      // how far ahead customers can order
+  daysAhead: 14,     // how far ahead customers can order (change in Settings)
   maxItems: 30,
   closed: [],        // ["2026-12-25", ...]
   message: "",       // shown on the order page (e.g. "Pie is sold out today")
@@ -46,7 +46,6 @@ const label12 = (hm) => { const [h, m] = hm.split(":").map(Number); return `${((
 async function settings() {
   const s = (await store.getJSON("pt:settings")) || {};
   const out = { ...DEFAULTS, ...s, hours: { ...DEFAULTS.hours, ...(s.hours || {}) } };
-  out.daysAhead = Math.min(7, out.daysAhead);
   return out;
 }
 const todayKey = () => T.dateKey(Date.now());
@@ -300,7 +299,7 @@ async function upcoming(req, res) {
   const S = await settings();
   const start = T.parseDate(todayKey());
   const out = [];
-  for (let i = 0; i <= S.daysAhead; i++) {
+  for (let i = 0; i < 7; i++) {
     const info = dayInfo(S, T.keyOf(T.addDays(start, i)));
     const load = (await store.getJSON(`pt:load:${info.date}`)) || {};
     out.push({ date: info.date, label: i === 0 ? "Today" : i === 1 ? "Tomorrow" : info.label, open: info.open,
@@ -345,7 +344,7 @@ async function saveSettings(req, res, b) {
   if (b.windowMin !== undefined) next.windowMin = [10, 15, 20, 30].includes(Number(b.windowMin)) ? Number(b.windowMin) : S.windowMin;
   if (b.perWindow !== undefined) next.perWindow = num(b.perWindow, 1, 50, S.perWindow);
   if (b.leadMin !== undefined) next.leadMin = num(b.leadMin, 0, 24 * 60, S.leadMin);
-  if (b.daysAhead !== undefined) next.daysAhead = num(b.daysAhead, 0, 7, S.daysAhead); // single orders: a week out at most
+  if (b.daysAhead !== undefined) next.daysAhead = num(b.daysAhead, 0, 60, S.daysAhead);
   if (b.maxItems !== undefined) next.maxItems = num(b.maxItems, 1, 100, S.maxItems);
   if (b.message !== undefined) next.message = str(b.message, 200);
   if (b.closed !== undefined) next.closed = [...new Set((Array.isArray(b.closed) ? b.closed : []).filter((d) => T.parseDate(d)))].sort().slice(-200);

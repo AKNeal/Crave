@@ -511,3 +511,14 @@ body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
 .cb-wwho small { display: block; color: var(--graphite); }
 .cb-wtime { font-weight: 700; }
 .cb-wmeta { color: var(--graphite); white-space: nowrap; }
+/* Pickup day: one scrolling line */
+.day-scroll { position: relative; display: flex; align-items: center; gap: 6px; }
+.day-row { flex: 1; flex-wrap: nowrap !important; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; padding: 2px 2px 4px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%); }
+.day-row::-webkit-scrollbar { display: none; }
+.day-row .cchip { flex: 0 0 auto; scroll-snap-align: start; }
+.ds-arrow { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--white); font-size: 1.3rem; line-height: 1; cursor: pointer; color: var(--ink); }
+.ds-arrow:hover { border-color: var(--sign); }
+.ds-arrow[hidden] { display: none; }
+.order-shell > div, .o-step, .day-scroll { min-width: 0; }
+.day-row .cchip { min-width: 78px; padding: 8px 12px; } .day-row .cchip:disabled { min-width: 0; opacity: .4; }

@@ -43,8 +43,16 @@
     if (!d.on) { $("pauseMsg").textContent = d.message || "Crave Curbside is paused right now. Please stop in, we'd love to see you."; $("pauseMsg").hidden = false; $("days").replaceChildren(); return; }
     $("days").replaceChildren(...d.days.map((day) => el("button", { type: "button", class: "cchip", disabled: !day.open, "aria-pressed": "false", "data-date": day.date,
       onclick: (ev) => pickDay(day, ev.currentTarget) }, day.label.split(" ")[0], el("small", {}, day.label.includes(" ") ? day.label.split(" ").slice(1).join(" ") : (day.open ? fmtDate(day.date) : "Closed")))));
+    setupScroll();
     const first = d.days.find((x) => x.open);
     if (!first) $("days").append(el("p", { class: "muted", style: "width:100%" }, "No pickup days open right now."));
+  }
+  function setupScroll() {
+    const row = $("days"), wrap = row.parentNode, prev = wrap.querySelector(".prev"), next = wrap.querySelector(".next");
+    const upd = () => { prev.hidden = row.scrollLeft < 4; next.hidden = row.scrollLeft + row.clientWidth >= row.scrollWidth - 4; };
+    prev.onclick = () => row.scrollBy({ left: -row.clientWidth * 0.8, behavior: "smooth" });
+    next.onclick = () => row.scrollBy({ left: row.clientWidth * 0.8, behavior: "smooth" });
+    row.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); upd();
   }
   const fmtDate = (k) => new Date(k + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 

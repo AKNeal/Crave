@@ -14,7 +14,7 @@ const S = shop.studio;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // Dining-room hours (shown on the site). Crave Curbside pickup hours are set on the kitchen board.
-const HOURS = [["Mon, Tue", "7:30 AM – 3:30 PM"], ["Wednesday", "Closed"], ["Thu, Fri", "7:30 AM – 3:30 PM"], ["Sat, Sun", "9:30 AM – 3:30 PM"]];
+const HOURS = [["Monday", "7:30 AM – 3:30 PM"], ["Tue, Wed", "Closed"], ["Thu, Fri", "7:30 AM – 3:30 PM"], ["Sat, Sun", "9:30 AM – 3:30 PM"]];
 const MAP = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(S.address)}`;
 
 const headHtml = () => `<meta charset="utf-8">
@@ -111,7 +111,7 @@ const jsonLd = () => `<script type="application/ld+json">${JSON.stringify({
   telephone: "+1-907-415-8499", email: "admin@mamamafiaco.com", sameAs: ["https://www.instagram.com/crave.907/"],
   areaServed: ["North Pole, AK", "Fairbanks, AK", "Eielson Air Force Base, AK", "Fort Wainwright, AK"],
   url: `https://${shop.hosts[0]}`, menu: `https://${shop.hosts[0]}/menu`, acceptsReservations: false,
-  openingHours: ["Mo,Tu,Th,Fr 07:30-15:30", "Sa,Su 09:30-15:30"],
+  openingHours: ["Mo,Th,Fr 07:30-15:30", "Sa,Su 09:30-15:30"],
 })}</script>`;
 
 let n = 0;

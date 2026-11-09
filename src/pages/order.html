@@ -22,7 +22,11 @@
       <div>
         <section class="o-step" id="stepDay">
           <h2><span class="n">1</span> Pickup day</h2>
-          <div class="cchips" id="days"><p class="muted">Loading days…</p></div>
+          <div class="day-scroll">
+            <button type="button" class="ds-arrow prev" aria-label="Earlier days" hidden>‹</button>
+            <div class="cchips day-row" id="days"><p class="muted">Loading days…</p></div>
+            <button type="button" class="ds-arrow next" aria-label="Later days" hidden>›</button>
+          </div>
         </section>
         <section class="o-step locked" id="stepTime">
           <h2><span class="n">2</span> Pickup time</h2>

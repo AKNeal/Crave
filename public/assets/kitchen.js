@@ -144,7 +144,7 @@
         el("div", { class: "row" },
           el("div", { class: "field" }, el("label", {}, "Pickup window length"), el("select", { name: "sWin" }, ...[10, 15, 20, 30].map((m) => el("option", { value: m, selected: S.windowMin === m }, `${m} minutes`)))),
           num("sPer", "Orders per window", S.perWindow, "What the kitchen can handle at once.")),
-        el("div", { class: "row" }, num("sLead", "Shortest notice (minutes)", S.leadMin, "For same-day orders."), num("sAhead", "Days ahead (up to 7)", S.daysAhead, "How far out people can order.")),
+        el("div", { class: "row" }, num("sLead", "Shortest notice (minutes)", S.leadMin, "For same-day orders."), num("sAhead", "Days ahead", S.daysAhead, "How far out people can order.")),
         el("h3", { style: "margin-top:18px" }, "Pickup hours (first and last pickup)"), ...hoursRows,
         el("div", { class: "field", style: "margin-top:14px" }, el("label", {}, "Closed days"),
           el("textarea", { name: "sClosed", rows: "2", placeholder: "One per line, like 2026-12-25" }, (S.closed || []).join("\n")), el("p", { class: "hint" }, "No orders on these dates (holidays, inventory).")),
