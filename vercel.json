@@ -4,6 +4,11 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/curbside",
+      "destination": "/order",
+      "permanent": false
+    },
+    {
       "source": "/preorder",
       "destination": "/thanksgiving",
       "permanent": false

@@ -105,7 +105,7 @@
   <p id="bootMsg" class="authbox" role="alert" hidden></p>
   <form id="login" class="authbox" hidden>
     <h1 style="font-size:40px">Staff login</h1>
-    <p class="muted">Log in to see Crave To Go orders and catering requests.</p>
+    <p class="muted">Log in to see Crave Curbside orders and catering requests.</p>
     <p class="notice small" id="setupHint" hidden>First time? Leave email blank and use the shop password. Then create everyone's login, yourself included, under <strong>Team</strong>.</p>
     <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" inputmode="email" spellcheck="false"></div>
     <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" required></div>
@@ -267,7 +267,7 @@
     window.scrollTo({ top: 0 });
   }
 
-  // ---------- Today: Crave To Go board + catering at a glance ----------
+  // ---------- Today: Crave Curbside board + catering at a glance ----------
   let board = null;
   const HOURS = { 0: "9:30 AM – 3:30 PM", 1: "7:30 AM – 3:30 PM", 2: "7:30 AM – 3:30 PM", 3: null, 4: "7:30 AM – 3:30 PM", 5: "7:30 AM – 3:30 PM", 6: "9:30 AM – 3:30 PM" };
   function showToday() {
@@ -289,7 +289,7 @@
         el("span", { class: `dash-open${HOURS[wd] ? "" : " shut"}` }, HOURS[wd] ? `Open ${HOURS[wd]}` : "Closed today")),
       el("div", { class: "dash-grid" },
         el("section", { class: "dash-card" },
-          el("header", {}, el("h2", {}, "Crave To Go"), el("span", { class: "dash-sum", id: "togoSum" })),
+          el("header", {}, el("h2", {}, "Crave Curbside"), el("span", { class: "dash-sum", id: "togoSum" })),
           el("div", { id: "boardMount" })),
         el("aside", { class: "dash-card dash-cater" },
           el("header", {}, el("h2", {}, "Catering")),
@@ -303,7 +303,7 @@
             : el("p", { class: "muted small" }, "No catering events booked."),
           el("p", { style: "margin:14px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showRequests() }, "Open the catering inbox →")))));
     const mountEl = $("boardMount");
-    board = CraveBoard.mount(mountEl, { kitchenLink: true, compact: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = u.total ? `${u.total} upcoming` : ""; } });
+    board = CraveBoard.mount(mountEl, { kitchenLink: true, compact: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = ""; } });
   }
 
   // ---------- Requests ----------

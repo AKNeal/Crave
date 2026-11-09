@@ -5,10 +5,10 @@ Website for **Crave.**, 235 N Santa Claus Lane, Suite 8, North Pole, Alaska. Bui
 ## What's on it
 | Address | What's there |
 |---|---|
-| `/` | Home: hours, favorites, Crave To Go and catering |
+| `/` | Home: hours, favorites, Crave Curbside and catering |
 | `/menu` | Full menu (built from `public/assets/menu-data.js`) |
-| `/order` | **Crave To Go (Perfect Timing order-ahead):** pick a pickup day and 15-minute window, build the order (eggs, protein, chips or soup), pay at the counter. `/order?t=…` is the customer's live tracking page |
-| `/kitchen` | **Kitchen board:** orders by status, sorted by the time to start each one so it's ready right at pickup; load per window; Crave To Go settings (hours, window length, orders per window, notice, closed days, pause switch) |
+| `/order` | **Crave Curbside (Perfect Timing order-ahead):** pick a pickup day and 15-minute window, build the order (eggs, protein, chips or soup), pay at the counter. `/order?t=…` is the customer's live tracking page |
+| `/kitchen` | **Kitchen board:** orders by status, sorted by the time to start each one so it's ready right at pickup; load per window; Crave Curbside settings (hours, window length, orders per window, notice, closed days, pause switch) |
 | `/catering` | Catering info |
 | `/booking` | Catering request form (**Beam** booking engine, same as Black Wolf): client can name a budget; offers and counter-offers; accepted offers go on the calendar |
 | `/request`, `/schedule` | Client's private request page and time picker (linked from emails) |

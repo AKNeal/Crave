@@ -45,7 +45,9 @@ const label12 = (hm) => { const [h, m] = hm.split(":").map(Number); return `${((
 
 async function settings() {
   const s = (await store.getJSON("pt:settings")) || {};
-  return { ...DEFAULTS, ...s, hours: { ...DEFAULTS.hours, ...(s.hours || {}) } };
+  const out = { ...DEFAULTS, ...s, hours: { ...DEFAULTS.hours, ...(s.hours || {}) } };
+  out.daysAhead = Math.min(7, out.daysAhead);
+  return out;
 }
 const todayKey = () => T.dateKey(Date.now());
 const nowMin = () => { const p = T.parts(Date.now()); return p.h * 60 + p.mi; };
@@ -167,7 +169,7 @@ async function place(req, res, b) {
   if (str(b.website)) return send(res, 200, { ok: true }); // bots fill the hidden field
   if ((await store.hit(`rl:order:${ip(req)}`, 3600)) > 12) return send(res, 429, { error: "Too many orders from here in the last hour. Please call us." });
   const S = await settings();
-  if (!S.on) return send(res, 400, { error: "Crave To Go is paused right now. Please call us." });
+  if (!S.on) return send(res, 400, { error: "Crave Curbside is paused right now. Please call us." });
   const name = str(b.name, 60), phone = str(b.phone, 30), email = str(b.email, 120).toLowerCase();
   const errors = {};
   if (name.length < 2) errors.name = "Enter the name for the order.";
@@ -298,16 +300,11 @@ async function upcoming(req, res) {
   const S = await settings();
   const start = T.parseDate(todayKey());
   const out = [];
-  for (let i = 0; i <= Math.max(S.daysAhead, 7); i++) {
+  for (let i = 0; i <= S.daysAhead; i++) {
     const info = dayInfo(S, T.keyOf(T.addDays(start, i)));
     const load = (await store.getJSON(`pt:load:${info.date}`)) || {};
     out.push({ date: info.date, label: i === 0 ? "Today" : i === 1 ? "Tomorrow" : info.label, open: info.open,
       count: Object.values(load).reduce((s, n) => s + n, 0) });
-  }
-  for (const p of SPECIAL.pickups) {
-    if (p.date < todayKey() || out.some((d) => d.date === p.date)) continue;
-    const load = (await store.getJSON(`pt:load:${p.date}`)) || {};
-    out.push({ date: p.date, label: dayInfo(S, p.date).label, open: true, special: true, count: Object.values(load).reduce((s, n) => s + n, 0) });
   }
   for (const d of out) if (specialPickup(d.date)) d.special = true;
   return send(res, 200, { days: out, total: out.reduce((s, d) => s + d.count, 0), on: S.on });
@@ -340,7 +337,7 @@ async function setStatus(req, res, b) {
 
 async function saveSettings(req, res, b) {
   const me = await staff(req, res); if (!me) return;
-  if (!auth.isFull(me) && me.role !== "desk") return send(res, 403, { error: "Ask the owner to change Crave To Go settings." });
+  if (!auth.isFull(me) && me.role !== "desk") return send(res, 403, { error: "Ask the owner to change Crave Curbside settings." });
   const S = await settings();
   const num = (v, lo, hi, d) => { const n = Math.floor(Number(v)); return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : d; };
   const next = { ...S };
@@ -348,7 +345,7 @@ async function saveSettings(req, res, b) {
   if (b.windowMin !== undefined) next.windowMin = [10, 15, 20, 30].includes(Number(b.windowMin)) ? Number(b.windowMin) : S.windowMin;
   if (b.perWindow !== undefined) next.perWindow = num(b.perWindow, 1, 50, S.perWindow);
   if (b.leadMin !== undefined) next.leadMin = num(b.leadMin, 0, 24 * 60, S.leadMin);
-  if (b.daysAhead !== undefined) next.daysAhead = num(b.daysAhead, 0, 30, S.daysAhead);
+  if (b.daysAhead !== undefined) next.daysAhead = num(b.daysAhead, 0, 7, S.daysAhead); // single orders: a week out at most
   if (b.maxItems !== undefined) next.maxItems = num(b.maxItems, 1, 100, S.maxItems);
   if (b.message !== undefined) next.message = str(b.message, 200);
   if (b.closed !== undefined) next.closed = [...new Set((Array.isArray(b.closed) ? b.closed : []).filter((d) => T.parseDate(d)))].sort().slice(-200);

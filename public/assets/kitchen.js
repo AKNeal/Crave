@@ -1,4 +1,4 @@
-// Crave To Go board (Perfect Timing). Used in two places: the staff page (/admin, "Today") and the full-screen
+// Crave Curbside board (Perfect Timing). Used in two places: the staff page (/admin, "Today") and the full-screen
 // kitchen screen (/kitchen). Orders sit in columns by status, sorted by the time to start each one so it finishes
 // right at its pickup window. CraveBoard.mount(element) builds everything inside that element.
 (() => {
@@ -8,34 +8,58 @@
   const todayKey = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Anchorage" }).format(new Date());
 
   function mount(root, opts = {}) {
-    let data = null, timer = null, day = todayKey(), first = true;
+    let data = null, timer = null, day = todayKey(), mode = "today";
     const k = (name) => root.querySelector(`[data-k="${name}"]`);
     root.classList.add("cboard");
     root.replaceChildren(
       el("div", { class: "cb-top" },
-        el("div", { class: "cb-days", "data-k": "days", role: "tablist", "aria-label": "Pick a day" }),
+        el("div", { class: "cb-days" },
+          el("strong", { class: "cb-today", "data-k": "todayLabel" }, "Today"),
+          el("button", { class: "linkbtn cb-week", type: "button", "data-k": "weekBtn", onclick: () => { mode = mode === "week" ? "today" : "week"; load(); } }, "This week")),
         el("div", { class: "cb-tools" },
-          el("label", { class: "cb-other" }, "Other day ", el("input", { type: "date", "data-k": "date", value: day, onchange: (e) => { day = e.target.value; load(); } })),
           el("button", { class: "linkbtn", type: "button", onclick: toggleSettings }, "Settings"),
           opts.kitchenLink ? el("a", { class: "linkbtn", href: "/kitchen", target: "_blank", rel: "noopener" }, "Kitchen screen ↗") : null)),
       el("div", { "data-k": "msg" }),
       el("div", { class: "cb-load", "data-k": "load", "aria-label": "Orders per pickup window" }),
       el("div", { class: "cb-cols", "data-k": "cols" }),
+      el("div", { class: "cb-weekview", "data-k": "week", hidden: true }),
       el("div", { "data-k": "settings", hidden: true }));
 
     const visible = () => root.offsetParent !== null;
     async function drawDays() {
-      let u; try { u = await api("/api/orders?upcoming=1"); } catch (e) { return; }
-      // First visit: if today is empty but an order is waiting later, open that day.
-      if (first) { first = false; const t = u.days[0]; const next = u.days.find((d) => d.count); if (t && !t.count && next && day === t.date) { day = next.date; k("date").value = day; load(); return; } }
-      const shown = u.days.filter((d, i) => i < 2 || d.count || d.date === day);
-      k("days").replaceChildren(...shown.map((d) => el("button", { type: "button", role: "tab", "aria-selected": String(d.date === day), class: `cb-day${d.count ? " has" : ""}${!d.open && !d.count && !d.special ? " shut" : ""}${d.special ? " special" : ""}`,
-        onclick: () => { day = d.date; k("date").value = day; load(); } }, el("span", {}, d.label), el("b", {}, d.open || d.count || d.special ? String(d.count) : "closed"))));
+      let u; try { u = await api("/api/orders?upcoming=1"); } catch (e) { return null; }
+      const later = u.days.slice(1).reduce((n, d) => n + d.count, 0);
+      k("weekBtn").textContent = mode === "week" ? "← Back to today" : later ? `This week (${later} more)` : "This week";
+      k("todayLabel").textContent = mode === "week" ? "This week" : `Today · ${u.days[0].count} order${u.days[0].count === 1 ? "" : "s"}`;
       if (opts.onSummary) opts.onSummary(u);
+      return u;
+    }
+
+    async function drawWeek() {
+      const u = await drawDays();
+      k("cols").hidden = true; k("load").hidden = true; const t = root.querySelector(".cb-tail"); if (t) t.remove();
+      const box = k("week"); box.hidden = false;
+      if (!u) return;
+      const busy = u.days.filter((d) => d.count);
+      const boards = await Promise.all(busy.map((d) => api(`/api/orders?board=${d.date}`).then((b) => ({ d, b })).catch(() => ({ d, b: { orders: [] } }))));
+      box.replaceChildren(...u.days.map((d) => {
+        const b = boards.find((x) => x.d.date === d.date);
+        const list = b ? b.b.orders.filter((o) => o.status !== "cancelled").sort((x, y) => x.pickupAt - y.pickupAt) : [];
+        return el("section", { class: `cb-wday${d.open ? "" : " shut"}` },
+          el("h3", {}, el("span", {}, d.label), el("b", {}, d.open ? `${list.length} order${list.length === 1 ? "" : "s"}` : "Closed")),
+          list.length ? el("ul", {}, ...list.map((o) => el("li", {},
+            el("span", { class: "cb-wtime" }, o.window.split("–")[0]),
+            el("span", { class: "cb-wwho" }, el("strong", {}, `${o.code} · ${o.name}`), el("small", {}, o.items.map((i) => `${i.qty}× ${i.name.replace("*", "")}`).join(", "))),
+            el("span", { class: "cb-wmeta" }, o.pickup === "curbside" ? "Curbside" : "", ` ${money(o.total)}`)))) : null);
+      }));
+      timer = setTimeout(tick, 60000);
     }
 
     async function load() {
       clearTimeout(timer);
+      day = todayKey();
+      if (mode === "week") return drawWeek();
+      k("week").hidden = true; k("cols").hidden = false;
       drawDays();
       const want = day; let d;
       try { d = await api(`/api/orders?board=${want}`); if (want !== day) return; data = d; }
@@ -43,7 +67,7 @@
         if (e.status === 401) { k("msg").replaceChildren(el("p", { class: "notice" }, "Log in first. ", el("a", { href: "/admin" }, "Open the staff page to log in"), ", then come back here.")); return; }
         k("msg").replaceChildren(el("p", { class: "notice" }, e.message)); timer = setTimeout(tick, 30000); return;
       }
-      k("msg").replaceChildren(!data.settings.on ? el("p", { class: "notice" }, "Crave To Go is paused: customers can't place orders. Turn it back on in Settings.") : "");
+      k("msg").replaceChildren(!data.settings.on ? el("p", { class: "notice" }, "Crave Curbside is paused: customers can't place orders. Turn it back on in Settings.") : "");
       draw();
       timer = setTimeout(tick, 20000);
     }
@@ -114,13 +138,13 @@
           el("input", { type: "time", name: `cl${i}`, value: h ? h.close : "15:15", "aria-label": `${d} last pickup` }));
       });
       k("settings").replaceChildren(el("section", { class: "panel cb-settings" },
-        el("h2", {}, "Crave To Go settings"),
+        el("h2", {}, "Crave Curbside settings"),
         el("label", { class: "check", style: "margin-bottom:14px" }, el("input", { type: "checkbox", name: "sOn", checked: S.on }), " Take online orders"),
         el("div", { class: "field" }, el("label", {}, "Message on the order page"), el("input", { name: "sMsg", type: "text", maxlength: "200", value: S.message || "", placeholder: "e.g. Cinnamon rolls are sold out today" })),
         el("div", { class: "row" },
           el("div", { class: "field" }, el("label", {}, "Pickup window length"), el("select", { name: "sWin" }, ...[10, 15, 20, 30].map((m) => el("option", { value: m, selected: S.windowMin === m }, `${m} minutes`)))),
           num("sPer", "Orders per window", S.perWindow, "What the kitchen can handle at once.")),
-        el("div", { class: "row" }, num("sLead", "Shortest notice (minutes)", S.leadMin, "For same-day orders."), num("sAhead", "Days ahead", S.daysAhead, "How far out people can order.")),
+        el("div", { class: "row" }, num("sLead", "Shortest notice (minutes)", S.leadMin, "For same-day orders."), num("sAhead", "Days ahead (up to 7)", S.daysAhead, "How far out people can order.")),
         el("h3", { style: "margin-top:18px" }, "Pickup hours (first and last pickup)"), ...hoursRows,
         el("div", { class: "field", style: "margin-top:14px" }, el("label", {}, "Closed days"),
           el("textarea", { name: "sClosed", rows: "2", placeholder: "One per line, like 2026-12-25" }, (S.closed || []).join("\n")), el("p", { class: "hint" }, "No orders on these dates (holidays, inventory).")),

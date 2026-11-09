@@ -497,3 +497,17 @@ body.admin #nav a[aria-current="page"] { background: var(--soft); color: var(--i
 @media (max-width: 760px) { .cb-cols, .kitchen .cb-cols { grid-template-columns: 1fr; } .today-bar .dash-open { margin-left: 0; } }
 .cb-actions .cb-small { font-size: .78rem; } .cb-go { flex: 0 1 auto; }
 body.admin .cb-actions .cb-small, body.admin .cb-tools .linkbtn { font-size: .8rem; }
+.cb-days { align-items: baseline; gap: 14px; }
+.cb-today { font: 600 1.05rem var(--head); }
+body.admin .cb-week, .cb-week { font-size: .8rem; color: var(--sign-dark); }
+.cb-weekview { display: grid; gap: 10px; }
+.cb-wday { background: var(--snow); border-radius: 12px; padding: 10px 14px; }
+.cb-wday.shut { opacity: .6; }
+.cb-wday h3 { display: flex; justify-content: space-between; font: 700 .78rem/1 var(--body); letter-spacing: .1em; text-transform: uppercase; margin: 4px 0; color: var(--graphite); }
+body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
+.cb-wday b { color: var(--ink); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.cb-wday ul { list-style: none; margin: 6px 0 0; padding: 0; }
+.cb-wday li { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: .88rem; align-items: baseline; }
+.cb-wwho small { display: block; color: var(--graphite); }
+.cb-wtime { font-weight: 700; }
+.cb-wmeta { color: var(--graphite); white-space: nowrap; }
