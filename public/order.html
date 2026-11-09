@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f5ef">
+<link rel="icon" href="/assets/crave-icon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/crave-icon-180.png">
+<meta property="og:image" content="https://crave.nealmedia.app/assets/crave-logo-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/crave.css">
+<script src="/assets/shop.js"></script>
+<title>Order ahead | Crave · North Pole, Alaska</title>
+<meta name="description" content="Order ahead from Crave in North Pole, Alaska. Pick a pickup time and we'll have it hot when you walk in.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="page header-inner">
+    <a class="brand crave-brand" href="/" aria-label="Crave, home"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="64" height="64"><span class="brand-sub">North Pole, Alaska</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="/menu">Menu</a>
+      <a href="/catering">Catering</a>
+      <a href="/visit">Visit</a>
+      <a class="btn sign sm" href="/order" aria-current="page">Order ahead</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <div class="page">
+    <header class="page-head">
+      <p class="eyebrow">Perfect Timing</p>
+      <h1>Order ahead</h1>
+      <p class="intro">Pick a pickup time, build your order, and pay at the counter. We start it so it's hot the minute you arrive.</p>
+      <p class="notice" id="pauseMsg" hidden></p>
+    </header>
+
+    <div id="trackView" hidden></div>
+
+    <div class="order-shell" id="orderView">
+      <div>
+        <section class="o-step" id="stepDay">
+          <h2><span class="n">1</span> Pickup day</h2>
+          <div class="cchips" id="days"><p class="muted">Loading days…</p></div>
+        </section>
+        <section class="o-step locked" id="stepTime">
+          <h2><span class="n">2</span> Pickup time</h2>
+          <div class="cchips" id="times"><p class="muted">Pick a day first.</p></div>
+        </section>
+        <section class="o-step" id="stepFood">
+          <h2><span class="n">3</span> Your order</h2>
+          <div class="o-cats cchips" id="cats"></div>
+          <div class="o-items" id="items"></div>
+        </section>
+        <section class="o-step" id="stepYou">
+          <h2><span class="n">4</span> Your details</h2>
+          <form id="who" class="form" novalidate>
+            <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <div class="row">
+              <div class="field" data-f="name"><label for="name">Name for the order</label><input id="name" type="text" autocomplete="name" maxlength="60" required><div class="err"></div></div>
+              <div class="field" data-f="phone"><label for="phone">Phone</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required><div class="err"></div></div>
+            </div>
+            <div class="field" data-f="email"><label for="email">Email <span class="opt">(optional, for your receipt and a "ready" note)</span></label><input id="email" type="email" autocomplete="email" maxlength="120"><div class="err"></div></div>
+            <div class="field"><label for="notes">Notes for the kitchen <span class="opt">(allergies, extra napkins, curbside…)</span></label><textarea id="notes" rows="2" maxlength="300"></textarea></div>
+            <fieldset class="field" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:8px">Pay at pickup with</legend>
+              <div class="pay-opts">
+                <button type="button" class="cchip" data-pay="card" aria-pressed="true">Card<small>at the counter</small></button>
+                <button type="button" class="cchip" data-pay="cash" aria-pressed="false">Cash<small>at the counter</small></button>
+              </div>
+            </fieldset>
+          </form>
+        </section>
+      </div>
+
+      <aside class="cart" id="cart" aria-label="Your order">
+        <h2>Your ticket</h2>
+        <p class="when" id="when"></p>
+        <ul id="lines"></ul>
+        <p class="empty" id="emptyCart">Nothing yet. Tap something on the menu.</p>
+        <div class="total"><span>Total</span><span id="total">$0.00</span></div>
+        <p class="small muted" style="margin:-6px 0 14px">Prices include tax. Pay when you pick up.</p>
+        <button class="btn sign" style="width:100%" id="place" type="button" disabled>Lock in my order</button>
+        <p class="form-error" id="placeErr" role="alert" hidden></p>
+      </aside>
+    </div>
+    <button class="mobile-cart" id="mobileCart" type="button" hidden><span id="mcCount">0 items</span><span id="mcTotal">$0.00</span></button>
+  </div>
+</main>
+<footer class="site-footer crave-footer">
+  <div class="page">
+    <div class="footer-grid">
+      <div>
+        <a class="brand crave-brand" href="/"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="96" height="96"></a>
+        <p style="margin-top:14px;max-width:32ch">Made-to-order breakfast, lunch and sweets in North Pole, Alaska.</p>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <ul><li><a href="https://www.google.com/maps/search/?api=1&query=235%20N%20Santa%20Claus%20Ln%2C%20Suite%208%2C%20North%20Pole%2C%20AK%2099705" rel="noopener">235 N Santa Claus Ln<br>Suite 8, North Pole, AK 99705</a></li></ul>
+      </div>
+      <div>
+        <h4>Hours</h4>
+        <ul><li>Mon, Tue<br><span class="muted">7:30 AM – 3:30 PM</span></li><li>Wednesday<br><span class="muted">Closed</span></li><li>Thu, Fri<br><span class="muted">7:30 AM – 3:30 PM</span></li><li>Sat, Sun<br><span class="muted">9:30 AM – 3:30 PM</span></li></ul>
+      </div>
+      <div>
+        <h4>Eat</h4>
+        <ul><li><a href="/order">Order ahead</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering</a></li><li><a href="/admin">Staff</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-shop="year">2026</span> Crave · North Pole, AK</span>
+      <a href="https://nealmedia.app" rel="noopener">Site by Neal Media &amp; Production</a>
+    </div>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+<script src="/assets/common.js"></script>
+<script src="/assets/menu-data.js"></script>
+<script src="/assets/order.js"></script>
+</body>
+</html>
