@@ -15,7 +15,8 @@
     state.choice[it.id] = (it.choices || []).map((g) => g.options[0]);
     const qtyEl = el("span", { class: "pre-q" }, "0");
     const set = (n) => { state.qty[it.id] = Math.max(0, Math.min(10, n)); qtyEl.textContent = String(state.qty[it.id]); li.classList.toggle("on", state.qty[it.id] > 0); render(); };
-    const li = el("li", { class: "pre-item" },
+    const li = el("li", { class: `pre-item${it.photo ? " has-photo" : ""}` },
+      it.photo ? el("img", { class: "pre-photo", src: it.photo, alt: "", loading: "lazy" }) : null,
       el("div", { class: "pre-info" },
         el("div", { class: "mi-top" }, el("h3", {}, it.name), el("span", { class: "leader", "aria-hidden": "true" }), el("span", { class: "price" }, money(it.price))),
         it.desc ? el("p", {}, it.desc) : null,

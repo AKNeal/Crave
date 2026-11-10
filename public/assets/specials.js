@@ -22,7 +22,7 @@
       { id: "tg1", name: "Deviled Egg Tray", price: 40, desc: "24 halves.", choices: [{ name: "Style", options: ["Traditional", "Bacon jalapeño"] }] },
       { id: "tg2", name: "Seasonal Charcuterie Box", price: 75, desc: "Meats, cheeses, seasonal fruit and sweet bites." },
       { id: "tg3", name: "10-inch Cheesecake", price: 70, desc: "", choices: [{ name: "Flavor", options: ["Coffee", "Turtle"] }] },
-      { id: "tg4", name: "Carrot Cake or 12 Cupcakes", price: 55, desc: "6-inch, 3-layer cake, or a dozen cupcakes.", choices: [{ name: "Make it", options: ["6-inch carrot cake", "12 cupcakes"] }] },
+      { id: "tg4", name: "Carrot Cake or 12 Cupcakes", price: 55, desc: "6-inch, 3-layer cake, or a dozen cupcakes.", photo: "/assets/food/cupcake-box.jpg", choices: [{ name: "Make it", options: ["6-inch carrot cake", "12 cupcakes"] }] },
       { id: "tg5", name: "Gluten-Free Carrot Cake or 12 Cupcakes", price: 65, desc: "GF ingredients, made in a shared kitchen. Not suitable for celiac disease.", choices: [{ name: "Make it", options: ["6-inch carrot cake", "12 cupcakes"] }] },
       { id: "tg6", name: "12 Large Cinnamon Rolls", price: 50, desc: "In multiple pans, with a frosting bag and reheating instructions.", photo: "/assets/food/cinnamon-roll-tray.jpg" },
       { id: "tg7", name: "Pumpkin Roll", price: 45, desc: "Serves 10." },

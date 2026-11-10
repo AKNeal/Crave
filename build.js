@@ -79,7 +79,7 @@ function menuHtml() {
   return MENU.categories.map((c) => {
     const items = MENU.items.filter((i) => i.cat === c.id);
     return `<section class="menu-cat" id="${c.id}">
-      <header><h2>${esc(c.name)}</h2>${c.blurb ? `<p class="muted">${esc(c.blurb)}</p>` : ""}</header>
+      <header${c.photo ? ' class="cat-head"' : ""}>${c.photo ? `<img src="${c.photo}" alt="" loading="lazy">` : ""}<div><h2>${esc(c.name)}</h2>${c.blurb ? `<p class="muted">${esc(c.blurb)}</p>` : ""}</div></header>
       <ul class="menu-list">${items.map((i) => `
         <li${i.photo ? ' class="has-photo"' : ""}>${i.photo ? `<img class="mi-photo" src="${i.photo}" alt="" loading="lazy">` : ""}<div class="mi-top"><h3>${esc(i.name)}${(i.tags || []).map((t) => ` <span class="tag">${esc(t)}</span>`).join("")}</h3><span class="leader" aria-hidden="true"></span><span class="price">${MENU.money(i.price)}</span></div>
           ${i.desc ? `<p>${esc(i.desc)}</p>` : ""}</li>`).join("")}
@@ -88,9 +88,10 @@ function menuHtml() {
 }
 const menuNav = () => `<nav class="menu-jump" aria-label="Menu sections">${MENU.categories.map((c) => `<a href="#${c.id}">${esc(c.name)}</a>`).join("")}<a href="#bakery">Bakery case</a><a href="#coffee">Coffee</a><a href="#cakes">Cakes</a></nav>`;
 
-// A few favorites for the home page.
+// A few favorites for the home page. Photos that show the dish without claiming it's that exact menu item.
+const favPhoto = { l6: "/assets/food/sandwiches.jpg" };
 const favorites = () => MENU.items.filter((i) => (i.tags || []).includes("Favorite")).slice(0, 4).map((i) => `
-  <a class="fav" href="/order">${i.photo ? `<img src="${i.photo}" alt="${esc(i.name.replace("*", ""))} at Crave" loading="lazy">` : `<span class="fav-ring" aria-hidden="true"></span>`}
+  <a class="fav" href="/order">${(i.photo || favPhoto[i.id]) ? `<img src="${i.photo || favPhoto[i.id]}" alt="${esc(i.name.replace("*", ""))} at Crave" loading="lazy">` : `<span class="fav-ring" aria-hidden="true"></span>`}
     <span class="fav-body"><span class="price">${MENU.money(i.price)}</span><h3>${esc(i.name.replace("*", ""))}</h3>${i.desc ? `<p>${esc(i.desc)}</p>` : ""}</span></a>`).join("");
 
 // Seasonal preorder banner (hidden by a tiny script outside the order dates).
