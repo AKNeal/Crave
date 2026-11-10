@@ -200,7 +200,7 @@ async function place(req, res, b) {
     const lines = o.items.map((i) => `${i.qty} × ${i.name}${i.choices.length ? ` (${i.choices.map((c) => c.split(": ")[1]).join(", ")})` : ""}`);
     const when = `${info.label === "Today" || info.label === "Tomorrow" ? info.label : info.label}, ${w.label}`;
     await Promise.all([
-      email && sendEmail({ to: email, subject: `Order ${o.code} is in — pickup ${when}`, title: "Your order is locked in",
+      email && sendEmail({ to: email, replyTo: config.studio.contactEmail || undefined, subject: `Order ${o.code} is in — pickup ${when}`, title: "Your order is locked in",
         paragraphs: [`Hi ${name.split(" ")[0]},`, `We'll have it hot at ${when}. Pay at the counter (${o.pay}).`, lines.join("\n"), `Total: ${MENU.money(total)}`],
         button: { label: "Track your order", url: link } }),
       config.studio.contactEmail && sendEmail({ to: config.studio.contactEmail, subject: `New order ${o.code} — ${when}`, title: `Order ${o.code} for ${name}`,
@@ -254,7 +254,7 @@ async function preorder(req, res, b) {
     const site = baseUrl(req), link = `${site}/order?t=${o.id}.${o.token}`;
     const lines = o.items.map((i) => `${i.qty} × ${i.name}${i.choices.length ? ` (${i.choices.map((c) => c.split(": ")[1]).join(", ")})` : ""}`);
     await Promise.all([
-      email && sendEmail({ to: email, subject: `Preorder ${o.code} received — ${p.label}`, title: "We've got your preorder",
+      email && sendEmail({ to: email, replyTo: config.studio.contactEmail || undefined, subject: `Preorder ${o.code} received — ${p.label}`, title: "We've got your preorder",
         paragraphs: [`Hi ${name.split(" ")[0]},`, `Pickup ${p.label}, ${w.label}. We'll reach out to confirm.`, lines.join("\n"), `Total: ${MENU.money(total)}, paid at pickup.`],
         button: { label: "See your preorder", url: link } }),
       config.studio.contactEmail && sendEmail({ to: config.studio.contactEmail, subject: `New preorder ${o.code} — ${p.label}`, title: `${SPECIAL.title}: ${o.code} for ${name}`,
@@ -329,7 +329,7 @@ async function setStatus(req, res, b) {
   o.history = [...(o.history || []), { at: Date.now(), status: b.status, by: me.name }].slice(-20);
   await store.setJSON(`pt:order:${o.id}`, o);
   if (b.status === "ready" && o.email) {
-    await sendEmail({ to: o.email, subject: `Order ${o.code} is ready`, title: "Your order is ready", paragraphs: [`Hi ${o.name.split(" ")[0]}, it's hot and waiting at the counter.`] });
+    await sendEmail({ to: o.email, replyTo: config.studio.contactEmail || undefined, subject: `Order ${o.code} is ready`, title: "Your order is ready", paragraphs: [`Hi ${o.name.split(" ")[0]}, it's hot and waiting at the counter.`] });
   }
   return send(res, 200, { ok: true });
 }
