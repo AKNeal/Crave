@@ -29,7 +29,7 @@ const DEFAULTS = {
   hours: { 0: { open: "09:30", close: "15:15" }, 1: { open: "07:30", close: "15:15" }, 2: null, 3: null,
     4: { open: "07:30", close: "15:15" }, 5: { open: "07:30", close: "15:15" }, 6: { open: "09:30", close: "15:15" } },
   windowMin: 15,     // length of a pickup window
-  perWindow: 5,      // orders the line can take per window
+  perWindow: 3,      // orders the kitchen takes per pickup window
   leadMin: 30,       // shortest notice for a same-day order
   daysAhead: 14,     // how far ahead customers can order (change in Settings)
   maxItems: 30,
@@ -185,7 +185,7 @@ async function place(req, res, b) {
     const load = (await store.getJSON(`pt:load:${info.date}`)) || {};
     const w = windowsFor(S, info, load).find((x) => x.time === time);
     if (!w) return send(res, 409, { error: "That pickup time just passed. Pick another.", pickAgain: true });
-    if (w.left <= 0) return send(res, 409, { error: "That pickup time just filled up. Pick another.", pickAgain: true });
+    if (w.left <= 0) return send(res, 409, { error: "That pickup time just filled up. Pick another.", pickAgain: true, full: true });
     const total = Math.round(items.reduce((s, i) => s + i.line, 0) * 100) / 100;
     const n = await store.hit(`pt:seq:${info.date}`, 3 * 86400);
     const o = { id: id(6), token: id(9), code: `${DAY_NAMES[info.wd][0]}${String(n).padStart(2, "0")}`, date: info.date, time, window: w.label,

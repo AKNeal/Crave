@@ -70,10 +70,40 @@
     try { d = await api(`/api/orders?date=${state.date}`); } catch (e) { $("times").replaceChildren(el("p", { class: "notice" }, e.message)); return; }
     const ws = d.windows || [];
     if (!ws.length) { $("times").replaceChildren(el("p", { class: "muted" }, "No pickup times left that day. Try another.")); return; }
-    $("times").replaceChildren(...ws.map((w) => el("button", { type: "button", class: "cchip", disabled: w.left <= 0, "aria-pressed": String(state.time === w.time),
-      onclick: (ev) => { state.time = w.time; state.window = w.label; document.querySelectorAll("#times .cchip").forEach((c) => c.setAttribute("aria-pressed", String(c === ev.currentTarget)));
+    $("times").replaceChildren(...ws.map((w) => el("button", { type: "button", class: `cchip${w.left <= 0 ? " full" : ""}`, "aria-pressed": String(state.time === w.time),
+      "aria-label": w.left <= 0 ? `${w.label}, full` : null,
+      onclick: (ev) => { if (w.left <= 0) return tooSlow(); state.time = w.time; state.window = w.label; document.querySelectorAll("#times .cchip").forEach((c) => c.setAttribute("aria-pressed", String(c === ev.currentTarget)));
         $("stepTime").classList.add("done"); $("stepFood").classList.remove("locked"); $("stepYou").classList.remove("locked"); render(); } },
       w.label.split("–")[0], el("small", {}, w.left <= 0 ? "Full" : w.left <= 2 ? `${w.left} left` : "Open"))));
+  }
+
+  // A pickup window is full (3 orders): an original crayon cinnamon roll zooms off.
+  function tooSlow() {
+    if (document.getElementById("tooSlow")) return;
+    const F = '<defs><filter id="crayon2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4" result="w"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="w" scale="3" result="d"/><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="9" result="g"/>' +
+      '<feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.5" result="h"/><feComposite in="d" in2="h" operator="in"/></filter>' +
+      '<pattern id="rollfill" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="6" height="6" fill="#d99a55" opacity=".35"/><line x1="0" y1="3" x2="6" y2="3" stroke="#d99a55" stroke-width="3.4" stroke-linecap="round"/></pattern></defs>';
+    const roll = '<svg viewBox="0 0 260 150" aria-hidden="true">' + F + '<g filter="url(#crayon2)" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+      '<g class="ts-lines" stroke="#a8582a" stroke-width="5"><path d="M10 52h46"/><path d="M0 76h52"/><path d="M14 100h40"/></g>' +
+      '<g class="ts-roll"><circle cx="150" cy="72" r="46" fill="url(#rollfill)" stroke="#7a4a20" stroke-width="4"/>' +
+      '<path d="M150 72m-8 0a8 8 0 1 0 8-8a16 16 0 1 0 16 16a24 24 0 1 0-24-24a32 32 0 1 0 32 32" stroke="#7a4a20" stroke-width="4"/>' +
+      '<path d="M118 44q20-18 50-8" stroke="#fffdf6" stroke-width="9"/>' +
+      '<circle cx="168" cy="62" r="4" fill="#2a1d16" stroke="none"/><circle cx="184" cy="62" r="4" fill="#2a1d16" stroke="none"/>' +
+      '<path d="M166 82q10 8 20 0" stroke="#2a1d16" stroke-width="3.5"/>' +
+      '<g class="ts-legs" stroke="#2a1d16" stroke-width="5"><path d="M134 114l-14 22h-10"/><path d="M164 114l16 20h10"/></g>' +
+      '<path d="M196 70l26-16M222 54l4 12M222 54l-10-4" stroke="#2a1d16" stroke-width="4.5"/></g></g></svg>';
+    const box = el("div", { class: "ts-bg", id: "tooSlow", role: "alertdialog", "aria-modal": "true", "aria-labelledby": "tsTitle" },
+      el("div", { class: "ts-card" },
+        el("div", { class: "ts-art", html: roll }),
+        el("p", { class: "ts-title", id: "tsTitle" }, "You gotta be quicker than that!"),
+        el("p", { class: "ts-sub" }, "That pickup time already has 3 orders. Grab another one before it goes too."),
+        el("button", { type: "button", class: "btn sign", onclick: () => close() }, "Pick another time")));
+    const close = () => { box.remove(); document.removeEventListener("keydown", esc); $("times").scrollIntoView({ behavior: "smooth", block: "center" }); };
+    const esc = (e) => { if (e.key === "Escape") close(); };
+    box.addEventListener("click", (e) => { if (e.target === box) close(); });
+    document.addEventListener("keydown", esc);
+    document.body.append(box); box.querySelector("button").focus();
   }
 
   // ---------- Step 3: menu ----------
@@ -173,6 +203,7 @@
       const errs = e.data && e.data.errors;
       if (errs) for (const [k, v] of Object.entries(errs)) { const f = document.querySelector(`#who [data-f="${k}"]`); if (f) { f.classList.add("invalid"); f.querySelector(".err").textContent = v; } }
       err.textContent = e.message; err.hidden = false;
+      if (e.data && e.data.full) tooSlow();
       if (e.data && e.data.pickAgain) { state.time = null; await loadTimes(); }
       btn.disabled = false; btn.textContent = label; render();
       if (errs) $("stepYou").scrollIntoView({ behavior: "smooth" });
