@@ -15,7 +15,7 @@ const reqs = require("../lib/requests");
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-// "Crave Our Kids" (the /give page): schools, teams, PTAs and clubs ask Crave to partner. Same inbox, own questions.
+// "Hometown Crave" (the /give page): schools, teams, PTAs and clubs ask Crave to partner. Same inbox, own questions.
 const GIVE_FORM = [
   { key: "org", label: "School, team or group", type: "text", required: true },
   { key: "role", label: "Your role", type: "choice", options: ["Teacher or staff", "Coach", "PTA / PTO", "Club or activity leader", "Parent", "Other"] },
@@ -87,7 +87,7 @@ module.exports = async function handler(req, res) {
     id: reqId, token, createdAt: now, updatedAt: now, status: "new",
     artist: artist ? artist.slug : "any",
     client: { name: f.name, email: f.email, phone: f.phone, instagram: f.instagram, smsOk: f.smsOk, smsOkAt: f.smsOk ? now : null },
-    details: { idea: give ? `Crave Our Kids: ${f.idea}` : f.idea, answers }, program: give ? "Crave Our Kids" : undefined,
+    details: { idea: give ? `Hometown Crave: ${f.idea}` : f.idea, answers }, program: give ? "Hometown Crave" : undefined,
     offers: draft.offers,
     images, notes: [],
     clientView: { message: "", quote: "", when: "", depositUrl: "" },
@@ -116,7 +116,7 @@ module.exports = async function handler(req, res) {
     sendEmail({
       to: [config.studio.contactEmail, artist?.email, ...(artist ? artistLogins : [])],
       replyTo: f.email,
-      subject: give ? `Crave Our Kids request — ${f.name}` : `New ${W.job} request — ${f.name}${artist ? ` (${artist.name})` : ""}`,
+      subject: give ? `Hometown Crave request — ${f.name}` : `New ${W.job} request — ${f.name}${artist ? ` (${artist.name})` : ""}`,
       title: `New ${W.job} request`,
       paragraphs: [`${f.name} wants: ${f.idea}`, `For: ${who}`, facts, offerText, images.length ? `Photos: ${images.length}` : "",
         `Contact: ${f.email}${f.phone ? ` · ${f.phone}` : ""}${f.instagram ? ` · ${f.instagram}` : ""}`],

@@ -619,7 +619,7 @@ body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
 .give-done p { font: 400 1.25rem "Gochi Hand", cursive; }
 .give-teaser { background: #1f2d44; color: #f4efe6; }
 .give-teaser-inner { display: grid; grid-template-columns: auto 1fr; gap: clamp(20px, 5vw, 64px); align-items: center; }
-.give-teaser-mark { font: 400 clamp(2.4rem, 6vw, 4.2rem)/.95 "Permanent Marker", cursive; color: #fffdf6; margin: 0; max-width: 6ch; transform: rotate(-3deg); }
+.give-teaser-mark { font: 400 clamp(2.2rem, 5vw, 3.6rem)/.95 "Permanent Marker", cursive; color: #fffdf6; margin: 0; max-width: 8ch; transform: rotate(-3deg); }
 .give-teaser-mark span { color: #e8473a; }
 .give-teaser h2 { color: #fffdf6; font-family: "Permanent Marker", cursive; font-weight: 400; margin: 0 0 8px; }
 .give-teaser p { color: #d4dceb; max-width: 56ch; margin: 0 0 18px; }
