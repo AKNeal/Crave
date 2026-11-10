@@ -24,7 +24,7 @@ const headHtml = () => `<meta charset="utf-8">
 <link rel="apple-touch-icon" href="/assets/crave-icon-180.png">
 <meta property="og:image" content="https://crave.nealmedia.app/assets/crave-logo-og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600;700&family=Gochi+Hand&family=Cabin+Sketch:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="stylesheet" href="/assets/crave.css">
 <script src="/assets/shop.js"></script>`;
@@ -59,7 +59,7 @@ const footer = () => `<footer class="site-footer crave-footer">
       </div>
       <div>
         <h4>Eat</h4>
-        <ul><li><a href="/order">Crave Curbside</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering &amp; cakes</a></li><li><a href="${SPECIAL.path}">${esc(SPECIAL.title)}</a></li><li><a href="https://craveprep.goprep.com" rel="noopener">Weekly meal prep ↗</a></li><li><a href="/admin">Staff</a></li></ul>
+        <ul><li><a href="/order">Crave Curbside</a></li><li><a href="/menu">Menu</a></li><li><a href="/catering">Catering &amp; cakes</a></li><li><a href="${SPECIAL.path}">${esc(SPECIAL.title)}</a></li><li><a href="https://craveprep.goprep.com" rel="noopener">Weekly meal prep ↗</a></li><li><a href="/#crew" data-crew>Meet the crew</a></li><li><a href="/admin">Staff</a></li></ul>
       </div>
     </div>
     <div class="footer-bottom">
@@ -68,7 +68,8 @@ const footer = () => `<footer class="site-footer crave-footer">
     </div>
   </div>
 </footer>
-<script src="/assets/site.js" defer></script>`;
+<script src="/assets/site.js" defer></script>
+<script src="/assets/team.js" defer></script>`;
 
 const poweredBy = `<p class="poweredby"><a href="https://beam.nealmedia.app" rel="noopener" target="_blank">Scheduling powered by: <img class="pb-on-light" src="/assets/brand/beam-book-logo.svg" alt="Beam" width="123" height="22"></a></p>`;
 
