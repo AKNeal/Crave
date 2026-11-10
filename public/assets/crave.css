@@ -626,3 +626,45 @@ body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
 @media (max-width: 1100px) { .give-ways { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 860px) { .give-hero-grid, .give-form-grid { grid-template-columns: 1fr; } .give-steps { grid-template-columns: 1fr; } .give-teaser-inner { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .give-ways { grid-template-columns: 1fr 1fr; gap: 12px; } .gw svg { height: 56px; } }
+
+/* ---------- Welcome / onboarding ---------- */
+.welcome-page { background: #fbf5ec; }
+.wl { max-width: 620px; margin: 0 auto; padding: 28px 20px 70px; }
+.wl-logo { display: block; width: 96px; height: auto; margin: 0 auto 10px; }
+.wl-step { background: #fff; border-radius: 22px; padding: 30px 24px; box-shadow: 0 10px 30px rgba(80,45,20,.10); }
+.wl-step h1 { font-family: Fraunces, Georgia, serif; font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.1; margin: 4px 0 16px; color: #3a2414; }
+.wl-kicker { font-family: "Gochi Hand", cursive; font-size: 1.35rem; color: #a8582a; margin: 0; }
+.wl-big { font-size: 1.18rem; line-height: 1.55; color: #3a2a1e; }
+.wl-btn { display: block; width: 100%; text-align: center; font-size: 1.2rem; padding: 18px; border-radius: 14px; margin-top: 22px; background: #a8582a; border-color: #a8582a; color: #fff; }
+.wl-btn:hover { background: #8e4720; border-color: #8e4720; color: #fff; }
+.wl-btn[disabled] { opacity: .6; }
+.wl-email { background: #f6ece0; border-radius: 12px; padding: 12px 14px; font-size: 1.05rem; word-break: break-all; }
+.wl-label { display: block; font-weight: 700; font-size: 1.1rem; margin: 18px 0 8px; }
+.wl-pw { display: flex; gap: 8px; }
+.wl-pw input { flex: 1; min-width: 0; font-size: 1.2rem; padding: 15px; border: 2px solid #d9c3aa; border-radius: 12px; background: #fffdf9; }
+.wl-pw input:focus { outline: none; border-color: #a8582a; }
+.wl-show { font-size: 1rem; font-weight: 700; padding: 0 16px; border: 2px solid #d9c3aa; border-radius: 12px; background: #fff; cursor: pointer; }
+.wl-meter { height: 8px; background: #eee3d6; border-radius: 9px; margin-top: 10px; overflow: hidden; }
+.wl-meter i { display: block; height: 100%; width: 0; transition: width .2s, background .2s; }
+.wl-hint { margin: 8px 0 0; font-weight: 600; color: #5b4636; }
+.wl-suggest { display: inline-block; margin-top: 10px; font-size: 1.05rem; padding: 0; color: #a8582a; }
+.wl-note { color: #6d5848; font-size: 1rem; margin-top: 16px; text-align: center; }
+.wl-tour { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 22px; }
+.wl-tour > li { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: start; padding-bottom: 22px; border-bottom: 1px dashed #e2cfba; }
+.wl-tour > li:last-child { border-bottom: 0; }
+.wl-tour h2 { font-family: Fraunces, Georgia, serif; font-size: 1.3rem; margin: 0 0 6px; color: #3a2414; }
+.wl-tour p, .wl-tour ul { font-size: 1.05rem; line-height: 1.5; margin: 0 0 8px; }
+.wl-tour ul { padding-left: 20px; }
+.wl-flow span { display: inline-block; background: #a8582a; color: #fff; border-radius: 8px; padding: 3px 8px; font-weight: 700; font-size: .92rem; margin: 2px 0; }
+.wl-pic { background: #f6ece0; border-radius: 14px; padding: 10px; font-size: .78rem; }
+.wl-pic > div { background: #fff; border-radius: 10px; padding: 8px; display: grid; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+.wl-pic b { font-size: .9rem; }
+.mini-card u { text-decoration: none; background: #a8582a; color: #fff; border-radius: 6px; text-align: center; padding: 4px; font-weight: 700; }
+.mini-card em { font-style: normal; color: #5b4636; }
+.mini-list span, .mini-set span { border-top: 1px solid #eee; padding-top: 4px; }
+.mini-phone { justify-items: center; text-align: center; }
+.mini-phone img { border-radius: 12px; }
+@media (max-width: 520px) {
+  .wl-tour > li { grid-template-columns: 1fr; }
+  .wl-pic { max-width: 220px; }
+}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<!--#head-->
+<meta name="robots" content="noindex">
+<title>Welcome to your staff page | Crave</title>
+</head>
+<body class="welcome-page">
+<main id="main" class="wl">
+  <img class="wl-logo" src="/assets/crave-logo.png" alt="Crave." width="120" height="112">
+
+  <!-- 1. Hello -->
+  <section class="wl-step" id="s-hello">
+    <p class="wl-kicker">Welcome!</p>
+    <h1 id="hello">Hi there 👋</h1>
+    <p class="wl-big">This is your <b>Crave staff page</b>. It's where your Crave Curbside orders, catering and cake requests, and Hometown Crave messages show up.</p>
+    <p class="wl-big">It takes about two minutes to set up. First, you'll pick a password.</p>
+    <button class="btn sign wl-btn" type="button" id="go1">Let's start</button>
+  </section>
+
+  <!-- 2. Password -->
+  <section class="wl-step" id="s-pass" hidden>
+    <p class="wl-kicker">Step 1 of 2</p>
+    <h1>Pick your password</h1>
+    <p class="wl-big">Make it at least 10 letters. An easy trick: <b>three words you'll remember</b>, like <i>maple-cocoa-snow</i>.</p>
+    <p class="wl-email">You'll log in with: <b id="email"></b></p>
+    <label class="wl-label" for="pw">Your new password</label>
+    <div class="wl-pw">
+      <input id="pw" type="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+      <button type="button" id="show" class="wl-show">Show</button>
+    </div>
+    <div class="wl-meter" aria-hidden="true"><i id="meter"></i></div>
+    <p class="wl-hint" id="hint">At least 10 letters.</p>
+    <button type="button" class="linkbtn wl-suggest" id="suggest">Suggest one for me</button>
+    <p class="wl-note">Tip: write it down or save it in your phone. If you ever forget it, Neal can reset it.</p>
+    <button class="btn sign wl-btn" type="button" id="save">Save my password</button>
+    <p class="form-error" id="err" role="alert" hidden></p>
+  </section>
+
+  <!-- 3. Tour -->
+  <section class="wl-step" id="s-tour" hidden>
+    <p class="wl-kicker">Step 2 of 2 · You're all set!</p>
+    <h1>Here's your quick tour</h1>
+    <ol class="wl-tour">
+      <li>
+        <div class="wl-pic"><div class="mini-card"><b>A07</b><span>Start 7:50a</span><em>1× Crave Burrito</em><u>Start cooking</u></div></div>
+        <div><h2>Orders show up on "Today"</h2>
+          <p>When someone orders Crave Curbside, it appears under <b>Up next</b>. Tap the big brown button as you go:</p>
+          <p class="wl-flow"><span>Start cooking</span> → <span>Ready for pickup</span> → <span>Picked up</span></p>
+          <p>The time on each order tells you when to start so it's hot right at pickup. Tap <b>This week</b> to see upcoming days.</p></div>
+      </li>
+      <li>
+        <div class="wl-pic"><div class="mini-list"><b>Needs you</b><span>Sarah · new request</span><span>NPHS Volleyball · Hometown Crave</span></div></div>
+        <div><h2>Catering, cakes &amp; Hometown Crave</h2>
+          <p>New requests show on the right under <b>Needs you</b>. Tap one to read it, then send an offer (price and date), reply, or decline.</p>
+          <p>Their offer and your counter-offer go back and forth until you both agree, and then it's on your calendar.</p></div>
+      </li>
+      <li>
+        <div class="wl-pic"><div class="mini-set"><b>Settings</b><span>☑ Take online orders</span><span>Orders per pickup time: 3</span><span>Closed days</span></div></div>
+        <div><h2>Busy day? Closed day? Use Settings</h2>
+          <p>Next to Today, tap <b>Settings</b> to:</p>
+          <ul><li>Pause online orders (untick <b>Take online orders</b>)</li><li>Add closed days, like holidays</li><li>Change how many orders fit in each pickup time</li><li>Post a note, like "Cinnamon rolls are sold out"</li></ul></div>
+      </li>
+      <li>
+        <div class="wl-pic wl-phone"><div class="mini-phone"><img src="/assets/crave-icon-180.png" alt="" width="54" height="54"><span>Crave</span></div></div>
+        <div><h2>Put it on your phone</h2>
+          <p><b>iPhone:</b> open the staff page in Safari, tap the <b>Share</b> button (the square with the arrow), then <b>Add to Home Screen</b>.</p>
+          <p><b>Android:</b> open it in Chrome, tap the <b>⋮</b> menu, then <b>Add to Home screen</b>.</p>
+          <p>Now Crave sits on your phone like an app.</p></div>
+      </li>
+    </ol>
+    <a class="btn sign wl-btn" href="/admin">Open my staff page</a>
+    <p class="wl-note">Stuck on anything? Just text Neal, he's got you.</p>
+  </section>
+
+  <section class="wl-step" id="s-bad" hidden>
+    <h1>This link has already been used</h1>
+    <p class="wl-big">Welcome links work one time, for 3 days. If you already set your password, just log in:</p>
+    <a class="btn sign wl-btn" href="/admin">Go to the login</a>
+    <p class="wl-note">Need a fresh link? Text Neal and he'll send you a new one.</p>
+  </section>
+</main>
+<script src="/assets/common.js"></script>
+<script>
+(() => {
+  const { api } = window.BW, $ = (id) => document.getElementById(id);
+  const token = new URLSearchParams(location.search).get("t") || "";
+  const show = (id) => { document.querySelectorAll(".wl-step").forEach((s) => (s.hidden = s.id !== id)); window.scrollTo({ top: 0 }); };
+  api(`/api/admin/login?reset=${encodeURIComponent(token)}`).then((r) => {
+    if (!r.valid) return show("s-bad");
+    const first = (r.name || "").split(" ")[0];
+    $("hello").textContent = first && !/^crave$/i.test(first) ? `Hi ${first} 👋` : "Hi there 👋";
+    $("email").textContent = r.email;
+  }).catch(() => show("s-bad"));
+
+  $("go1").onclick = () => { show("s-pass"); setTimeout(() => $("pw").focus(), 50); };
+  $("show").onclick = () => { const p = $("pw"); p.type = p.type === "password" ? "text" : "password"; $("show").textContent = p.type === "password" ? "Show" : "Hide"; };
+  const W = ["maple", "cocoa", "spruce", "caribou", "frosting", "biscuit", "aurora", "cinnamon", "mocha", "honey", "sprinkle", "snowy", "pumpkin", "sunflower", "latte", "cookie"];
+  $("suggest").onclick = () => {
+    const pick = () => W[crypto.getRandomValues(new Uint32Array(1))[0] % W.length];
+    $("pw").value = `${pick()}-${pick()}-${pick()}`; $("pw").type = "text"; $("show").textContent = "Hide"; meter();
+  };
+  function meter() {
+    const v = $("pw").value, n = v.length, ok = n >= 10;
+    $("meter").style.width = Math.min(100, n * 8) + "%";
+    $("meter").style.background = ok ? "#3f8f5a" : n >= 6 ? "#d9a066" : "#c0392b";
+    $("hint").textContent = ok ? "Looks good! ✓" : `${10 - n} more letter${10 - n === 1 ? "" : "s"} to go.`;
+  }
+  $("pw").addEventListener("input", meter);
+  $("save").onclick = async () => {
+    const err = $("err"); err.hidden = true;
+    if ($("pw").value.length < 10) { err.textContent = "Use at least 10 letters. Try three words with dashes."; err.hidden = false; return; }
+    $("save").disabled = true; $("save").textContent = "Saving…";
+    try { await api("/api/admin/login", { body: { action: "reset", token, password: $("pw").value } }); show("s-tour"); }
+    catch (e) { err.textContent = e.message; err.hidden = false; $("save").disabled = false; $("save").textContent = "Save my password"; }
+  };
+})();
+</script>
+</body>
+</html>
