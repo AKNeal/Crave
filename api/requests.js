@@ -15,10 +15,19 @@ const reqs = require("../lib/requests");
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+// "Crave Our Kids" (the /give page): schools, teams, PTAs and clubs ask Crave to partner. Same inbox, own questions.
+const GIVE_FORM = [
+  { key: "org", label: "School, team or group", type: "text", required: true },
+  { key: "role", label: "Your role", type: "choice", options: ["Teacher or staff", "Coach", "PTA / PTO", "Club or activity leader", "Parent", "Other"] },
+  { key: "kind", label: "What are you thinking?", type: "multi", options: ["Percentage-of-sales day", "Team fundraiser", "PTA support", "Special event", "Something else"] },
+  { key: "when", label: "Date or timeframe", type: "text", hint: "e.g. a Saturday in March, or flexible" },
+];
+
 module.exports = async function handler(req, res) {
   if (!method(req, res, "POST")) return;
   const b = body(req);
-  const W = config.words, form = config.form || [];
+  const give = b.program === "give";
+  const W = config.words, form = give ? GIVE_FORM : (config.form || []);
 
   // Bots fill hidden fields; act as if it worked.
   if (str(b.website)) return send(res, 200, { ok: true, id: "x", token: "x" });
@@ -41,7 +50,7 @@ module.exports = async function handler(req, res) {
   const { answers, errors: answerErrors } = readAnswers(form, b);
   Object.assign(errors, answerErrors);
   if (config.ageCheck && b.age18 !== true) errors.age18 = `You must be ${config.studio.minAge} or older to book.`;
-  if (config.policyCheck && b.agreePolicy !== true) errors.agreePolicy = "Please accept the deposit policy.";
+  if (!give && config.policyCheck && b.agreePolicy !== true) errors.agreePolicy = "Please accept the deposit policy.";
 
   let artist = null;
   if (f.artist !== "any") {
@@ -78,7 +87,7 @@ module.exports = async function handler(req, res) {
     id: reqId, token, createdAt: now, updatedAt: now, status: "new",
     artist: artist ? artist.slug : "any",
     client: { name: f.name, email: f.email, phone: f.phone, instagram: f.instagram, smsOk: f.smsOk, smsOkAt: f.smsOk ? now : null },
-    details: { idea: f.idea, answers },
+    details: { idea: give ? `Crave Our Kids: ${f.idea}` : f.idea, answers }, program: give ? "Crave Our Kids" : undefined,
     offers: draft.offers,
     images, notes: [],
     clientView: { message: "", quote: "", when: "", depositUrl: "" },
@@ -107,7 +116,7 @@ module.exports = async function handler(req, res) {
     sendEmail({
       to: [config.studio.contactEmail, artist?.email, ...(artist ? artistLogins : [])],
       replyTo: f.email,
-      subject: `New ${W.job} request — ${f.name}${artist ? ` (${artist.name})` : ""}`,
+      subject: give ? `Crave Our Kids request — ${f.name}` : `New ${W.job} request — ${f.name}${artist ? ` (${artist.name})` : ""}`,
       title: `New ${W.job} request`,
       paragraphs: [`${f.name} wants: ${f.idea}`, `For: ${who}`, facts, offerText, images.length ? `Photos: ${images.length}` : "",
         `Contact: ${f.email}${f.phone ? ` · ${f.phone}` : ""}${f.instagram ? ` · ${f.instagram}` : ""}`],
