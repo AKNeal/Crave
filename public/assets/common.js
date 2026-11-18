@@ -22,7 +22,7 @@ window.BW = Object.assign(window.BW || {}, {
       else if (k === "html") n.innerHTML = v; // only ever used with static strings
       else n.setAttribute(k, v === true ? "" : v);
     }
-    for (const kid of kids.flat()) if (kid != null && kid !== false) n.append(kid.nodeType ? kid : String(kid));
+    for (const kid of kids.flat(Infinity)) if (kid != null && kid !== false) n.append(kid.nodeType ? kid : String(kid));
     return n;
   },
 

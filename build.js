@@ -70,20 +70,23 @@ const footer = () => `<footer class="site-footer crave-footer">
 </footer>
 <script src="/assets/site.js" defer></script>
 <script src="/assets/team.js" defer></script>
+<script src="/assets/site-edit.js" defer></script>
 ${googleReview()}`;
 
 // Floating Google review button: same template as Black Wolf's, drawn in crayon to match the "Meet us!" card.
-// Set studio.googleReviewUrl (Google's "write a review" link) and studio.googleRating ({ rating, reviews }) in config/crave.js.
+// Set studio.googleReviewUrl (Google's "write a review" link) in config/crave.js. The rating fills in from the morning Google check
+// (lib/site.js) once there is one; studio.googleRating ({ rating, reviews }) is only a fallback.
 function googleReview() {
   const url = S.googleReviewUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Crave. ${S.address}`)}`;
   const g = S.googleRating;
   const r = g && Number(g.rating), f = r ? Math.round(r) : 5;
   const label = r ? `Google rating ${r.toFixed(1)} out of 5 from ${g.reviews} reviews. Leave Crave a Google review` : "Leave Crave a Google review";
   return `<svg class="crayon-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="crayon" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
-<a class="g-rating crayon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc(label)}">
+<a class="g-rating crayon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc(label)}" data-g-rating>
   <span class="g-mark" aria-hidden="true">Google</span>
   <span class="g-body"><span class="g-top"><span class="g-star" aria-hidden="true">★</span><strong>${r ? r.toFixed(1) : "Review"}</strong><span class="g-stars" aria-hidden="true">${"★".repeat(f)}${"☆".repeat(5 - f)}</span></span><span class="g-label">${r ? "Rating" : "Tell us how we did"}</span></span>
-</a>`;
+</a>
+<script>(function(){var a=document.querySelector("[data-g-rating]");if(!a||!window.fetch)return;fetch("/api/waitlist?site=rating").then(function(r){return r.ok?r.json():null}).then(function(k){if(!k||k.rating==null)return;var r=Number(k.rating),f=Math.round(r);a.querySelector("strong").textContent=r.toFixed(1);a.querySelector(".g-stars").textContent="\u2605".repeat(f)+"\u2606".repeat(5-f);a.querySelector(".g-label").textContent="Rating";a.setAttribute("aria-label","Google rating "+r.toFixed(1)+" out of 5 from "+k.reviews+" reviews. Leave Crave a Google review")}).catch(function(){})})();</script>`;
 }
 
 const poweredBy = `<p class="poweredby"><a href="https://beam.nealmedia.app" rel="noopener" target="_blank">Scheduling powered by: <img class="pb-on-light" src="/assets/brand/beam-book-logo.svg" alt="Beam" width="123" height="22"></a></p>`;

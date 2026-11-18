@@ -98,8 +98,13 @@
 <body class="admin">
 <header class="top"><div class="shell adminbar">
   <div class="crave-staff-brand"><a class="brand crave-brand" href="/admin" aria-label="Crave staff"><img class="logo" src="/assets/crave-logo.png" alt="Crave." width="64" height="60"><span class="brand-sub">Staff<b id="shopName" hidden>Crave</b></span></a><div class="whoami" id="whoami"></div></div>
-  <nav id="nav" hidden><a href="#" id="viewToday">Today</a><a href="#" id="viewReq">Catering</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewArt" hidden>Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
+  <nav id="nav" hidden><a href="#" id="viewToday">Today</a><a href="#" id="viewReq">Catering</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewSched">Schedule</a><a href="#" id="viewArt" hidden>Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewSite" hidden>Website</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
 </div></header>
+<div class="sitebar" id="sitebar" hidden><div class="shell sitebar-in">
+  <span class="sb-label">Website <button class="linkbtn" type="button" id="sbList"><span id="sbProgress"></span></button></span>
+  <a class="btn sm sign" href="/?edit=1" target="_blank" rel="noopener" id="sbEdit">✎ Edit the website</a>
+  <button class="btn sm line" type="button" id="sbChange">Request a change</button>
+</div></div>
 
 <main class="shell" id="app">
   <p id="bootMsg" class="authbox" role="alert" hidden></p>
@@ -146,6 +151,8 @@
   <div id="teamView" hidden></div>
   <div id="acctView" hidden></div>
   <div id="formView" hidden></div>
+  <div id="schedView" hidden></div>
+  <div id="siteView" hidden></div>
 </main>
 
 <script>
@@ -193,8 +200,12 @@
     $("whoami").textContent = ME.shopKey ? "Shop password" : `${ME.name} · ${ME.roleName}`;
     $("viewTeam").hidden = !["owner", "admin"].includes(ME.role);
     $("viewForm").hidden = !["owner", "admin"].includes(ME.role);
+    // Staff (Front desk) see only their own schedule; the catering calendar's hours and closed days are the Owner's.
+    $("viewCal").hidden = !["owner", "admin", "artist"].includes(ME.role);
+    $("viewSched").textContent = ["owner", "admin"].includes(ME.role) ? "Schedule" : "My schedule";
     $("viewArt").textContent = ME.role === "artist" ? "My books" : "Books and waitlist";
     await load();
+    loadSite();
     if (q.get("ig")) { // back from connecting Instagram
       const ok = q.get("ig") === "connected";
       history.replaceState(null, "", "/admin");
@@ -258,10 +269,10 @@
   $("viewTeam").addEventListener("click", (e) => { e.preventDefault(); showTeam(); });
   $("viewAcct").addEventListener("click", (e) => { e.preventDefault(); showAccount(); });
   $("viewForm").addEventListener("click", (e) => { e.preventDefault(); showForm(); });
-  const views = ["todayView", "inbox", "artistsView", "calView", "teamView", "acctView", "formView"];
+  const views = ["todayView", "inbox", "artistsView", "calView", "teamView", "acctView", "formView", "schedView", "siteView"];
   function only(v) {
     for (const x of views) $(x).hidden = x !== v;
-    const navFor = { todayView: "viewToday", inbox: "viewReq", calView: "viewCal", teamView: "viewTeam", acctView: "viewAcct", formView: "viewForm" };
+    const navFor = { todayView: "viewToday", inbox: "viewReq", calView: "viewCal", teamView: "viewTeam", acctView: "viewAcct", formView: "viewForm", schedView: "viewSched", siteView: "viewSite" };
     document.querySelectorAll("#nav a").forEach((a) => a.removeAttribute("aria-current"));
     if (navFor[v]) $(navFor[v]).setAttribute("aria-current", "page");
     window.scrollTo({ top: 0 });
@@ -301,7 +312,9 @@
           el("h3", {}, "Coming up"),
           appts.length ? el("ul", { class: "dash-list" }, ...appts.map((a) => el("li", {}, el("div", { class: "dash-appt" }, el("strong", {}, `${a.dayLabel}, ${a.time}`), el("span", {}, a.clientName || a.title || "Catering")))))
             : el("p", { class: "muted small" }, "No catering events booked."),
-          el("p", { style: "margin:14px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showRequests() }, "Open the catering inbox →")))));
+          el("p", { style: "margin:14px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showRequests() }, "Open the catering inbox →")))),
+      el("div", { class: "today-extra", id: "todayExtra" }));
+    fillTodayExtra();
     const mountEl = $("boardMount");
     board = CraveBoard.mount(mountEl, { kitchenLink: true, compact: true, onSummary: (u) => { const t = $("togoSum"); if (t) t.textContent = ""; } });
   }
@@ -1083,11 +1096,11 @@
     });
 
     // Blocked time
-    const blocks = el("section", { class: "panel" }, el("h2", {}, "Time off"),
-      el("p", { class: "muted small", style: "margin-top:0" }, "Days off, travel, guest spots, conventions. Clients can't book these times."));
+    const blocks = el("section", { class: "panel" }, el("h2", {}, "Closed for catering"),
+      el("p", { class: "muted small", style: "margin-top:0" }, "Days or hours Crave can't take catering events: holidays, closures, a full kitchen. Customers can't book these times. (Staff time off is under ", el("button", { class: "linkbtn", type: "button", onclick: () => showSchedule() }, "Schedule"), ".)"));
     for (const b of C.blocks) {
       blocks.append(el("div", { class: "agenda-row" }, el("div", {}, el("strong", {}, b.label), b.note ? el("div", { class: "muted small" }, b.note) : null),
-        el("button", { class: "btn sm line", type: "button", onclick: () => calPost({ action: "unblock", id: b.id }, "Time off removed") }, "Remove")));
+        el("button", { class: "btn sm line", type: "button", onclick: () => calPost({ action: "unblock", id: b.id }, "Removed") }, "Remove")));
     }
     const allDay = el("input", { type: "checkbox", name: "allDay", checked: true });
     const times = el("div", { class: "row", hidden: true },
@@ -1100,16 +1113,345 @@
         el("div", { class: "field" }, el("label", {}, "First day"), el("input", { type: "date", name: "startDate", required: true, min: today, value: today })),
         el("div", { class: "field" }, el("label", {}, "Last day"), el("input", { type: "date", name: "endDate", min: today }))),
       el("label", { class: "check" }, allDay, "All day"), times,
-      el("div", { class: "field" }, el("label", {}, "Note ", el("span", { class: "opt" }, "(only you see this)")), el("input", { type: "text", name: "note", maxlength: 120, placeholder: "e.g. Guest spot in Anchorage" })),
-      el("button", { class: "btn sm", type: "submit" }, "Add time off"));
+      el("div", { class: "field" }, el("label", {}, "Note ", el("span", { class: "opt" }, "(only you see this)")), el("input", { type: "text", name: "note", maxlength: 120, placeholder: "e.g. Closed for Christmas" })),
+      el("button", { class: "btn sm", type: "submit" }, "Add closed time"));
     bf.addEventListener("submit", (e) => {
       e.preventDefault(); const fd = new FormData(bf);
       calPost({ action: "block", startDate: fd.get("startDate"), endDate: fd.get("endDate") || fd.get("startDate"),
-        from: allDay.checked ? "" : fd.get("from"), to: allDay.checked ? "" : fd.get("to"), note: fd.get("note") }, "Time off added");
+        from: allDay.checked ? "" : fd.get("from"), to: allDay.checked ? "" : fd.get("to"), note: fd.get("note") }, "Closed time added");
     });
     blocks.append(bf);
 
     cols.append(el("div", { class: "cal-col" }, ext, up, feed), el("div", { class: "cal-col" }, hoursForm, blocks));
+  }
+
+
+  // ================= Website: finish the site (checklist, change requests, Google ranking, onboarding answers) =================
+  // Data comes from /api/admin/photo?site=… (lib/site.js). Owner, Site admins and Neal Media see it; Neal Media signs items off.
+  let SITE = null, SCHED = null;
+  const SITE_API = (op) => `/api/admin/photo?site=${op}`;
+  const AK = (o, ms = Date.now()) => new Intl.DateTimeFormat("en-US", { timeZone: "America/Anchorage", ...o }).format(new Date(ms));
+  const dkey = (ms) => new Date(ms).toLocaleDateString("en-CA", { timeZone: "America/Anchorage" });
+  const plusDays = (d, n) => dkey(Date.parse(`${d}T20:00:00Z`) + n * 86400e3);
+  const dayName = (d, o = { weekday: "short", month: "short", day: "numeric" }) => AK(o, Date.parse(`${d}T20:00:00Z`));
+  const hm12 = (s) => { if (!s) return ""; const [h, m] = s.split(":").map(Number); return `${h % 12 || 12}${m ? ":" + String(m).padStart(2, "0") : ""} ${h < 12 ? "AM" : "PM"}`; };
+  const isFull = () => ["owner", "admin"].includes(ME.role);
+
+  async function loadSite() {
+    const [o, s] = await Promise.all([api(SITE_API("overview")).catch(() => null), api(SITE_API("schedule")).catch(() => null)]);
+    SITE = o && o.allowed ? o : null; SCHED = s;
+    $("viewSite").hidden = !SITE; $("sitebar").hidden = !SITE;
+    if (SITE) $("sbProgress").textContent = `${SITE.checklist.done} of ${SITE.checklist.total} done`;
+    fillTodayExtra();
+  }
+  $("viewSite").addEventListener("click", (e) => { e.preventDefault(); showSite(); });
+  $("viewSched").addEventListener("click", (e) => { e.preventDefault(); showSchedule(); });
+  $("sbChange").addEventListener("click", () => showSite("change"));
+  $("sbList").addEventListener("click", () => showSite());
+
+  const medal = (r) => r == null ? ["none", "–"] : r === 1 ? ["gold", "#1"] : r === 2 ? ["silver", "#2"] : r === 3 ? ["bronze", "#3"] : r <= 10 ? ["blue", `#${r}`] : ["none", "10+"];
+
+  function fillTodayExtra() {
+    const box = $("todayExtra"); if (!box) return;
+    box.textContent = "";
+    if (SITE) {
+      const k = SITE.rankings, c = SITE.checklist;
+      box.append(
+        el("section", { class: "dash-card" },
+          el("header", {}, el("h2", {}, "Google ranking"), el("span", { class: "dash-sum" }, k.date ? `checked ${dayName(k.date)}` : "")),
+          k.date ? el("ul", { class: "rank-mini" }, k.searches.map((x) => { const [t, w] = medal(x.rank); return el("li", {}, el("span", { class: `rk rk-${t}` }, w), el("span", {}, x.q),
+              x.change ? el("span", { class: x.change > 0 ? "rk-up" : "rk-down" }, x.change > 0 ? `▲${x.change}` : `▼${-x.change}`) : null); }))
+            : el("p", { class: "muted small" }, k.tracking ? "The first check runs tomorrow morning." : "Daily checks start once Neal Media switches them on."),
+          el("p", { style: "margin:12px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showSite("rank") }, "See the details →"))),
+        el("section", { class: "dash-card" },
+          el("header", {}, el("h2", {}, "Finish the website"), el("span", { class: "dash-sum" }, `${c.done} of ${c.total} done`)),
+          progressBar(c),
+          el("p", { class: "muted small" }, c.total - c.done - c.review > 0 ? `${c.total - c.done - c.review} still needed from Crave. ${c.review ? `${c.review} sent and being worked in.` : ""}` : "Everything's in. Neal Media is finishing up."),
+          el("p", { style: "margin:12px 0 0;display:flex;gap:10px;flex-wrap:wrap" },
+            el("button", { class: "btn sm", type: "button", onclick: () => showSite() }, "Open the checklist"),
+            el("a", { class: "btn sm line", href: "/?edit=1", target: "_blank", rel: "noopener" }, "✎ Edit the website"))));
+    }
+    if (SCHED && !SCHED.canSet) box.append(myShiftsCard(4));
+  }
+  function progressBar(c) {
+    const pct = (n) => `${Math.round((100 * n) / Math.max(1, c.total))}%`;
+    return el("div", { class: "prog", role: "img", "aria-label": `${c.done} of ${c.total} done` }, el("i", { class: "p-done", style: `width:${pct(c.done)}` }), el("i", { class: "p-review", style: `width:${pct(c.review)}` }));
+  }
+
+  function showSite(focus) {
+    only("siteView"); document.querySelectorAll("#nav a").forEach((a) => a.removeAttribute("aria-current")); $("viewSite").setAttribute("aria-current", "page");
+    const v = $("siteView"); v.textContent = "";
+    if (!SITE) { v.append(el("p", { class: "muted" }, "Loading…")); loadSite().then(() => SITE && showSite(focus)); return; }
+    v.append(
+      el("div", { class: "today-bar" }, el("h1", {}, "Website"), el("a", { class: "today-date", href: "/", target: "_blank", rel: "noopener" }, "crave.nealmedia.app ↗")),
+      el("div", { class: "site-actions" },
+        el("a", { class: "btn sign", href: "/?edit=1", target: "_blank", rel: "noopener" }, "✎ Edit the website"),
+        el("button", { class: "btn line", type: "button", onclick: () => { $("chgBox").scrollIntoView({ behavior: "smooth", block: "start" }); $("chgWhat").focus({ preventScroll: true }); } }, "Request a change"),
+        el("a", { class: "btn line", href: "/rhonda", target: "_blank", rel: "noopener" }, "Rhonda's onboarding page"),
+        el("a", { class: "btn line", href: "/onboard", target: "_blank", rel: "noopener" }, "Crew onboarding page")),
+      el("p", { class: "muted small", style: "margin:-4px 0 18px" }, "Edit the website: tap any sentence on the site to change it; it's live as soon as you click away. For anything bigger (photos, new sections, the menu), use Request a change."),
+      checklistPanel(), changePanel(), rankPanel(), onboardPanel(), SITE.nealMedia ? editsPanel() : null);
+    if (focus === "change") setTimeout(() => { $("chgBox").scrollIntoView({ block: "start" }); $("chgWhat").focus({ preventScroll: true }); }, 30);
+    if (focus === "rank") setTimeout(() => $("rankBox").scrollIntoView({ block: "start" }), 30);
+  }
+
+  // ----- checklist -----
+  const STATUS_WORD = { done: "Done", review: "Sent · Neal Media is working it in", waiting: "Still needed" };
+  function checklistPanel() {
+    const c = SITE.checklist;
+    const p = el("section", { class: "panel site-panel", id: "chkBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, c.heading), el("span", { class: "sp-count" }, `${c.done} of ${c.total} done`)),
+      progressBar(c), el("p", { class: "muted" }, c.intro));
+    for (const g of c.groups) {
+      const items = c.items.filter((i) => i.group === g);
+      p.append(el("h3", { class: "chk-group" }, g), el("ul", { class: "chk" }, items.map(chkItem)));
+    }
+    return p;
+  }
+  function chkItem(it) {
+    const open = el("button", { class: "linkbtn chk-open", type: "button" }, it.kind ? (it.value || it.files.length ? "See or change" : it.kind === "files" ? "Add photos" : "Answer") : null);
+    const li = el("li", { class: `chk-item st-${it.status}${it.neal ? " neal" : ""}` },
+      el("span", { class: "led", "aria-hidden": "true" }),
+      el("div", { class: "chk-main" },
+        el("div", { class: "chk-title" }, el("strong", {}, it.title), it.neal ? el("span", { class: "chip" }, "Neal Media") : null),
+        el("div", { class: "chk-why" }, it.why),
+        el("div", { class: "chk-meta" }, el("span", { class: "chk-st" }, it.neal && it.status !== "done" ? "In progress" : STATUS_WORD[it.status]),
+          it.detail ? el("span", {}, it.detail) : null,
+          it.sentAt && it.status !== "waiting" ? el("span", {}, `from ${it.sentBy}, ${datetime(it.sentAt)}`) : null,
+          it.where ? el("a", { href: it.where.href, target: "_blank", rel: "noopener" }, `${it.where.label} ↗`) : null,
+          it.href ? el("a", { href: it.href, target: "_blank", rel: "noopener" }, `${it.action || "Open"} ↗`) : null,
+          it.view === "account" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null),
+        it.note ? el("div", { class: "chk-note" }, el("strong", {}, "Neal Media: "), it.note) : null),
+      el("div", { class: "chk-side" }, it.kind ? open : null, signOff(it)));
+    const box = el("div", { class: "chk-edit", hidden: true });
+    li.querySelector(".chk-main").append(box);
+    open.addEventListener("click", () => { box.hidden = !box.hidden; if (!box.hidden && !box.children.length) chkEditor(it, box); });
+    return li;
+  }
+  function signOff(it) {
+    if (!SITE.checklist.canSignOff || it.auto) return null;
+    return it.status === "done" ? el("button", { class: "btn sm line", type: "button", onclick: () => chkPost({ id: it.id, action: "reopen" }, "Reopened") }, "Reopen")
+      : el("button", { class: "btn sm", type: "button", onclick: () => chkPost({ id: it.id, action: "done" }, "Marked done") }, "Mark done");
+  }
+  async function chkPost(body, msg) {
+    try { const r = await api(SITE_API("checklist"), { body }); SITE.checklist = r.checklist; $("sbProgress").textContent = `${r.checklist.done} of ${r.checklist.total} done`; if (msg) toast(msg); return r; }
+    catch (e) { toast(e.message); throw e; }
+  }
+  function chkEditor(it, box) {
+    const refresh = () => { const y = window.scrollY; showSite(); window.scrollTo(0, y); };
+    if (["text", "long", "both"].includes(it.kind)) {
+      const ta = it.kind === "text" ? el("input", { type: "text", value: it.value, maxlength: 2000 }) : el("textarea", { rows: 6 }, it.value);
+      const err = el("p", { class: "form-error", hidden: true });
+      box.append(ta, el("div", { class: "chk-btns" }, el("button", { class: "btn sm", type: "button", onclick: async () => {
+        try { await chkPost({ id: it.id, action: "save", value: ta.value }, "Saved for Neal Media"); refresh(); } catch (e) { err.textContent = e.message; err.hidden = false; }
+      } }, "Save")), err);
+    }
+    if (["files", "both"].includes(it.kind)) {
+      const list = el("ul", { class: "chk-files" }, it.files.map((f) => el("li", {},
+        f.type === "application/pdf" ? el("a", { href: f.url, target: "_blank", rel: "noopener" }, `📄 ${f.label}`) : el("a", { href: f.url, target: "_blank", rel: "noopener" }, el("img", { src: f.url, alt: f.label, loading: "lazy" })),
+        el("button", { class: "crew-x", type: "button", "aria-label": `Remove ${f.label}`, onclick: async () => { if (!confirm(`Remove ${f.label}?`)) return; await chkPost({ id: it.id, action: "removeFile", name: f.name }, "Removed"); refresh(); } }, "×"))));
+      const status = el("span", { class: "muted small" });
+      const input = el("input", { type: "file", multiple: true, accept: "image/*,application/pdf", class: "chk-file" });
+      input.addEventListener("change", async () => {
+        const files = [...input.files]; let n = 0;
+        for (const f of files) {
+          status.textContent = `Uploading ${++n} of ${files.length}…`;
+          try {
+            const data = f.type === "application/pdf" ? await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); }) : await BW.shrink(f, 2000, 0.85);
+            await chkPost({ id: it.id, action: "addFile", data, filename: f.name });
+          } catch (e) { status.textContent = `${f.name}: ${e.message}`; return; }
+        }
+        toast(`${files.length} added`); refresh();
+      });
+      box.append(list, el("label", { class: "btn sm line chk-up" }, input, it.kind === "both" ? "Add photos or a PDF" : "Add photos"), status);
+    }
+    if (SITE.checklist.canSignOff) {
+      const note = el("input", { type: "text", value: it.note, placeholder: "Note to Rhonda (she sees this)", maxlength: 300 });
+      box.append(el("div", { class: "chk-btns" }, note, el("button", { class: "btn sm line", type: "button", onclick: async () => { await chkPost({ id: it.id, action: "note", note: note.value }, "Note saved"); refresh(); } }, "Save note")));
+    }
+  }
+
+  // ----- change requests -----
+  function changePanel() {
+    const c = SITE.changes;
+    const sel = el("select", { "aria-label": "Which page" }, c.pages.map((p) => el("option", { value: p }, p)));
+    const ta = el("textarea", { id: "chgWhat", rows: 4, maxlength: 4000, placeholder: "e.g. Add the new peppermint mocha to the menu, $5.75 for a 16 oz." });
+    const urgent = el("input", { type: "checkbox" }), err = el("p", { class: "form-error", hidden: true });
+    const btn = el("button", { class: "btn", type: "submit" }, "Send to Neal Media");
+    const f = el("form", { class: "act-form" },
+      el("div", { class: "field" }, el("label", {}, "Which page?"), sel),
+      el("div", { class: "field" }, el("label", { for: "chgWhat" }, "What should change?"), ta),
+      el("label", { class: "check" }, urgent, "It's time-sensitive (a holiday, a sale, something wrong on the site)"), btn, err);
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault(); err.hidden = true; btn.disabled = true;
+      try { const r = await api(SITE_API("change"), { body: { page: sel.value, what: ta.value, urgent: urgent.checked } }); SITE.changes = r.changes; toast("Sent to Neal Media"); showSite("change"); }
+      catch (x) { err.textContent = x.message; err.hidden = false; } finally { btn.disabled = false; }
+    });
+    return el("section", { class: "panel site-panel", id: "chgBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Request a change"), c.open ? el("span", { class: "sp-count" }, `${c.open} open`) : null),
+      el("p", { class: "muted" }, "New menu items, prices, photos, a new page, something that looks wrong: tell Neal Media here. Small text fixes you can do yourself with Edit the website."),
+      f,
+      c.recent.length ? el("ul", { class: "chg-list" }, c.recent.map((x) => el("li", { class: x.doneAt ? "is-done" : "" },
+        el("div", {}, el("strong", {}, x.page), x.urgent ? el("span", { class: "chip warn" }, "Time-sensitive") : null, el("span", { class: "chip" + (x.doneAt ? " ok" : "") }, x.doneAt ? "Done" : "Open"),
+          el("div", { class: "chg-what" }, x.what), el("div", { class: "muted small" }, `${x.by} · ${datetime(x.at)}${x.doneAt ? ` · done ${date(x.doneAt)}` : ""}`)),
+        SITE.nealMedia ? el("button", { class: "btn sm line", type: "button", onclick: async () => { const r = await api(SITE_API("changeDone"), { body: { id: x.id, undo: Boolean(x.doneAt) } }); SITE.changes = r.changes; showSite("change"); } }, x.doneAt ? "Reopen" : "Mark done") : null))) : null);
+  }
+
+  // ----- Google ranking -----
+  function rankPanel() {
+    const k = SITE.rankings;
+    const refresh = el("button", { class: "btn sm line", type: "button", onclick: async () => { try { const r = await api(SITE_API("rankRefresh"), { body: {} }); SITE.rankings = r.rankings; toast("Asked for a fresh check. It usually runs within the hour."); showSite("rank"); } catch (e) { toast(e.message); } } }, "Check again");
+    return el("section", { class: "panel site-panel", id: "rankBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Google ranking"), el("span", { class: "sp-count" }, k.date ? `checked ${dayName(k.date, { weekday: "long", month: "long", day: "numeric" })}` : "no checks yet")),
+      el("p", { class: "muted" }, "Where Crave shows up in Google's business list (the map results under the search box) for each search, checked every morning from North Pole. ",
+        k.rating != null ? el("strong", {}, `Google rating ${Number(k.rating).toFixed(1)}★ from ${k.reviews} reviews.`) : null),
+      el("table", { class: "rank-table" }, el("thead", {}, el("tr", {}, el("th", {}, "Search"), el("th", {}, "Crave"), el("th", {}, "Change"), el("th", {}, "Top of the list"))),
+        el("tbody", {}, k.searches.map((x) => { const [t, w] = medal(x.rank); return el("tr", {}, el("td", {}, `“${x.q}”`), el("td", {}, el("span", { class: `rk rk-${t}` }, w)),
+          el("td", {}, x.change ? el("span", { class: x.change > 0 ? "rk-up" : "rk-down" }, x.change > 0 ? `▲ ${x.change}` : `▼ ${-x.change}`) : "–"),
+          el("td", { class: "muted small" }, (x.top || []).slice(0, 3).join(" · ") || "–")); }))),
+      el("p", { class: "muted small", style: "margin:12px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap" },
+        k.avg != null ? `Average spot: ${k.avg}. ` : "", k.requestedAt && (!k.at || k.at < k.requestedAt) ? `Fresh check asked for ${datetime(k.requestedAt)}. ` : "",
+        !k.tracking ? "Daily checks aren't switched on yet (Neal Media). " : "", refresh));
+  }
+
+  // ----- onboarding answers -----
+  function onboardPanel() {
+    const list = SITE.onboarding || [];
+    const makeLogin = (name, email, job) => el("button", { class: "btn sm line", type: "button", onclick: async (e) => {
+      const b = e.currentTarget; b.disabled = true;
+      try {
+        const r = await api("/api/admin/login", { body: { action: "add", name, email, role: "desk" } });
+        const inv = r.invite;
+        b.replaceWith(el("div", { class: "notice small" }, el("strong", {}, `${name} has a login. `), inv ? (inv.emailed ? `We emailed ${email} a link to pick a password.` : el("span", {}, "Text or email them this link to pick a password (works once, 72 hours): ", el("input", { type: "text", value: inv.link, readonly: true, onclick: (ev) => ev.target.select(), style: "width:100%;margin-top:6px" }))) : ""));
+      } catch (x) { b.disabled = false; toast(x.message); }
+    } }, `Make ${name.split(" ")[0]}'s staff login`);
+    return el("section", { class: "panel site-panel", id: "obBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Onboarding answers"), el("span", { class: "sp-count" }, `${list.length} sent`)),
+      el("p", { class: "muted" }, "From ", el("a", { href: "/rhonda", target: "_blank" }, "crave.nealmedia.app/rhonda"), " and ", el("a", { href: "/onboard", target: "_blank" }, "crave.nealmedia.app/onboard"), ". Rhonda's answers also fill in the checklist."),
+      list.length ? el("div", { class: "ob-list" }, list.map((x) => el("details", { class: "ob-entry" + (x.handledAt ? " is-done" : "") },
+        el("summary", {}, el("strong", {}, x.name), el("span", { class: "chip" }, x.form === "owner" ? "Owner" : x.job ? `Crew · ${x.job}` : "Crew"), x.show === "Don't show me" ? el("span", { class: "chip" }, "Not on the website") : null,
+          el("span", { class: "muted small" }, datetime(x.at)), x.handledAt ? el("span", { class: "chip ok" }, "Handled") : null),
+        x.sections.map(([t, rows]) => rows.some(([, v]) => v) ? el("div", { class: "ob-sec" }, el("h4", {}, t),
+          el("dl", {}, rows.filter(([, v]) => v).map(([k2, v]) => [el("dt", {}, k2), el("dd", {}, v)]))) : null),
+        el("div", { class: "chk-btns" },
+          isFull() && x.form === "team" && x.email ? makeLogin(x.name, x.email) : null,
+          ...(isFull() && x.form === "owner" ? (x.crew || []).filter((c) => c.email).map((c) => makeLogin(c.name, c.email)) : []),
+          el("button", { class: "btn sm line", type: "button", onclick: async () => { const r = await api(SITE_API("onboardDone"), { body: { id: x.id, undo: Boolean(x.handledAt) } }); SITE.onboarding = r.onboarding; showSite(); $("obBox").scrollIntoView(); } }, x.handledAt ? "Mark not handled" : "Mark handled"))))) :
+        el("p", { class: "muted small" }, "Nothing yet."));
+  }
+
+  function editsPanel() {
+    const pages = Object.entries(SITE.edits || {});
+    return el("section", { class: "panel site-panel" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Text changes made on the site"), el("span", { class: "sp-count" }, "Neal Media only")),
+      el("p", { class: "muted" }, "Made with Edit the website. They're live already; fold them into src/pages when you next work on the site."),
+      pages.length ? pages.map(([pg, eds]) => el("div", { class: "ob-sec" }, el("h4", {}, `/${pg === "index" ? "" : pg}`),
+        el("dl", {}, Object.values(eds).map((e) => [el("dt", {}, `${e.by}, ${date(e.at)}`), el("dd", {}, el("s", { class: "muted" }, e.orig), el("br"), e.html.replace(/<[^>]+>/g, ""))])))) : el("p", { class: "muted small" }, "None yet."));
+  }
+
+  // ================= Schedule: the Owner sets shifts; staff see only their own and request time off =================
+  let weekStart = null;
+  const mondayOf = (d) => { const wd = new Date(Date.parse(`${d}T20:00:00Z`)).getUTCDay(); return plusDays(d, -((wd + 6) % 7)); };
+  async function schedPost(op, body, msg) {
+    try { SCHED = await api(SITE_API(op), { body }); if (msg) toast(msg); showSchedule(); fillTodayExtra(); return true; } catch (e) { toast(e.message); return false; }
+  }
+  const offStatus = { pending: "Waiting for Rhonda", approved: "Approved", denied: "Not approved" };
+  const offWhen = (t) => `${t.startDate === t.endDate ? dayName(t.startDate, { weekday: "long", month: "long", day: "numeric" }) : `${dayName(t.startDate)} to ${dayName(t.endDate)}`}${t.from ? `, ${hm12(t.from)} – ${hm12(t.to)}` : ", all day"}`;
+
+  async function showSchedule() {
+    only("schedView"); document.querySelectorAll("#nav a").forEach((a) => a.removeAttribute("aria-current")); $("viewSched").setAttribute("aria-current", "page");
+    const v = $("schedView"); v.textContent = "";
+    if (!SCHED) { v.append(el("p", { class: "muted" }, "Loading…")); SCHED = await api(SITE_API("schedule")).catch((e) => { v.textContent = e.message; return null; }); if (!SCHED) return; v.textContent = ""; }
+    if (SCHED.canSet) ownerSchedule(v); else mySchedule(v);
+  }
+
+  function myShiftsCard(n) {
+    const up = SCHED.shifts.filter((s) => s.date >= SCHED.today).slice(0, n);
+    return el("section", { class: "dash-card" }, el("header", {}, el("h2", {}, "My next shifts")),
+      up.length ? el("ul", { class: "dash-list" }, up.map((s) => el("li", {}, el("div", { class: "dash-appt" }, el("strong", {}, s.date === SCHED.today ? "Today" : dayName(s.date, { weekday: "long", month: "short", day: "numeric" })), el("span", {}, s.label + (s.note ? ` · ${s.note}` : ""))))))
+        : el("p", { class: "muted small" }, "No shifts posted yet."),
+      el("p", { style: "margin:12px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: showSchedule }, "My schedule and time off →")));
+  }
+
+  function timeOffForm() {
+    const t = SCHED.today, allDay = el("input", { type: "checkbox", checked: true }), err = el("p", { class: "form-error", hidden: true });
+    const first = el("input", { type: "date", required: true, min: t, value: t }), last = el("input", { type: "date", min: t });
+    const from = el("input", { type: "time", value: "07:30", step: 900 }), to = el("input", { type: "time", value: "11:30", step: 900 });
+    const times = el("div", { class: "row", hidden: true }, el("div", { class: "field" }, el("label", {}, "From"), from), el("div", { class: "field" }, el("label", {}, "To"), to));
+    allDay.addEventListener("change", () => { times.hidden = allDay.checked; });
+    const reason = el("input", { type: "text", maxlength: 300, placeholder: "e.g. Family in town, doctor's appointment" });
+    const f = el("form", { class: "act-form" },
+      el("div", { class: "row" }, el("div", { class: "field" }, el("label", {}, "First day off"), first), el("div", { class: "field" }, el("label", {}, "Last day off ", el("span", { class: "opt" }, "(if more than one)")), last)),
+      el("label", { class: "check" }, allDay, "The whole day"), times,
+      el("div", { class: "field" }, el("label", {}, "Reason ", el("span", { class: "opt" }, "(optional, Rhonda sees this)")), reason),
+      el("button", { class: "btn", type: "submit" }, "Send time off request"), err);
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault(); err.hidden = true;
+      const ok = await schedPost("timeoff", { action: "request", startDate: first.value, endDate: last.value || first.value, from: allDay.checked ? "" : from.value, to: allDay.checked ? "" : to.value, reason: reason.value }, "Time off request sent to Rhonda");
+      if (!ok) { err.textContent = "Check the dates and try again."; err.hidden = false; }
+    });
+    return f;
+  }
+
+  function mySchedule(v) {
+    const t = SCHED.today, days = [...Array(21)].map((_, i) => plusDays(t, i));
+    const offOn = (d) => SCHED.timeoff.find((x) => x.status === "approved" && x.startDate <= d && x.endDate >= d);
+    v.append(el("div", { class: "today-bar" }, el("h1", {}, "My schedule"), el("span", { class: "today-date" }, `${ME.name}`)),
+      el("div", { class: "sched-cols" },
+        el("section", { class: "panel" }, el("h2", {}, "My shifts"), el("p", { class: "muted small", style: "margin-top:0" }, "Rhonda sets the schedule. Only your own shifts show here."),
+          el("ul", { class: "my-shifts" }, days.map((d) => { const s = SCHED.shifts.filter((x) => x.date === d), off = offOn(d);
+            return (s.length || off) ? el("li", { class: d === t ? "is-today" : "" }, el("strong", {}, d === t ? "Today" : dayName(d, { weekday: "long", month: "short", day: "numeric" })),
+              el("span", {}, s.map((x) => x.label + (x.note ? ` · ${x.note}` : "")).join(", "), off ? el("span", { class: "chip ok" }, "Time off") : null)) : null; })),
+          SCHED.shifts.some((x) => x.date >= t) ? null : el("p", { class: "muted" }, "No shifts posted for the next three weeks yet.")),
+        el("section", { class: "panel" }, el("h2", {}, "Request time off"), el("p", { class: "muted small", style: "margin-top:0" }, "Rhonda gets your request and approves it here."), timeOffForm(),
+          SCHED.timeoff.length ? el("div", {}, el("h3", { class: "chk-group" }, "My requests"), el("ul", { class: "chg-list" }, SCHED.timeoff.map((x) => el("li", {},
+            el("div", {}, el("strong", {}, offWhen(x)), el("span", { class: `chip${x.status === "approved" ? " ok" : x.status === "denied" ? " warn" : ""}` }, offStatus[x.status]),
+              x.reason ? el("div", { class: "muted small" }, x.reason) : null, x.reply ? el("div", { class: "small" }, `${x.decidedBy}: ${x.reply}`) : null),
+            x.status === "pending" ? el("button", { class: "btn sm line", type: "button", onclick: () => schedPost("timeoff", { action: "cancel", id: x.id }, "Request cancelled") }, "Cancel") : null)))) : null)));
+  }
+
+  function ownerSchedule(v) {
+    if (!weekStart) weekStart = mondayOf(SCHED.today);
+    const days = [...Array(7)].map((_, i) => plusDays(weekStart, i)), staff = SCHED.staff || [];
+    const pending = SCHED.timeoff.filter((x) => x.status === "pending");
+    const offFor = (uid, d) => SCHED.timeoff.find((x) => x.uid === uid && x.status !== "denied" && x.startDate <= d && x.endDate >= d);
+    // Add-shift form (the + in each cell fills it in)
+    const who = el("select", {}, staff.map((u) => el("option", { value: u.id }, u.name))), day = el("input", { type: "date", value: days[0] });
+    const start = el("input", { type: "time", value: "07:00", step: 900 }), end = el("input", { type: "time", value: "15:30", step: 900 }), note = el("input", { type: "text", maxlength: 80, placeholder: "e.g. Opening, Kitchen" });
+    const add = el("form", { class: "shift-form", id: "shiftForm" },
+      el("div", { class: "field" }, el("label", {}, "Who"), who), el("div", { class: "field" }, el("label", {}, "Day"), day),
+      el("div", { class: "field" }, el("label", {}, "Start"), start), el("div", { class: "field" }, el("label", {}, "End"), end),
+      el("div", { class: "field" }, el("label", {}, "Note ", el("span", { class: "opt" }, "(optional)")), note), el("button", { class: "btn sm", type: "submit" }, "Add shift"));
+    add.addEventListener("submit", (e) => { e.preventDefault(); schedPost("shift", { uid: who.value, date: day.value, start: start.value, end: end.value, note: note.value }, "Shift added"); });
+
+    v.append(el("div", { class: "today-bar" }, el("h1", {}, "Schedule"),
+      el("span", { class: "today-date" }, `Week of ${dayName(weekStart, { month: "long", day: "numeric" })}`),
+      el("span", { class: "sched-nav" },
+        el("button", { class: "btn sm line", type: "button", onclick: () => { weekStart = plusDays(weekStart, -7); showSchedule(); } }, "‹ Last week"),
+        el("button", { class: "btn sm line", type: "button", onclick: () => { weekStart = mondayOf(SCHED.today); showSchedule(); } }, "This week"),
+        el("button", { class: "btn sm line", type: "button", onclick: () => { weekStart = plusDays(weekStart, 7); showSchedule(); } }, "Next week ›"))));
+    if (pending.length) v.append(el("section", { class: "panel site-panel off-pending" }, el("div", { class: "sp-head" }, el("h2", {}, "Time off requests"), el("span", { class: "sp-count" }, `${pending.length} waiting`)),
+      el("ul", { class: "chg-list" }, pending.map((x) => { const reply = el("input", { type: "text", maxlength: 300, placeholder: "Reply (optional)" });
+        return el("li", {}, el("div", {}, el("strong", {}, x.name), " · ", offWhen(x), x.reason ? el("div", { class: "muted small" }, x.reason) : null, el("div", { class: "muted small" }, `Asked ${datetime(x.at)}`), reply),
+          el("div", { class: "chk-btns" }, el("button", { class: "btn sm", type: "button", onclick: () => schedPost("timeoff", { action: "approve", id: x.id, reply: reply.value }, `Approved for ${x.name}`) }, "Approve"),
+            el("button", { class: "btn sm line", type: "button", onclick: () => schedPost("timeoff", { action: "deny", id: x.id, reply: reply.value }, "Turned down") }, "Turn down"))); }))));
+    if (!staff.length) { v.append(el("div", { class: "notice" }, "Add your crew on the ", el("button", { class: "linkbtn", type: "button", onclick: showTeam }, "Team"), " screen first. Everyone with a login can be put on the schedule.")); return; }
+    const grid = el("table", { class: "sched-grid" },
+      el("thead", {}, el("tr", {}, el("th", {}, ""), days.map((d) => el("th", { class: d === SCHED.today ? "is-today" : "" }, dayName(d, { weekday: "short" }), el("br"), dayName(d, { month: "short", day: "numeric" }))))),
+      el("tbody", {}, staff.map((u) => el("tr", {}, el("th", { scope: "row" }, u.name, el("div", { class: "muted small" }, u.role)),
+        days.map((d) => { const off = offFor(u.id, d);
+          return el("td", { class: d === SCHED.today ? "is-today" : "" },
+            off ? el("span", { class: `chip ${off.status === "approved" ? "ok" : "warn"}` }, off.status === "approved" ? "Off" : "Off?") : null,
+            SCHED.shifts.filter((s) => s.uid === u.id && s.date === d).map((s) => el("span", { class: "shift", title: s.note || "" }, s.label.replace(/ AM/g, "a").replace(/ PM/g, "p"),
+              el("button", { type: "button", "aria-label": "Remove shift", onclick: () => { if (confirm(`Remove ${u.name}'s shift, ${dayName(d)} ${s.label}?`)) schedPost("shift", { remove: true, id: s.id }, "Shift removed"); } }, "×"))),
+            el("button", { class: "cell-add", type: "button", "aria-label": `Add a shift for ${u.name}, ${dayName(d)}`, onclick: () => { who.value = u.id; day.value = d; $("shiftForm").scrollIntoView({ behavior: "smooth", block: "center" }); start.focus(); } }, "+")); })))));
+    v.append(el("div", { class: "sched-wrap" }, grid), add,
+      el("p", { class: "muted small", style: "display:flex;gap:12px;align-items:center;flex-wrap:wrap" }, "Each person only sees their own shifts, on their phone.",
+        el("button", { class: "btn sm line", type: "button", onclick: async () => { const ok = confirm("Copy this week's shifts onto next week?"); if (!ok) return; const r = await api(SITE_API("shift"), { body: { copyWeek: weekStart } }).catch((e) => { toast(e.message); return null; }); if (r) { SCHED = r; weekStart = plusDays(weekStart, 7); toast(`${r.copied} shifts copied to next week`); showSchedule(); } } }, "Copy this week to next week")));
+    const past = SCHED.timeoff.filter((x) => x.status !== "pending").slice(-8).reverse();
+    if (past.length) v.append(el("details", { class: "panel", style: "margin-top:16px" }, el("summary", {}, el("strong", {}, "Approved and turned-down time off")),
+      el("ul", { class: "chg-list" }, past.map((x) => el("li", {}, el("div", {}, el("strong", {}, x.name), " · ", offWhen(x), " ", el("span", { class: `chip ${x.status === "approved" ? "ok" : "warn"}` }, offStatus[x.status])),
+        el("button", { class: "btn sm line", type: "button", onclick: () => schedPost("timeoff", { action: "cancel", id: x.id }, "Removed") }, "Remove"))))));
   }
 
   start().catch((e) => { document.getElementById("app").textContent = e.message; });

@@ -1,10 +1,14 @@
 // POST /api/waitlist — join an artist's waitlist while their books are closed.
+// /api/waitlist?site=<op> — the website's public extras (text edits, onboarding pages, Google rating and rank checks).
+//   Lives here because Crave is at Vercel's 12-function limit. See lib/site.js.
 
 const store = require("../lib/store");
 const artists = require("../lib/artists");
 const { send, method, body, ip, str } = require("../lib/http");
 
 module.exports = async function handler(req, res) {
+  const site = new URL(req.url, "http://x").searchParams.get("site");
+  if (site) return require("../lib/site").publicApi(req, res, site, send, body);
   if (!method(req, res, "POST")) return;
   const b = body(req);
   if (str(b.website)) return send(res, 200, { ok: true });

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f5ef">
+<link rel="icon" href="/assets/crave-icon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/crave-icon-180.png">
+<meta property="og:image" content="https://crave.nealmedia.app/assets/crave-logo-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&family=Figtree:wght@400;500;600;700&family=Gochi+Hand&family=Cabin+Sketch:wght@700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/crave.css">
+<script src="/assets/shop.js"></script>
+<meta name="robots" content="noindex">
+<title>Welcome to the Crave crew | Crave Coffee &amp; Bakery</title>
+</head>
+<body class="ob-page">
+<main id="main" class="ob">
+  <header class="ob-head">
+    <img class="ob-logo" src="/assets/crave-logo.png" alt="" width="120" height="112">
+    <div class="ob-co">Crave Coffee &amp; Bakery<small>Crew onboarding · 235 N Santa Claus Ln, North Pole</small></div>
+  </header>
+
+  <div class="ob-hello">
+    <p class="ob-kicker">Welcome to the crew!</p>
+    <h1>Let's get you set up</h1>
+    <p class="ob-lead">Working at Crave comes with your own staff login. It shows Crave Curbside orders as they come in, the kitchen screen, and <b>your schedule</b>: your shifts, plus a button to request time off. It also gets you a spot in <b>Meet the crew</b> on the website, if you want one. Two minutes, tops.</p>
+  </div>
+
+  <form id="ob" class="ob-form" data-form="team" novalidate>
+    <input class="ob-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <section class="ob-card">
+      <h2><span class="n">1</span>About you</h2>
+      <p class="why">For your staff login, and for your card in Meet the crew (the little house in the corner of the website).</p>
+      <div class="q"><label for="name">Your name <span class="req">*</span></label><input type="text" id="name" name="name" maxlength="100" autocomplete="name"></div>
+      <div class="q"><span class="lbl">On the website, show me as</span>
+        <div class="opts"><label><input type="radio" name="show" value="Full name"> My full name</label><label><input type="radio" name="show" value="First name only" checked> First name only</label><label><input type="radio" name="show" value="Don't show me"> Don't show me</label></div></div>
+      <div class="q"><span class="lbl">What do you do at Crave?</span>
+        <div class="opts">
+          <label><input type="radio" name="job" value="Baker"> Baker</label>
+          <label><input type="radio" name="job" value="Cook"> Cook</label>
+          <label><input type="radio" name="job" value="Barista"> Barista</label>
+          <label><input type="radio" name="job" value="Front counter"> Front counter</label>
+          <label><input type="radio" name="job" value="Cakes and decorating"> Cakes and decorating</label>
+          <label><input type="radio" name="job" value="A bit of everything"> A bit of everything</label>
+        </div></div>
+      <div class="q"><label for="jobOther">Your job title, in your words<span class="hint">Optional. "Cinnamon roll queen" counts.</span></label><input type="text" id="jobOther" name="jobOther" maxlength="80"></div>
+      <div class="q"><label for="line">A line about you<span class="hint">One or two sentences: what you love making, a fun fact, your go-to order.</span></label><textarea id="line" name="line" maxlength="600" style="min-height:80px"></textarea></div>
+      <div class="q two">
+        <div><label for="favorite">Favorite thing on the menu</label><input type="text" id="favorite" name="favorite" maxlength="120"></div>
+        <div><label for="since">Working at Crave since</label><input type="text" id="since" name="since" maxlength="60" placeholder="e.g. last summer"></div>
+      </div>
+    </section>
+
+    <section class="ob-card">
+      <h2><span class="n">2</span>Your staff login</h2>
+      <p class="why">Your email becomes your login. Rhonda turns it on, then you get a link to pick your password.</p>
+      <div class="q two">
+        <div><label for="email">Your email</label><input type="email" id="email" name="email" maxlength="120" autocomplete="email"></div>
+        <div><label for="phone">Your cell</label><input type="tel" id="phone" name="phone" maxlength="30" autocomplete="tel"></div>
+      </div>
+      <div class="feats" data-features>
+        <label class="feat"><input type="checkbox" value="My schedule on my phone" checked><span><strong>My schedule on my phone</strong><span class="hint">See your shifts any time, and request time off from your phone.</span></span></label>
+        <label class="feat"><input type="checkbox" value="Text me new Crave Curbside orders during my shift"><span><strong>Text me new Crave Curbside orders during my shift</strong><span class="hint">Handy if you run the counter.</span></span></label>
+      </div>
+      <div class="q"><label for="shifts">Days and times you usually work<span class="hint">Rhonda sets the schedule. This just helps her.</span></label><input type="text" id="shifts" name="shifts" maxlength="200" placeholder="e.g. Thu–Sun mornings"></div>
+    </section>
+
+    <section class="ob-card send">
+      <h2><span class="n">3</span>Ideas and send</h2>
+      <div class="q"><label for="featureRequest">What would make your shift easier?<span class="hint">Anything: the kitchen screen, orders, the website.</span></label><textarea id="featureRequest" name="featureRequest" maxlength="2000" style="min-height:80px"></textarea></div>
+      <div class="q"><label for="notes">Anything else?</label><textarea id="notes" name="notes" maxlength="2000" style="min-height:80px"></textarea></div>
+      <p class="note">This goes to Rhonda and Neal Media &amp; Production.</p>
+      <button type="submit" class="btn sign">Send it</button>
+      <p class="ob-err" role="alert"></p>
+    </section>
+  </form>
+
+  <div class="ob-done" hidden>
+    <h3>You're all set. Welcome to Crave!</h3>
+    <p>Rhonda will turn on your staff login. Watch for a link to pick your password, then log in at <a href="/admin">crave.nealmedia.app/admin</a> to see your schedule.</p>
+  </div>
+
+  <footer class="ob-foot">
+    <a class="credit" href="https://nealmedia.app" rel="noopener"><img src="/assets/nealmedia-logo.webp" alt="" width="11" height="22">Site by NealMedia</a>
+  </footer>
+</main>
+<script src="/assets/onboard.js" defer></script>
+</body>
+</html>

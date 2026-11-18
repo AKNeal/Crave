@@ -1,12 +1,16 @@
 // GET /api/admin/photo?p=<path> — streams a client's private reference photo, for the logged-in shop only.
+// /api/admin/photo?site=<op> — finishing the website: checklist, change requests, text edits, onboarding answers,
+//   Google ranking (staff only). Lives here because Crave is at Vercel's 12-function limit. See lib/site.js.
 
 const config = require("../../config/studio");
 const auth = require("../../lib/auth");
 const store = require("../../lib/store");
 const files = require("../../lib/files");
-const { send, method } = require("../../lib/http");
+const { send, method, body } = require("../../lib/http");
 
 module.exports = async function handler(req, res) {
+  const site = new URL(req.url, "http://x").searchParams.get("site");
+  if (site) return require("../../lib/site").staffApi(req, res, site, send, body);
   if (!method(req, res, "GET")) return;
   const me = await auth.currentUser(req);
   if (!me) return send(res, 401, { error: "Log in first." });

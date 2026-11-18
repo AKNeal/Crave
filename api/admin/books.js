@@ -23,6 +23,8 @@ module.exports = async function handler(req, res) {
   const me = await auth.currentUser(req);
   if (!me) return send(res, 401, { error: "Log in first." });
   const b = body(req);
+  // Front desk staff don't change the catering calendar (hours, closed days, outside calendars); that's the Owner's.
+  if (me.role === "desk" && b.action !== "resetFeed") return send(res, 403, { error: "Only the Owner or a Site admin changes the catering calendar." });
   const slug = str(b.slug, 60);
   if (/^ig[A-Z]/.test(String(b.action || ""))) return instagram(req, res, me, b.action);
   if (b.action === "bookingSettings") return bookingSettings(req, res, me, b);

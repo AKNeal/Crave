@@ -1,0 +1,14 @@
+{
+  "_about": "The Google searches Crave is ranked on. Checks come from a real Google search each morning (Neal Media's scheduled browser task posts them to /api/waitlist?site=rankIngest) and are saved in the site's database; the inbox reads them from there. Rank 11 means Crave wasn't in the top 10. Crave is matched by name in the business list under the search box.",
+  "business": "Crave",
+  "searches": [
+    "restaurant north pole",
+    "restaurant near me",
+    "coffee shop north pole",
+    "coffee shop near me",
+    "cafe north pole",
+    "cafe near me",
+    "bakery north pole"
+  ],
+  "checks": []
+}

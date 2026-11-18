@@ -211,10 +211,12 @@
 </footer>
 <script src="/assets/site.js" defer></script>
 <script src="/assets/team.js" defer></script>
+<script src="/assets/site-edit.js" defer></script>
 <svg class="crayon-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="crayon" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
-<a class="g-rating crayon" href="https://www.google.com/maps/search/?api=1&amp;query=Crave.%20235%20N%20Santa%20Claus%20Ln%2C%20Suite%208%2C%20North%20Pole%2C%20AK%2099705" target="_blank" rel="noopener" aria-label="Leave Crave a Google review">
+<a class="g-rating crayon" href="https://www.google.com/maps/search/?api=1&amp;query=Crave.%20235%20N%20Santa%20Claus%20Ln%2C%20Suite%208%2C%20North%20Pole%2C%20AK%2099705" target="_blank" rel="noopener" aria-label="Leave Crave a Google review" data-g-rating>
   <span class="g-mark" aria-hidden="true">Google</span>
   <span class="g-body"><span class="g-top"><span class="g-star" aria-hidden="true">★</span><strong>Review</strong><span class="g-stars" aria-hidden="true">★★★★★</span></span><span class="g-label">Tell us how we did</span></span>
 </a>
+<script>(function(){var a=document.querySelector("[data-g-rating]");if(!a||!window.fetch)return;fetch("/api/waitlist?site=rating").then(function(r){return r.ok?r.json():null}).then(function(k){if(!k||k.rating==null)return;var r=Number(k.rating),f=Math.round(r);a.querySelector("strong").textContent=r.toFixed(1);a.querySelector(".g-stars").textContent="★".repeat(f)+"☆".repeat(5-f);a.querySelector(".g-label").textContent="Rating";a.setAttribute("aria-label","Google rating "+r.toFixed(1)+" out of 5 from "+k.reviews+" reviews. Leave Crave a Google review")}).catch(function(){})})();</script>
 </body>
 </html>
