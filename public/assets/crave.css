@@ -828,3 +828,16 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 .my-shifts li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .my-shifts li.is-today { font-size: 1.05rem; } .my-shifts li.is-today strong { color: var(--sign); }
 @media (max-width: 680px) { .chk-item { grid-template-columns: 16px 1fr; } .chk-side { grid-column: 2; align-items: flex-start; flex-direction: row; } .today-extra { margin-top: -30px; } .sb-label { width: 100%; } }
+
+/* ---------- Drag-and-drop upload area (menu photos and PDFs) ---------- */
+.dropzone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; cursor: pointer;
+  min-height: 150px; padding: 22px 18px; border: 2.5px dashed #d2b08c; border-radius: 18px; background: #fffaf3; color: var(--graphite); transition: background .15s, border-color .15s, transform .15s; }
+.dropzone:hover, .dropzone:focus-visible { border-color: var(--sign); outline: none; }
+.dropzone.is-over { border-color: var(--sign); border-style: solid; background: #fbeee0; transform: scale(1.01); }
+.dropzone.is-busy { opacity: .7; pointer-events: none; }
+.dropzone .drop-icon { font-size: 2rem; line-height: 1; }
+.dropzone strong { color: var(--ink); font-size: 1.05rem; }
+.dropzone .drop-or { font: 400 1.15rem/1 "Gochi Hand", cursive; color: var(--sign); }
+.dropzone .drop-status { font-weight: 600; color: var(--sign-dark); min-height: 1.2em; }
+.drop-list { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.drop-list li { font-size: .88rem; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }

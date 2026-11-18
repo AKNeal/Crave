@@ -78,7 +78,15 @@
           <label><input type="radio" name="menuHow" value="I'll type what's missing below"> I'll type what's missing</label>
           <label><input type="radio" name="menuHow" value="Neal can come take photos"> Come take photos</label>
         </div>
-        <p class="note">Photos and PDFs go on your checklist: staff page, Website tab, "The complete menu".</p></div>
+      </div>
+      <div class="q"><span class="lbl">Menu photos or PDF<span class="hint">Snap the menu board, the pastry case, a printed menu. They upload right away and go straight to Neal Media.</span></span>
+        <div class="dropzone" id="menuDrop" aria-label="Add menu photos or a PDF">
+          <span class="drop-icon" aria-hidden="true">📋</span>
+          <strong>Drop menu photos or a PDF here</strong>
+          <span class="drop-or">or tap to choose</span>
+          <span class="drop-status" aria-live="polite"></span>
+        </div>
+        <ul class="drop-list" id="menuDropList"></ul></div>
       <div class="q"><label for="menuNotes">What's missing or wrong on the Menu page?<span class="hint">Items, prices, sizes, add-ons.</span></label><textarea id="menuNotes" name="menuNotes" maxlength="3000"></textarea></div>
       <div class="q two">
         <div><label for="bestSellers">Your best sellers</label><input type="text" id="bestSellers" name="bestSellers" maxlength="300"></div>
@@ -143,6 +151,7 @@
     <a class="credit" href="https://nealmedia.app" rel="noopener"><img src="/assets/nealmedia-logo.webp" alt="" width="11" height="22">Site by NealMedia</a>
   </footer>
 </main>
+<script src="/assets/dropzone.js" defer></script>
 <script src="/assets/onboard.js" defer></script>
 </body>
 </html>

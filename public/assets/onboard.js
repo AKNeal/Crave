@@ -53,6 +53,18 @@
   restore();
   form.addEventListener("input", save); form.addEventListener("change", save);
 
+  // Menu drop area (owner page): each file uploads right away to the checklist's "complete menu" item.
+  var drop = document.getElementById("menuDrop");
+  if (drop && window.CraveDrop) {
+    var dl = document.getElementById("menuDropList");
+    CraveDrop.attach(drop, {
+      upload: function (data, f) {
+        return fetch("/api/waitlist?site=menuUpload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: data, filename: f.name }) })
+          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "Didn't upload. Try again."); var li = document.createElement("li"); li.textContent = "✓ " + f.name; dl.appendChild(li); }); });
+      },
+    });
+  }
+
   var err = form.querySelector(".ob-err"), btn = form.querySelector('button[type="submit"]');
   form.addEventListener("submit", function (e) {
     e.preventDefault(); err.textContent = "";

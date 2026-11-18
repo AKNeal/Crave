@@ -243,6 +243,7 @@
 <script src="/assets/shop.js"></script>
 <script src="/assets/formbuilder.js"></script>
 <script src="/assets/kitchen.js"></script>
+<script src="/assets/dropzone.js"></script>
 <script>
 (() => {
   const { api, el, datetime, date } = BW;
@@ -1274,7 +1275,7 @@
   }
   function chkItem(it) {
     const open = el("button", { class: "linkbtn chk-open", type: "button" }, it.kind ? (it.value || it.files.length ? "See or change" : it.kind === "files" ? "Add photos" : "Answer") : null);
-    const li = el("li", { class: `chk-item st-${it.status}${it.neal ? " neal" : ""}` },
+    const li = el("li", { class: `chk-item st-${it.status}${it.neal ? " neal" : ""}`, "data-chk": it.id },
       el("span", { class: "led", "aria-hidden": "true" }),
       el("div", { class: "chk-main" },
         el("div", { class: "chk-title" }, el("strong", {}, it.title), it.neal ? el("span", { class: "chip" }, "Neal Media") : null),
@@ -1290,6 +1291,8 @@
     const box = el("div", { class: "chk-edit", hidden: true });
     li.querySelector(".chk-main").append(box);
     open.addEventListener("click", () => { box.hidden = !box.hidden; if (!box.hidden && !box.children.length) chkEditor(it, box); });
+    // The menu is the big one: its drop area is always open until Neal Media signs it off.
+    if (it.id === "menu" && it.status !== "done") { box.hidden = false; chkEditor(it, box); }
     return li;
   }
   function signOff(it) {
@@ -1301,6 +1304,8 @@
     try { const r = await api(SITE_API("checklist"), { body }); SITE.checklist = r.checklist; $("sbProgress").textContent = `${r.checklist.done} of ${r.checklist.total} done`; if (msg) toast(msg); return r; }
     catch (e) { toast(e.message); throw e; }
   }
+  // After a refresh, open the same item again (so a dropzone stays in view).
+  function reopen(id) { const li = document.querySelector(`[data-chk="${id}"]`); if (li?.querySelector(".chk-edit")?.hidden) li.querySelector(".chk-open")?.click(); }
   function chkEditor(it, box) {
     const refresh = () => { const y = window.scrollY; showSite(); window.scrollTo(0, y); };
     if (["text", "long", "both"].includes(it.kind)) {
@@ -1314,20 +1319,17 @@
       const list = el("ul", { class: "chk-files" }, it.files.map((f) => el("li", {},
         f.type === "application/pdf" ? el("a", { href: f.url, target: "_blank", rel: "noopener" }, `📄 ${f.label}`) : el("a", { href: f.url, target: "_blank", rel: "noopener" }, el("img", { src: f.url, alt: f.label, loading: "lazy" })),
         el("button", { class: "crew-x", type: "button", "aria-label": `Remove ${f.label}`, onclick: async () => { if (!confirm(`Remove ${f.label}?`)) return; await chkPost({ id: it.id, action: "removeFile", name: f.name }, "Removed"); refresh(); } }, "×"))));
-      const status = el("span", { class: "muted small" });
-      const input = el("input", { type: "file", multiple: true, accept: "image/*,application/pdf", class: "chk-file" });
-      input.addEventListener("change", async () => {
-        const files = [...input.files]; let n = 0;
-        for (const f of files) {
-          status.textContent = `Uploading ${++n} of ${files.length}…`;
-          try {
-            const data = f.type === "application/pdf" ? await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); }) : await BW.shrink(f, 2000, 0.85);
-            await chkPost({ id: it.id, action: "addFile", data, filename: f.name });
-          } catch (e) { status.textContent = `${f.name}: ${e.message}`; return; }
-        }
-        toast(`${files.length} added`); refresh();
+      // Drag-and-drop area: drop photos or a PDF on it, or tap to choose (assets/dropzone.js).
+      const zone = el("div", { class: "dropzone", "aria-label": `Add files for ${it.title}` },
+        el("span", { class: "drop-icon", "aria-hidden": "true" }, it.id === "menu" ? "📋" : "📷"),
+        el("strong", {}, it.kind === "both" ? "Drop photos or a PDF here" : "Drop photos here"),
+        el("span", { class: "drop-or" }, "or tap to choose"),
+        el("span", { class: "drop-status", "aria-live": "polite" }));
+      box.append(list, zone);
+      CraveDrop.attach(zone, {
+        upload: (data, f) => api(SITE_API("checklist"), { body: { id: it.id, action: "addFile", data, filename: f.name } }).then((r) => { SITE.checklist = r.checklist; }),
+        done: (n) => { if (n) { toast(`${n} added`); $("sbProgress").textContent = `${SITE.checklist.done} of ${SITE.checklist.total} done`; refresh(); reopen(it.id); } },
       });
-      box.append(list, el("label", { class: "btn sm line chk-up" }, input, it.kind === "both" ? "Add photos or a PDF" : "Add photos"), status);
     }
     if (SITE.checklist.canSignOff) {
       const note = el("input", { type: "text", value: it.note, placeholder: "Note to Rhonda (she sees this)", maxlength: 300 });
