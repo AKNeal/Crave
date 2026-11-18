@@ -868,3 +868,15 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 @media (max-width: 1000px) { .igs-table { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .igs-table { grid-template-columns: repeat(2, minmax(0, 1fr)); } .igs-cap { font-size: .95rem; } }
 @media (prefers-reduced-motion: reduce) { .igs-table, .igs-card { transition: none; } }
+.hours-note { font-weight: 600; color: var(--sign-dark); margin: 10px 0 0; }
+/* Staff page: shop hours editor and the staff page introduction */
+.hours-form { display: grid; gap: 8px; max-width: 560px; }
+.hours-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.hours-row .times { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.hours-row .times input { width: auto; }
+.hours-row.is-closed .times { opacity: .4; pointer-events: none; }
+.intro-feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 14px 0 4px; padding: 0; list-style: none; }
+.intro-feats li { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.intro-feats strong { display: block; } .intro-feats .muted { display: block; font-size: .92rem; }
+.hours-form .btn { justify-self: start; }
+.intro-feats button.linkbtn, .intro-feats a { font-size: .9rem; padding: 0; margin-top: 4px; }

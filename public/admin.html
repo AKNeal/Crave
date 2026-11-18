@@ -352,7 +352,8 @@
 
   // ---------- Today: Crave Curbside board + catering at a glance ----------
   let board = null;
-  const HOURS = { 0: "9:30 AM – 3:30 PM", 1: "7:30 AM – 3:30 PM", 2: null, 3: null, 4: "7:30 AM – 3:30 PM", 5: "7:30 AM – 3:30 PM", 6: "9:30 AM – 3:30 PM" };
+  // Today's hours: replaced by the hours saved under Website, Shop hours once they load (loadSite).
+  let HOURS = { 0: "9:30 AM – 3:30 PM", 1: "7:30 AM – 3:30 PM", 2: null, 3: null, 4: "7:30 AM – 3:30 PM", 5: "7:30 AM – 3:30 PM", 6: "9:30 AM – 3:30 PM" };
   function showToday() {
     only("todayView");
     const v = $("todayView");
@@ -369,7 +370,7 @@
       el("div", { class: "today-bar" },
         el("h1", {}, "Today"),
         el("span", { class: "today-date" }, ak({ weekday: "long", month: "long", day: "numeric" })),
-        el("span", { class: `dash-open${HOURS[wd] ? "" : " shut"}` }, HOURS[wd] ? `Open ${HOURS[wd]}` : "Closed today")),
+        el("span", { class: `dash-open${HOURS[wd] ? "" : " shut"}`, id: "todayOpen" }, HOURS[wd] ? `Open ${HOURS[wd]}` : "Closed today")),
       el("div", { class: "dash-grid" },
         el("section", { class: "dash-card" },
           el("header", {}, el("h2", {}, "Crave Curbside"), el("span", { class: "dash-sum", id: "togoSum" })),
@@ -1210,7 +1211,8 @@
   const isFull = () => ["owner", "admin"].includes(ME.role);
 
   async function loadSite() {
-    const [o, s] = await Promise.all([api(SITE_API("overview")).catch(() => null), api(SITE_API("schedule")).catch(() => null)]);
+    const [o, s, h] = await Promise.all([api(SITE_API("overview")).catch(() => null), api(SITE_API("schedule")).catch(() => null), api("/api/waitlist?site=hours").catch(() => null)]);
+    if (h && h.days) setHours(h.days);
     SITE = o && o.allowed ? o : null; SCHED = s;
     $("viewSite").hidden = !SITE; $("sitebar").hidden = !SITE;
     if (SITE) $("sbProgress").textContent = `${SITE.checklist.done} of ${SITE.checklist.total} done`;
@@ -1222,6 +1224,13 @@
   $("sbList").addEventListener("click", () => showSite());
 
 
+  const hmTxt = (t) => { const [a, b] = t.split(":").map(Number); return `${a % 12 || 12}:${String(b).padStart(2, "0")} ${a < 12 ? "AM" : "PM"}`; };
+  function setHours(days) {
+    HOURS = {}; for (let d = 0; d < 7; d++) HOURS[d] = days[d] ? `${hmTxt(days[d].open)} – ${hmTxt(days[d].close)}` : null;
+    const t = $("todayOpen"); if (!t) return;
+    const wd = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(AK({ weekday: "short" }));
+    t.className = `dash-open${HOURS[wd] ? "" : " shut"}`; t.textContent = HOURS[wd] ? `Open ${HOURS[wd]}` : "Closed today";
+  }
   function fillTodayExtra() {
     const box = $("todayExtra"); if (!box) return;
     box.textContent = "";
@@ -1255,9 +1264,56 @@
         el("a", { class: "btn line", href: "/rhonda", target: "_blank", rel: "noopener" }, "Rhonda's onboarding page"),
         el("a", { class: "btn line", href: "/onboard", target: "_blank", rel: "noopener" }, "Crew onboarding page")),
       el("p", { class: "muted small", style: "margin:-4px 0 18px" }, "Edit the website: tap any sentence on the site to change it; it's live as soon as you click away. For anything bigger (photos, new sections, the menu), use Request a change."),
-      checklistPanel(), changePanel(), rankPanel(), onboardPanel(), SITE.nealMedia ? editsPanel() : null);
+      introPanel(), checklistPanel(), hoursPanel(), changePanel(), rankPanel(), onboardPanel(), SITE.nealMedia ? editsPanel() : null);
     if (focus === "change") setTimeout(() => { $("chgBox").scrollIntoView({ block: "start" }); $("chgWhat").focus({ preventScroll: true }); }, 30);
     if (focus === "rank") setTimeout(() => $("rankBox").scrollIntoView({ block: "start" }), 30);
+    if (focus === "hours") setTimeout(() => $("hoursBox").scrollIntoView({ block: "start" }), 30);
+  }
+
+  // ----- the staff page, introduced (top of the Website tab; folds away once read) -----
+  function introPanel() {
+    let shut = false; try { shut = localStorage.getItem("crave-intro-shut") === "1"; } catch {}
+    const go = (fn) => el("button", { class: "linkbtn", type: "button", onclick: fn }, "Open →");
+    const d = el("details", { class: "panel site-panel", open: !shut },
+      el("summary", { class: "sp-head", style: "cursor:pointer;list-style:none" }, el("h2", {}, "Your staff page"), el("span", { class: "sp-count" }, shut ? "Show" : "Hide")),
+      el("p", { class: "muted" }, "Everything Crave runs on, in one place. Here's what each part does:"),
+      el("ul", { class: "intro-feats" },
+        el("li", {}, el("strong", {}, "Crave Curbside orders"), el("span", { class: "muted" }, "Orders show on Today the minute they come in: Up next, Cooking, Ready for pickup."), go(showToday)),
+        el("li", {}, el("strong", {}, "Kitchen screen"), el("span", { class: "muted" }, "Open it on a tablet in the kitchen; a tap moves an order along."), el("a", { href: "/kitchen", target: "_blank", rel: "noopener" }, "Open →")),
+        el("li", {}, el("strong", {}, "Catering and cakes"), el("span", { class: "muted" }, "Requests come in here. Send a price, agree on details and book the date from your phone."), go(() => showRequests())),
+        el("li", {}, el("strong", {}, "Staff schedule"), el("span", { class: "muted" }, "You set the shifts; each person sees only their own and can request time off."), go(showSchedule)),
+        el("li", {}, el("strong", {}, "Holiday preorders"), el("span", { class: "muted" }, "Thanksgiving pies, Christmas boxes: people pick a pickup day, you see the totals."), el("a", { href: "/thanksgiving", target: "_blank", rel: "noopener" }, "Open →")),
+        el("li", {}, el("strong", {}, "Edit the website"), el("span", { class: "muted" }, "Tap any sentence on the site and change it. It's live right away."), el("a", { href: "/?edit=1", target: "_blank", rel: "noopener" }, "Open →")),
+        el("li", {}, el("strong", {}, "Shop hours"), el("span", { class: "muted" }, "Change your hours here and the website updates itself."), go(() => $("hoursBox").scrollIntoView({ behavior: "smooth" }))),
+        el("li", {}, el("strong", {}, "Google ranking"), el("span", { class: "muted" }, "Every morning: where Crave shows up for \u201ccoffee shop near me\u201d and three more. Tap the medal."), go(() => $("rankBox").scrollIntoView({ behavior: "smooth" })))));
+    d.addEventListener("toggle", () => { try { localStorage.setItem("crave-intro-shut", d.open ? "0" : "1"); } catch {} d.querySelector(".sp-count").textContent = d.open ? "Hide" : "Show"; });
+    return d;
+  }
+
+  // ----- shop hours (what the website shows) -----
+  function hoursPanel() {
+    const H = SITE.hours, names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const rows = [1, 2, 3, 4, 5, 6, 0].map((d) => {
+      const day = H.days[d], on = el("input", { type: "checkbox", checked: Boolean(day) });
+      const open = el("input", { type: "time", step: 900, value: day ? day.open : "07:30" }), close = el("input", { type: "time", step: 900, value: day ? day.close : "15:30" });
+      const row = el("div", { class: `hours-row${day ? "" : " is-closed"}` }, el("label", { class: "check", style: "margin:0" }, on, names[d]), el("div", { class: "times" }, open, "to", close));
+      on.addEventListener("change", () => row.classList.toggle("is-closed", !on.checked));
+      return { d, on, open, close, row };
+    });
+    const note = el("input", { type: "text", maxlength: 160, value: H.note, placeholder: "e.g. Closed Thanksgiving Day. Open 9 to noon Christmas Eve." });
+    const err = el("p", { class: "form-error", hidden: true }), btn = el("button", { class: "btn", type: "submit" }, "Save hours");
+    const f = el("form", { class: "hours-form" }, rows.map((r) => r.row),
+      el("div", { class: "field", style: "margin:10px 0 0" }, el("label", {}, "Note under the hours ", el("span", { class: "opt" }, "(optional: holidays, closures)")), note), btn, err);
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault(); err.hidden = true; btn.disabled = true;
+      const days = {}; rows.forEach((r) => { days[r.d] = r.on.checked ? { open: r.open.value, close: r.close.value } : null; });
+      try { const r = await api(SITE_API("hours"), { body: { days, note: note.value } }); SITE.hours = r.hours; setHours(r.hours.days); const o = await api(SITE_API("overview")); SITE = o; toast("Hours saved. The website shows them now."); showSite("hours"); }
+      catch (x) { err.textContent = x.message; err.hidden = false; } finally { btn.disabled = false; }
+    });
+    return el("section", { class: "panel site-panel", id: "hoursBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Shop hours"), el("span", { class: "sp-count" }, H.savedAt ? `saved ${datetime(H.savedAt)}` : "not saved yet")),
+      el("p", { class: "muted" }, "The hours on the website (every page footer, Home and Visit). Uncheck a day to show it as closed. Crave Curbside pickup times are set separately on the kitchen board's Settings."),
+      f);
   }
 
   // ----- checklist -----
@@ -1285,7 +1341,8 @@
           it.sentAt && it.status !== "waiting" ? el("span", {}, `from ${it.sentBy}, ${datetime(it.sentAt)}`) : null,
           it.where ? el("a", { href: it.where.href, target: "_blank", rel: "noopener" }, `${it.where.label} ↗`) : null,
           it.href ? el("a", { href: it.href, target: "_blank", rel: "noopener" }, `${it.action || "Open"} ↗`) : null,
-          it.view === "account" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null),
+          it.view === "account" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null,
+          it.view === "hours" ? el("button", { class: "linkbtn", type: "button", onclick: () => $("hoursBox").scrollIntoView({ behavior: "smooth", block: "start" }) }, `${it.action} ↓`) : null),
         it.note ? el("div", { class: "chk-note" }, el("strong", {}, "Neal Media: "), it.note) : null),
       el("div", { class: "chk-side" }, it.kind ? open : null, signOff(it)));
     const box = el("div", { class: "chk-edit", hidden: true });

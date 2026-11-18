@@ -13,7 +13,8 @@ const OUT = path.join(__dirname, "public");
 const S = shop.studio;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-// Dining-room hours (shown on the site). Crave Curbside pickup hours are set on the kitchen board.
+// Dining-room hours (shown on the site). Only the fallback: Rhonda changes them on the staff page (Website tab, Shop hours)
+// and assets/hours.js puts the current ones in as the page loads. Crave Curbside pickup hours are set on the kitchen board.
 const HOURS = [["Monday", "7:30 AM – 3:30 PM"], ["Tue, Wed", "Closed"], ["Thu, Fri", "7:30 AM – 3:30 PM"], ["Sat, Sun", "9:30 AM – 3:30 PM"]];
 const MAP = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(S.address)}`;
 
@@ -55,7 +56,7 @@ const footer = () => `<footer class="site-footer crave-footer">
       </div>
       <div>
         <h4>Hours</h4>
-        <ul>${HOURS.map(([d, h]) => `<li>${d}<br><span class="muted">${h}</span></li>`).join("")}</ul>
+        <ul data-hours="list">${HOURS.map(([d, h]) => `<li>${d}<br><span class="muted">${h}</span></li>`).join("")}</ul>
       </div>
       <div>
         <h4>Eat</h4>
@@ -70,6 +71,7 @@ const footer = () => `<footer class="site-footer crave-footer">
 </footer>
 <script src="/assets/site.js" defer></script>
 <script src="/assets/team.js" defer></script>
+<script src="/assets/hours.js" defer></script>
 <script src="/assets/site-edit.js" defer></script>
 ${googleReview()}`;
 
@@ -91,7 +93,7 @@ function googleReview() {
 
 const poweredBy = `<p class="poweredby"><a href="https://beam.nealmedia.app" rel="noopener" target="_blank">Scheduling powered by: <img class="pb-on-light" src="/assets/brand/beam-book-logo.svg" alt="Beam" width="123" height="22"></a></p>`;
 
-const hoursList = () => `<dl class="chours">${HOURS.map(([d, h]) => `<div><dt>${d}</dt><dd>${h}</dd></div>`).join("")}</dl>`;
+const hoursList = () => `<dl class="chours" data-hours="dl">${HOURS.map(([d, h]) => `<div><dt>${d}</dt><dd>${h}</dd></div>`).join("")}</dl>`;
 
 // Full menu, rendered at build time.
 function menuHtml() {

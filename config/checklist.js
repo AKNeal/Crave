@@ -17,8 +17,10 @@ module.exports = {
   nealMedia: ["nealmedia@yahoo.com", "artemis.nealmedia@gmail.com"],
   groups: [
     { name: "Start here", items: [
-      { id: "ownerForm", title: "Rhonda's onboarding page", why: "Five minutes: your story, links, menu notes and crew in one place. Most of this list fills in from it.", form: "owner", href: "/rhonda", action: "Open it" },
+      { id: "ownerForm", title: "Rhonda's onboarding page", why: "Five minutes: your story, contact details and social links in one place. Some of this list fills in from it.", form: "owner", href: "/rhonda", action: "Open it" },
+      { id: "hours", title: "Set your shop hours", why: "Check the hours on the website and fix anything that's off, right here on the staff page (Shop hours, below). Changes show on the website right away.", auto: "hours", view: "hours", action: "Shop hours" },
       { id: "staff", title: "Your crew: names, jobs and emails", why: "One person per line, like: Jamie, Baker, jamie@email.com. Each one gets their own staff login and onboarding page, and shows up in Meet the crew.", kind: "long", where: { href: "/#crew", label: "Meet the crew" } },
+      { id: "curbside", title: "Crave Curbside: what can be ordered ahead", why: "Everything on the menu, or only some items? Anything that sells out early or needs extra time?", kind: "long", where: { href: "/order", label: "Crave Curbside" } },
       { id: "teamForms", title: "Each employee's onboarding page", why: "Send your crew this link: crave.nealmedia.app/onboard. It takes them two minutes.", form: "team", href: "/onboard", action: "Open it" },
     ] },
     { name: "Social media", items: [
@@ -29,7 +31,6 @@ module.exports = {
     { name: "Menu", items: [
       { id: "menu", title: "The complete menu with prices", why: "Photos of the menu board or a PDF are perfect. Or type what's missing or wrong on the Menu page.", kind: "both", where: { href: "/menu", label: "Menu page" } },
       { id: "foodPhotos", title: "Food and drink photos", why: "Phone photos are fine. Best sellers first. They're shrunk before they upload.", kind: "files", where: { href: "/", label: "Home and Menu" } },
-      { id: "curbside", title: "What can be ordered for Crave Curbside", why: "Everything on the menu, or only some items? Anything that sells out early or needs extra time?", kind: "long", where: { href: "/order", label: "Crave Curbside" } },
       { id: "catering", title: "Catering and cake prices", why: "Party trays, cakes, cupcakes by the dozen: what you offer, starting prices, and how much notice you need.", kind: "both", where: { href: "/catering", label: "Catering & cakes" } },
       { id: "specials", title: "Seasonal items and holiday preorders", why: "What comes back each season, and what people can preorder for Thanksgiving, Christmas and Easter.", kind: "long", where: { href: "/thanksgiving", label: "Preorders" } },
     ] },
@@ -39,7 +40,6 @@ module.exports = {
       { id: "giving", title: "Hometown Crave: who you give back to", why: "The groups and causes you support, so the Giving back page tells the real story.", kind: "long", where: { href: "/give", label: "Giving back" } },
     ] },
     { name: "The practical bits", items: [
-      { id: "hours", title: "Confirm hours and holiday closures", why: "The site says Mon, Thu, Fri 7:30 to 3:30; Sat and Sun 9:30 to 3:30; closed Tue and Wed. Right? Any holidays coming up?", kind: "long", where: { href: "/visit", label: "Visit page" } },
       { id: "contact", title: "Public phone and email", why: "The site lists (907) 415-8499 and admin@mamamafiaco.com. Keep them, or use different ones?", kind: "text", where: { href: "/visit", label: "Every page footer" } },
       { id: "logo", title: "Your logo files", why: "The biggest, sharpest versions you have (PNG, SVG or PDF). The site uses the coffee-ring logo now.", kind: "files" },
       { id: "domain", title: "Your own web address", why: "Do you own one (like cravenorthpole.com), or want one? Right now it's crave.nealmedia.app.", kind: "text" },

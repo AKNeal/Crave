@@ -52,7 +52,7 @@
       <div class="q"><span class="lbl">Is that right?</span>
         <div class="opts"><label><input type="radio" name="hoursOk" value="Hours are right"> Yes</label><label><input type="radio" name="hoursOk" value="Hours need changes"> Not quite</label></div></div>
       <div class="q"><label for="hours">What should they be?<span class="hint">Only if something's different.</span></label><input type="text" id="hours" name="hours" maxlength="1000"></div>
-      <div class="q"><label for="holidays">Holiday closures coming up</label><input type="text" id="holidays" name="holidays" maxlength="1000" placeholder="e.g. closed Thanksgiving Day, Christmas Eve until noon"></div>
+      <p class="note">You can change your hours any time on your staff page (Website, then Shop hours), and the website updates itself.</p>
       <div class="q two">
         <div><label for="publicPhone">Phone for the website</label><input type="tel" id="publicPhone" name="publicPhone" maxlength="40" value="(907) 415-8499"></div>
         <div><label for="publicEmail">Email for the website</label><input type="email" id="publicEmail" name="publicEmail" maxlength="120" value="admin@mamamafiaco.com"></div>
@@ -69,82 +69,19 @@
         <div class="q"><label for="l-tiktok">TikTok</label><input type="text" id="l-tiktok" name="links.tiktok" inputmode="url" autocapitalize="off" maxlength="300"></div>
         <div class="q"><label for="l-google">Your Google listing<span class="hint">Search Crave North Pole on Google Maps, tap Share.</span></label><input type="text" id="l-google" name="links.google" inputmode="url" autocapitalize="off" maxlength="300"></div>
         <div class="q"><label for="l-yelp">Yelp</label><input type="text" id="l-yelp" name="links.yelp" inputmode="url" autocapitalize="off" maxlength="300"></div>
-        <div class="q"><label for="l-youtube">YouTube</label><input type="text" id="l-youtube" name="links.youtube" inputmode="url" autocapitalize="off" maxlength="300"></div>
-        <div class="q"><label for="l-threads">Threads</label><input type="text" id="l-threads" name="links.threads" inputmode="url" autocapitalize="off" maxlength="300"></div>
-        <div class="q"><label for="l-x">X (Twitter)</label><input type="text" id="l-x" name="links.x" inputmode="url" autocapitalize="off" maxlength="300"></div>
-        <div class="q"><label for="l-pinterest">Pinterest</label><input type="text" id="l-pinterest" name="links.pinterest" inputmode="url" autocapitalize="off" maxlength="300"></div>
         <div class="q"><label for="l-delivery">DoorDash, Uber Eats or other delivery</label><input type="text" id="l-delivery" name="links.delivery" inputmode="url" autocapitalize="off" maxlength="300"></div>
         <div class="q"><label for="l-other">Anything else<span class="hint">Meal prep is linked already (craveprep.goprep.com).</span></label><input type="text" id="l-other" name="links.other" inputmode="url" autocapitalize="off" maxlength="300"></div>
       </div>
     </section>
 
     <section class="ob-card">
-      <h2><span class="n">4</span>Your menu</h2>
-      <p class="why">The <a href="/menu" target="_blank" rel="noopener">Menu page</a> and Crave Curbside use the same menu, so getting it complete matters most.</p>
-      <div class="q"><span class="lbl">Easiest way for you to get us the whole menu?</span>
-        <div class="opts">
-          <label><input type="radio" name="menuHow" value="Photos of the menu board"> Photos of the menu board</label>
-          <label><input type="radio" name="menuHow" value="A PDF or printed menu"> A PDF or printed menu</label>
-          <label><input type="radio" name="menuHow" value="I'll type what's missing below"> I'll type what's missing</label>
-          <label><input type="radio" name="menuHow" value="Neal can come take photos"> Come take photos</label>
-        </div>
-      </div>
-      <div class="q"><span class="lbl">Menu photos or PDF<span class="hint">Snap the menu board, the pastry case, a printed menu. They upload right away and go straight to Neal Media.</span></span>
-        <div class="dropzone" id="menuDrop" aria-label="Add menu photos or a PDF">
-          <span class="drop-icon" aria-hidden="true">📋</span>
-          <strong>Drop menu photos or a PDF here</strong>
-          <span class="drop-or">or tap to choose</span>
-          <span class="drop-status" aria-live="polite"></span>
-        </div>
-        <ul class="drop-list" id="menuDropList"></ul></div>
-      <div class="q"><label for="menuNotes">What's missing or wrong on the Menu page?<span class="hint">Items, prices, sizes, add-ons.</span></label><textarea id="menuNotes" name="menuNotes" maxlength="3000"></textarea></div>
-      <div class="q two">
-        <div><label for="bestSellers">Your best sellers</label><input type="text" id="bestSellers" name="bestSellers" maxlength="300"></div>
-        <div><label for="dietary">Gluten-free, vegan, allergy notes</label><input type="text" id="dietary" name="dietary" maxlength="300"></div>
-      </div>
-      <div class="q"><label for="curbside">Crave Curbside: anything that can't be ordered ahead, or needs extra time?</label><input type="text" id="curbside" name="curbside" maxlength="1500"></div>
-      <div class="q"><label for="catering">Catering and cakes: what you offer and starting prices<span class="hint">Trays, cakes, cupcakes by the dozen, how much notice you need.</span></label><textarea id="catering" name="catering" maxlength="2000"></textarea></div>
-      <div class="q"><label for="seasonal">Seasonal items and holiday preorders</label><input type="text" id="seasonal" name="seasonal" maxlength="1500" placeholder="e.g. pumpkin whoopie pies in fall, Christmas cookie boxes"></div>
-    </section>
-
-    <section class="ob-card">
-      <h2><span class="n">5</span>Your crew</h2>
-      <p class="why">Everyone who should have a staff login. Each person gets their own login and a two-minute onboarding page of their own. They only show up in Meet the crew on the site if they say yes.</p>
-      <div id="crew" class="crew-rows"></div>
-      <button type="button" class="ob-add" id="addCrew">+ Add someone</button>
-      <p class="note">Or send them this link yourself: <a href="/onboard" target="_blank" rel="noopener">crave.nealmedia.app/onboard</a></p>
-    </section>
-
-    <section class="ob-card">
-      <h2><span class="n">6</span>Your staff page</h2>
-      <p class="why">Your staff page is at <a href="/admin" target="_blank" rel="noopener">crave.nealmedia.app/admin</a>. Here's what it can do. Everything is on unless you uncheck it.</p>
-      <div class="feats" data-features>
-        <label class="feat"><input type="checkbox" value="Text me each new Crave Curbside order" checked><span><strong>Text me each new Crave Curbside order</strong><span class="hint">So nobody misses an order on a busy morning.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Kitchen screen" checked><span><strong>Kitchen screen</strong><span class="hint">A tablet in the kitchen shows Up next, Cooking and Ready, and a tap moves an order along.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Catering and cake requests in one inbox" checked><span><strong>Catering and cake requests in one inbox</strong><span class="hint">Send a price, agree on details and book the date, all from your phone.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Staff schedule" checked><span><strong>Staff schedule</strong><span class="hint">You set the shifts; each person sees only their own and can request time off. You approve it with one tap.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Holiday preorders" checked><span><strong>Holiday preorders</strong><span class="hint">Thanksgiving pies, Christmas boxes: people pick a pickup day, you see the totals.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Edit the website yourself" checked><span><strong>Edit the website yourself</strong><span class="hint">Tap any sentence on the site and change it. It's live right away.</span></span></label>
-        <label class="feat"><input type="checkbox" value="Google ranking report" checked><span><strong>Google ranking report</strong><span class="hint">Every morning: where Crave shows up for "coffee shop near me", "cafe North Pole" and two more.</span></span></label>
-      </div>
-    </section>
-
-    <section class="ob-card">
-      <h2><span class="n">7</span>Google and giving back</h2>
-      <p class="why">To work on your Google ranking, we need to be a manager on your Google Business Profile. On your phone in Google Maps, open Crave, tap <b>More</b>, <b>Business Profile settings</b>, <b>People and access</b>, <b>Add</b>, then add <b>artemis.nealmedia@gmail.com</b> as <b>Manager</b>.</p>
-      <div class="q"><span class="lbl">Neal Media as a Google manager</span>
-        <div class="opts"><label><input type="radio" name="google" value="Done, I added Neal Media"> Done</label><label><input type="radio" name="google" value="I'll do it later"> Later</label><label><input type="radio" name="google" value="Help me do it"> Help me</label><label><input type="radio" name="google" value="Crave doesn't have a Google listing yet"> We don't have one</label></div></div>
-      <div class="q"><label for="giving">Hometown Crave: who do you give back to?<span class="hint">Schools, teams, causes, events. It makes the Giving back page real.</span></label><textarea id="giving" name="giving" maxlength="2000"></textarea></div>
-    </section>
-
-    <section class="ob-card">
-      <h2><span class="n">8</span>Request a feature</h2>
+      <h2><span class="n">4</span>Request a feature</h2>
       <p class="why">What would make running Crave easier? Loyalty punch cards, online payment, gift cards, a daily specials board: if you can picture it, we can talk about it. Later, the staff page has a Request a change button for anything that comes up.</p>
       <div class="q"><label for="featureRequest">Your wish list</label><textarea id="featureRequest" name="featureRequest" maxlength="2000"></textarea></div>
     </section>
 
     <section class="ob-card send">
-      <h2><span class="n">9</span>Send it</h2>
+      <h2><span class="n">5</span>Send it</h2>
       <div class="q"><label for="notes">Anything else we should know?</label><textarea id="notes" name="notes" maxlength="2000"></textarea></div>
       <p class="note">This goes to Neal Media &amp; Production and lands on your checklist in the staff page. You can send it again any time with changes.</p>
       <button type="submit" class="btn sign">Send to Neal Media</button>
@@ -154,14 +91,13 @@
 
   <div class="ob-done" hidden>
     <h3>Got it. Thank you, Rhonda!</h3>
-    <p>Your answers are on their way to Neal Media and on your checklist. Next: add your menu photos on the <a href="/admin">staff page</a> (Website tab), and send your crew <a href="/onboard">crave.nealmedia.app/onboard</a>.</p>
+    <p>Your answers are on their way to Neal Media. Next stop: your <a href="/admin">staff page</a>. The Website tab walks you through the rest (menu photos, hours, your crew).</p>
   </div>
 
   <footer class="ob-foot">
     <a class="credit" href="https://nealmedia.app" rel="noopener"><img src="/assets/nealmedia-logo.webp" alt="" width="11" height="22">Site by NealMedia</a>
   </footer>
 </main>
-<script src="/assets/dropzone.js" defer></script>
 <script src="/assets/onboard.js" defer></script>
 </body>
 </html>
