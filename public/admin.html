@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Figtree:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="stylesheet" href="/assets/crave.css">
 <style>
@@ -93,6 +93,76 @@
   .hours-edit input:disabled { opacity: .4; }
   .linkbtn { background: none; border: 0; padding: 0; color: var(--sign-dark); text-decoration: underline; font: inherit; cursor: pointer; }
   @media (max-width: 480px) { .agenda-row { flex-direction: column; align-items: flex-start; } .hours-edit { grid-template-columns: 1fr 1fr; } .hours-edit .hd { grid-column: 1 / -1; } .hours-edit span { display: none; } }
+  /* ---- Google ranking: Black Wolf's 8-bit medal and torn-paper sheet (same code, Crave colors for links) ---- */
+  /* Google ranking panel: an award per search. Gold #1, silver #2, bronze #3, blue ribbon #4-5 (still earns a fee), grey #6 and below. */
+  .awards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 10px 0 16px; }
+  .award { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+  .award-tier { font: 800 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--medal-ink); }
+  .award-q { font-weight: 700; font-size: 14px; line-height: 1.25; }
+  .award-ch { font-size: 12px; font-weight: 700; } .award-ch.up { color: #15803d; } .award-ch.down { color: #b91c1c; } .award-ch.same { color: var(--graphite, #555); }
+  .award-ahead { font-size: 12px; color: var(--graphite, #555); line-height: 1.3; }
+  .tier-gold.award { border-color: #e9c46a; } .tier-silver.award { border-color: #c4cad2; } .tier-bronze.award { border-color: #d9a273; } .tier-blue.award { border-color: #93c5fd; }
+  .fee-card { border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; border: 1px solid #d1d5db; background: #f3f4f6; color: #374151; }
+  .fee-card .fee-amt { font: 800 30px/1 var(--display, var(--body)); }
+  .fee-card .fee-lbl { font-weight: 700; } .fee-card .fee-sub { font-size: 13px; opacity: .85; }
+  .fee-card.earning { background: #dcfce7; border-color: #22c55e; color: #14532d; }
+  .fee-card.earning .fee-amt { color: #15803d; }
+  /* 8-bit ribbon medal. Tier colors: o outline, l light, m mid, d dark, f face; ribbons q/R/r; k is the number. */
+  .pxmedal { display: inline-block; line-height: 0; }
+  .pxmedal svg { display: block; }
+  .pxmedal .px-o { fill: var(--px-o); } .pxmedal .px-l { fill: var(--px-l); } .pxmedal .px-m { fill: var(--px-m); } .pxmedal .px-d { fill: var(--px-d); }
+  .pxmedal .px-f { fill: var(--px-m); } .pxmedal .px-w { fill: var(--px-l); } .pxmedal .px-k { fill: var(--px-k, var(--px-o)); }
+  .pxmedal .px-q { fill: var(--rb-o, #5c0f0f); } .pxmedal .px-R { fill: var(--rb-l, #e53935); } .pxmedal .px-r { fill: var(--rb-d, #b71c1c); }
+  .pxmedal .px-shine { fill: #fff; opacity: .7; animation: px-shine 4.5s steps(12) infinite; }
+  @keyframes px-shine { 0%, 55% { transform: translateX(0) skewX(-20deg); } 100% { transform: translateX(34px) skewX(-20deg); } }
+  .tier-grey { --rb-o: #4b5563; --rb-l: #b8bcc3; --rb-d: #8b9098; }
+  .tier-blue { --px-k: #fff; }
+  .tier-gold   { --px-o: #5a3a00; --px-l: #fff3a0; --px-m: #f4c430; --px-d: #b8860b; --medal-ink: #6b4e00; }
+  .tier-silver { --px-o: #2f3640; --px-l: #ffffff; --px-m: #c9d0d8; --px-d: #7d8590; --medal-ink: #39414b; }
+  .tier-bronze { --px-o: #4a2208; --px-l: #ffd2a6; --px-m: #cd7f32; --px-d: #8a4b1c; --medal-ink: #5a2d0c; }
+  .tier-blue   { --px-o: #0b2a6b; --px-l: #bfdbfe; --px-m: #3b82f6; --px-d: #1e40af; --medal-ink: #0b2a6b; }
+  .tier-grey   { --px-o: #4b5563; --px-l: #f3f4f6; --px-m: #c4c8ce; --px-d: #8b9098; --medal-ink: #6b7280; }
+  .tier-grey .px-shine { opacity: .45; }
+  .px-font { font-family: "Press Start 2P", monospace; letter-spacing: 0; }
+  /* Floating medal (bottom left): bobs slowly and shimmers. */
+  .rank-float { position: fixed; left: 14px; bottom: 16px; z-index: 60; }
+  @media (min-width: 861px) { .rank-float { left: 34px; bottom: 30px; } }
+  .rank-badge { position: relative; border: 0; background: none; padding: 0; cursor: pointer; animation: px-bob 2.8s steps(4, jump-none) infinite alternate; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
+  @keyframes px-bob { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+  .rank-badge:focus-visible { outline: 3px dashed var(--sign); outline-offset: 4px; }
+  .rank-badge .pxmedal { position: relative; z-index: 1; }
+  .rank-badge { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .rank-cap { font: 600 9.5px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: #4b4a47;
+    background: rgba(255,255,255,.88); padding: 3px 6px 2px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
+  .rank-float.open .rank-badge { animation-play-state: paused; }
+  /* The torn sheet: tears out to the right from the medal. */
+  .rank-fly { position: absolute; left: 84px; bottom: 0; width: min(440px, calc(100vw - 92px)); pointer-events: none;
+    clip-path: inset(0 100% 0 0); transition: clip-path .45s steps(9); filter: drop-shadow(4px 5px 0 rgba(0,0,0,.18)); }
+  .rank-float.open .rank-fly { clip-path: inset(-20px -20px -20px 0); pointer-events: auto; }
+  .fly-paper { background: #fbf6e8; color: #2a2418; padding: 16px 34px 14px 18px; text-align: left;
+    background-image: repeating-linear-gradient(transparent 0 23px, rgba(80,120,200,.12) 23px 24px); }
+  .fly-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .fly-head .px-font { font-size: 11px; }
+  .fly-avg { display: flex; align-items: baseline; gap: 10px; margin: 12px 0 10px; } .fly-avg .px-font { font-size: 24px; }
+  .fly-avg-l { font: 600 13px var(--body); color: #6b6250; }
+  .fly-fee { display: flex; align-items: baseline; gap: 10px; padding: 8px 10px; font-size: 13px; margin-bottom: 10px; background: #e9e5da; color: #4b5563; box-shadow: 0 0 0 2px #b9b3a4; }
+  .fly-fee .px-font { font-size: 14px; }
+  .fly-fee.earning { background: #d7f5dd; color: #14532d; box-shadow: 0 0 0 2px #22c55e; } .fly-fee.earning .px-font { color: #15803d; }
+  .fly-rows { border-top: 2px dashed #d9cfb5; }
+  .fly-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 2px dashed #d9cfb5; font-size: 14px; }
+  .fly-q { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dot { flex: none; min-width: 40px; height: 22px; display: grid; place-items: center; font: 9px/1 "Press Start 2P", monospace; color: var(--px-o); background: var(--px-m); box-shadow: 0 0 0 2px var(--px-o); }
+  .dot.tier-blue, .dot.tier-bronze { color: #fff; }
+  .fly-rev { font-size: 13px; margin-top: 8px; } .fly-rev .up { color: #15803d; font-weight: 700; }
+  .fly-more { display: block; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--sign); text-align: right; }
+  @media (prefers-reduced-motion: reduce) { .rank-badge, .pxmedal .px-shine { animation: none; } .rank-fly { transition: none; } }
+  .rank-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+  @media (max-width: 640px) {
+    .awards { gap: 8px; } .award { padding: 10px 4px 10px; }
+    .award-q { font-size: 12px; } .award-ahead { display: none; }
+  }
+
+  body.has-rank { padding-bottom: 120px; }
 </style>
 </head>
 <body class="admin">
@@ -272,6 +342,7 @@
   const views = ["todayView", "inbox", "artistsView", "calView", "teamView", "acctView", "formView", "schedView", "siteView"];
   function only(v) {
     for (const x of views) $(x).hidden = x !== v;
+    if (typeof closeRankFly === "function") closeRankFly();
     const navFor = { todayView: "viewToday", inbox: "viewReq", calView: "viewCal", teamView: "viewTeam", acctView: "viewAcct", formView: "viewForm", schedView: "viewSched", siteView: "viewSite" };
     document.querySelectorAll("#nav a").forEach((a) => a.removeAttribute("aria-current"));
     if (navFor[v]) $(navFor[v]).setAttribute("aria-current", "page");
@@ -1142,27 +1213,20 @@
     SITE = o && o.allowed ? o : null; SCHED = s;
     $("viewSite").hidden = !SITE; $("sitebar").hidden = !SITE;
     if (SITE) $("sbProgress").textContent = `${SITE.checklist.done} of ${SITE.checklist.total} done`;
-    fillTodayExtra();
+    fillTodayExtra(); rankBadge();
   }
   $("viewSite").addEventListener("click", (e) => { e.preventDefault(); showSite(); });
   $("viewSched").addEventListener("click", (e) => { e.preventDefault(); showSchedule(); });
   $("sbChange").addEventListener("click", () => showSite("change"));
   $("sbList").addEventListener("click", () => showSite());
 
-  const medal = (r) => r == null ? ["none", "–"] : r === 1 ? ["gold", "#1"] : r === 2 ? ["silver", "#2"] : r === 3 ? ["bronze", "#3"] : r <= 10 ? ["blue", `#${r}`] : ["none", "10+"];
 
   function fillTodayExtra() {
     const box = $("todayExtra"); if (!box) return;
     box.textContent = "";
     if (SITE) {
-      const k = SITE.rankings, c = SITE.checklist;
+      const c = SITE.checklist;
       box.append(
-        el("section", { class: "dash-card" },
-          el("header", {}, el("h2", {}, "Google ranking"), el("span", { class: "dash-sum" }, k.date ? `checked ${dayName(k.date)}` : "")),
-          k.date ? el("ul", { class: "rank-mini" }, k.searches.map((x) => { const [t, w] = medal(x.rank); return el("li", {}, el("span", { class: `rk rk-${t}` }, w), el("span", {}, x.q),
-              x.change ? el("span", { class: x.change > 0 ? "rk-up" : "rk-down" }, x.change > 0 ? `▲${x.change}` : `▼${-x.change}`) : null); }))
-            : el("p", { class: "muted small" }, k.tracking ? "The first check runs tomorrow morning." : "Daily checks start once Neal Media switches them on."),
-          el("p", { style: "margin:12px 0 0" }, el("button", { class: "linkbtn", type: "button", onclick: () => showSite("rank") }, "See the details →"))),
         el("section", { class: "dash-card" },
           el("header", {}, el("h2", {}, "Finish the website"), el("span", { class: "dash-sum" }, `${c.done} of ${c.total} done`)),
           progressBar(c),
@@ -1297,21 +1361,116 @@
         SITE.nealMedia ? el("button", { class: "btn sm line", type: "button", onclick: async () => { const r = await api(SITE_API("changeDone"), { body: { id: x.id, undo: Boolean(x.doneAt) } }); SITE.changes = r.changes; showSite("change"); } }, x.doneAt ? "Reopen" : "Mark done") : null))) : null);
   }
 
-  // ----- Google ranking -----
+  // Google ranking: a floating award (bottom left). Click it for key numbers; the link at the bottom opens the full page.
+  const rkFmt = (d) => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  // Award tier by place: gold, silver, bronze, blue ribbon for #4-5, grey for #6 and below (same as Black Wolf).
+  const rkTier = (r) => r == null ? ["grey", "No rank"] : r <= 1 ? ["gold", "Gold"] : r === 2 ? ["silver", "Silver"] : r === 3 ? ["bronze", "Bronze"] : r <= 5 ? ["blue", "Top 5"] : ["grey", r > 10 ? "Not top 10" : `${r}th place`];
+  const rkLabel = (r) => r == null ? "–" : r > 10 ? ">10" : `#${r}`;
+  // The badge shows this month's Friday average (what the fee is based on), or the latest check's average before the first Friday.
+  function rkOverall(k) {
+    if (k.monthAvg != null) return { n: Math.round(k.monthAvg), exact: k.monthAvg, what: "this month's average" };
+    const rs = k.searches.map((x) => x.rank).filter((x) => x != null);
+    if (!rs.length) return { n: null, exact: null, what: "latest check" };
+    const avg = Math.round(rs.reduce((a, b) => a + b, 0) / rs.length * 10) / 10;
+    return { n: Math.round(avg), exact: avg, what: "latest check" };
+  }
+  // 8-bit ribbon medal, drawn as pixels: o outline, l light, m mid, d dark, f face, w shine, q/R/r ribbon. Colors come from the tier's CSS variables.
+  const MEDAL = ["...........ooo...........", "........ooolllooo........", "......oollllllllloo......", ".....olllldddddlmmmo.....", "....olllddwffffddmmmo....", "...ollldwwfffffffdmmmo...", "...olldwwfffffffffdmmo...", "..olldwwfffffffffffdddo..", "..olldwffffffffffffdddo..", "..olldfffffffffffffdddo..", "..olldfffffffffffffdddo..", "..olldfffffffffffffdddo..", "..olldfffffffffffffdddo..", "..olldfffffffffffffdddo..", "..olldfffffffffffffdddo..", "...ommdfffffffffffdddo...", "...ommmdfffffffffddddo...", "....ommmddfffffdddddo....", ".....ommmddddddddddo.....", "......oodddddddddoo......", "......qRooodddooorq......", ".....qRRRq.ooo.qrrrq.....", ".....qRRRq.....qrrrq.....", "....qRRRq.......qrrrq....", "....qRRRq.......qrrrq....", "...qRRRq.........qrrrq...", "...qRRRq.........qrrrq...", "..qRRRq...........qrrrq..", "..qRqRq...........qrqrq..", "..qq.qq...........qq.qq.."];
+  const DIGITS = { 0: ["111","101","101","101","111"], 1: ["010","110","010","010","111"], 2: ["111","001","111","100","111"], 3: ["111","001","011","001","111"],
+    4: ["101","101","111","001","001"], 5: ["111","100","111","001","111"], 6: ["111","100","111","101","111"], 7: ["111","001","010","010","010"],
+    8: ["111","101","111","101","111"], 9: ["111","101","111","001","111"], "+": ["000","010","111","010","000"], "-": ["000","000","111","000","000"], "?": ["111","001","011","000","010"], ".": ["0","0","0","0","1"] };
+  const SVGNS = "http://www.w3.org/2000/svg";
+  let medalN = 0;
+  function medal(r, scale = 3, label = null) {
+    const [t, word] = rkTier(r), id = "mc" + (++medalN);
+    const W = MEDAL[0].length, H = MEDAL.length;
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W * scale); svg.setAttribute("height", H * scale);
+    svg.setAttribute("shape-rendering", "crispEdges"); svg.setAttribute("aria-hidden", "true");
+    const mk = (tag, at) => { const n = document.createElementNS(SVGNS, tag); for (const k in at) n.setAttribute(k, at[k]); return n; };
+    const defs = mk("defs", {}), clip = mk("clipPath", { id }); defs.append(clip); svg.append(defs);
+    MEDAL.forEach((row, y) => [...row].forEach((c, x) => {
+      if (c === ".") return;
+      svg.append(mk("rect", { x, y, width: 1, height: 1, class: "px-" + c }));
+      if ("olmdfw".includes(c)) clip.append(mk("rect", { x, y, width: 1, height: 1 }));
+    }));
+    // The number on the face (3x5 pixel digits, 1px dot), centered.
+    const txt = label != null ? label : r == null ? "?" : r > 10 ? "10+" : String(r);
+    const glyphs = [...txt].map((ch) => DIGITS[ch] || DIGITS["?"]);
+    const gw = glyphs.reduce((a, gl) => a + gl[0].length + 1, -1);
+    let x = Math.round(W / 2 - gw / 2); const y0 = 9;
+    for (const gl of glyphs) {
+      gl.forEach((line, dy) => [...line].forEach((bit, dx) => { if (bit === "1") svg.append(mk("rect", { x: x + dx, y: y0 + dy, width: 1, height: 1, class: "px-k" })); }));
+      x += gl[0].length + 1;
+    }
+    const g = mk("g", { "clip-path": `url(#${id})` });
+    g.append(mk("rect", { class: "px-shine", x: -6, y: -2, width: 3, height: 26, transform: "skewX(-20)" }));
+    svg.append(g);
+    return el("span", { class: `pxmedal tier-${t}`, role: "img", "aria-label": `${word}, number ${r ?? "unknown"}` }, svg);
+  }
+  // A torn edge for the paper sheet (random each time, so it looks hand-torn).
+  function tornEdge() {
+    const pts = ["0 0"]; let y = 0;
+    while (y < 100) { pts.push(`${(96 + Math.random() * 4).toFixed(1)}% ${y.toFixed(1)}%`); y += 3 + Math.random() * 5; }
+    pts.push("97% 100%", "0 100%");
+    return `polygon(${pts.join(", ")})`;
+  }
+  function closeRankFly() { const w = document.getElementById("rankFloat"); if (w) { w.classList.remove("open"); w.querySelector(".rank-badge")?.setAttribute("aria-expanded", "false"); } }
+
+  function rankBadge() {
+    document.getElementById("rankFloat")?.remove(); document.body.classList.remove("has-rank");
+    const k = SITE && SITE.rankings;
+    if (!k || !k.date) return;
+    const o = rkOverall(k);
+    const btn = el("button", { class: "rank-badge", type: "button", "aria-expanded": "false", "aria-controls": "rankFly", "aria-label": `Google ranking: #${o.exact ?? "–"}. Show details` },
+      medal(o.n, 3, o.exact == null ? null : o.exact > 10 ? "10+" : String(o.exact)),
+      el("span", { class: "rank-cap", "aria-hidden": "true" }, "Google ranking"));
+    const rows = k.searches.map((x) => el("div", { class: "fly-row" },
+      el("span", { class: `dot tier-${rkTier(x.rank)[0]}` }, rkLabel(x.rank)),
+      el("span", { class: "fly-q" }, x.q),
+      x.change ? el("span", { class: `award-ch ${x.change > 0 ? "up" : "down"}` }, x.change > 0 ? `▲${x.change}` : `▼${-x.change}`)
+        : el("span", { class: "award-ch same", title: "No change", "aria-label": "No change" }, "–")));
+    const paper = el("div", { class: "fly-paper" },
+      el("div", { class: "fly-head" }, el("span", { class: "px-font" }, "GOOGLE RANK"), el("span", { class: "small muted" }, `checked ${rkFmt(k.date)}`)),
+      el("div", { class: "fly-avg" }, el("span", { class: "px-font" }, o.exact != null ? `#${o.exact}` : "–"), el("span", { class: "fly-avg-l" }, o.what)),
+      el("div", { class: "fly-rows" }, rows),
+      k.reviews != null ? el("div", { class: "fly-rev" }, el("strong", {}, `${k.reviews} reviews`), ` · ${Number(k.rating).toFixed(1)}★`) : null,
+      el("a", { href: "#", class: "fly-more", onclick: (e) => { e.preventDefault(); closeRankFly(); showSite("rank"); } }, "See full details →"));
+    const fly = el("div", { class: "rank-fly", id: "rankFly", role: "dialog", "aria-label": "Google ranking" }, paper);
+    const wrap = el("div", { class: "rank-float", id: "rankFloat" }, btn, fly);
+    btn.addEventListener("click", () => {
+      const open = !wrap.classList.contains("open");
+      if (open) paper.style.clipPath = tornEdge();
+      wrap.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) closeRankFly(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRankFly(); });
+    document.body.append(wrap); document.body.classList.add("has-rank");
+  }
+
+  // Full details (Website tab): one award per search, like Black Wolf's ranking page.
   function rankPanel() {
     const k = SITE.rankings;
     const refresh = el("button", { class: "btn sm line", type: "button", onclick: async () => { try { const r = await api(SITE_API("rankRefresh"), { body: {} }); SITE.rankings = r.rankings; toast("Asked for a fresh check. It runs with the next morning check."); showSite("rank"); } catch (e) { toast(e.message); } } }, "Check again");
-    return el("section", { class: "panel site-panel", id: "rankBox" },
-      el("div", { class: "sp-head" }, el("h2", {}, "Google ranking"), el("span", { class: "sp-count" }, k.date ? `checked ${dayName(k.date, { weekday: "long", month: "long", day: "numeric" })}` : "no checks yet")),
-      el("p", { class: "muted" }, "Where Crave shows up in Google's business list (the map results under the search box) for each search, checked every morning from North Pole. ",
-        k.rating != null ? el("strong", {}, `Google rating ${Number(k.rating).toFixed(1)}★ from ${k.reviews} reviews.`) : null),
-      el("table", { class: "rank-table" }, el("thead", {}, el("tr", {}, el("th", {}, "Search"), el("th", {}, "Crave"), el("th", {}, "Change"), el("th", {}, "Top of the list"))),
-        el("tbody", {}, k.searches.map((x) => { const [t, w] = medal(x.rank); return el("tr", {}, el("td", {}, `“${x.q}”`), el("td", {}, el("span", { class: `rk rk-${t}` }, w)),
-          el("td", {}, x.change ? el("span", { class: x.change > 0 ? "rk-up" : "rk-down" }, x.change > 0 ? `▲ ${x.change}` : `▼ ${-x.change}`) : "–"),
-          el("td", { class: "muted small" }, (x.top || []).slice(0, 3).join(" · ") || "–")); }))),
-      el("p", { class: "muted small", style: "margin:12px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap" },
-        k.avg != null ? `Average spot: ${k.avg}. ` : "", k.requestedAt && (!k.at || k.at < k.requestedAt) ? `Fresh check asked for ${datetime(k.requestedAt)}. ` : "",
-        !k.tracking ? "Daily checks aren't switched on yet (Neal Media). " : "", refresh));
+    const body = el("section", { class: "panel site-panel", id: "rankBox" },
+      el("div", { class: "sp-head" }, el("h2", {}, "Google ranking"), el("span", { class: "sp-count" }, k.date ? `checked ${rkFmt(k.date)}` : "no checks yet")),
+      el("p", { class: "muted", style: "max-width:680px" }, "Where Crave shows in the business list of a real Google search from North Pole. #1 is the top. Searched every night at 1:50 AM."));
+    if (k.date) body.append(el("div", { class: "awards" }, k.searches.map((x) => {
+      const [t, word] = rkTier(x.rank);
+      const ch = x.change == null ? "–" : x.change > 0 ? `▲ ${x.change}` : x.change < 0 ? `▼ ${-x.change}` : "– No change";
+      const ahead = x.rank > 1 ? (x.top || []).slice(0, Math.min(x.rank - 1, 5)).filter((n) => !/^crave\.?$/i.test(n.trim())) : [];
+      return el("div", { class: `award tier-${t}` }, medal(x.rank, 4),
+        el("span", { class: "award-tier" }, word),
+        el("span", { class: "award-q" }, `"${x.q}"`),
+        el("span", { class: `award-ch ${x.change > 0 ? "up" : x.change < 0 ? "down" : "same"}` }, ch),
+        ahead.length ? el("span", { class: "award-ahead" }, `Ahead: ${ahead.join(", ")}`) : null);
+    })));
+    else body.append(el("p", { class: "muted" }, k.tracking ? "The first check runs tonight at 1:50 AM." : "Daily checks aren't switched on yet (Neal Media)."));
+    body.append(el("div", { class: "rank-foot" },
+      k.reviews != null ? el("span", {}, el("strong", {}, `${k.reviews} Google reviews`), ` · ${Number(k.rating).toFixed(1)}★`) : null,
+      k.avg != null ? el("span", {}, `Average spot #${k.avg}`) : null,
+      k.requestedAt && (!k.at || k.at < k.requestedAt) ? el("span", {}, `Fresh check asked for ${datetime(k.requestedAt)}`) : null, refresh));
+    return body;
   }
 
   // ----- onboarding answers -----
