@@ -47,7 +47,7 @@ module.exports = {
     { name: "Neal Media's part", items: [
       { id: "email", title: "Connect email", why: "So the site can send order and catering emails, password links, and copies of these answers.", neal: true, auto: "email" },
       { id: "texts", title: "Connect text alerts", why: "New Crave Curbside orders and catering requests by text.", neal: true, auto: "sms" },
-      { id: "rankTracking", title: "Daily Google ranking checks", why: "Seven searches checked every morning; results show on Today and in the Website tab.", neal: true, auto: "ranking" },
+      { id: "rankTracking", title: "Daily Google ranking checks", why: "Four searches checked every night; results show on Today and in the Website tab.", neal: true, auto: "ranking" },
     ] },
   ],
 };
