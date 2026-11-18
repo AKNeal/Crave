@@ -1300,7 +1300,7 @@
   // ----- Google ranking -----
   function rankPanel() {
     const k = SITE.rankings;
-    const refresh = el("button", { class: "btn sm line", type: "button", onclick: async () => { try { const r = await api(SITE_API("rankRefresh"), { body: {} }); SITE.rankings = r.rankings; toast("Asked for a fresh check. It usually runs within the hour."); showSite("rank"); } catch (e) { toast(e.message); } } }, "Check again");
+    const refresh = el("button", { class: "btn sm line", type: "button", onclick: async () => { try { const r = await api(SITE_API("rankRefresh"), { body: {} }); SITE.rankings = r.rankings; toast("Asked for a fresh check. It runs with the next morning check."); showSite("rank"); } catch (e) { toast(e.message); } } }, "Check again");
     return el("section", { class: "panel site-panel", id: "rankBox" },
       el("div", { class: "sp-head" }, el("h2", {}, "Google ranking"), el("span", { class: "sp-count" }, k.date ? `checked ${dayName(k.date, { weekday: "long", month: "long", day: "numeric" })}` : "no checks yet")),
       el("p", { class: "muted" }, "Where Crave shows up in Google's business list (the map results under the search box) for each search, checked every morning from North Pole. ",
