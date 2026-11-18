@@ -841,3 +841,30 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 .dropzone .drop-status { font-weight: 600; color: var(--sign-dark); min-height: 1.2em; }
 .drop-list { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .drop-list li { font-size: .88rem; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+
+/* ---------- Fresh from Instagram: a shuffled table of polaroids (assets/igshuffle.js) ---------- */
+.igs { padding: clamp(48px, 7vw, 84px) 0; background: #f3ece2; }
+.igs[hidden] { display: none; }
+.igs-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.igs-head h2 { margin: 4px 0 0; }
+.igs-tools { display: flex; align-items: center; gap: 14px; }
+.igs-tools a { font-weight: 600; }
+.igs-btn { position: relative; font: 400 1.35rem/1 "Gochi Hand", cursive; color: #fffaf1; border: 0; padding: 10px 20px 11px; cursor: pointer; background: none; isolation: isolate; transform: rotate(-2deg); transition: transform .15s; }
+.igs-btn::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 22px 16px 20px 14px; filter: url(#crayon);
+  background: repeating-linear-gradient(62deg, #a8582a 0 3px, #b9693a 3px 4px, #96491f 4px 6px); }
+.igs-btn:hover, .igs-btn:focus-visible { transform: rotate(0deg) scale(1.06); }
+.igs-btn:active { transform: rotate(3deg) scale(.96); }
+.igs-table { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(14px, 2vw, 26px); transition: opacity .25s, transform .25s; }
+.igs-table.is-out { opacity: 0; transform: scale(.97) rotate(-.5deg); }
+.igs-card { position: relative; display: block; background: #fffdf6; padding: 9px 9px 0; border-radius: 3px; color: #2a1d16; text-decoration: none;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 12px 24px -14px rgba(60,30,10,.55); transform: rotate(var(--tilt)); transition: transform .2s, box-shadow .2s; }
+.igs-table.is-in .igs-card { animation: igs-deal .5s cubic-bezier(.2,.9,.3,1.2) both; animation-delay: var(--delay); }
+@keyframes igs-deal { from { opacity: 0; transform: translateY(-26px) rotate(calc(var(--tilt) * -3)) scale(.9); } to { opacity: 1; transform: rotate(var(--tilt)); } }
+.igs-card:hover, .igs-card:focus-visible { transform: rotate(0deg) scale(1.05); z-index: 2; box-shadow: 0 18px 34px -14px rgba(60,30,10,.6); color: #2a1d16; }
+.igs-ph { position: relative; display: block; padding-top: 100%; background: #efe6d8; overflow: hidden; }
+.igs-card .igs-ph img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; margin: 0; }
+.igs-cap { display: block; font: 400 1.05rem/1.15 "Gochi Hand", cursive; padding: 8px 2px 10px; min-height: 2.6em; overflow: hidden; }
+.igs-play { position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: rgba(42,29,22,.7); color: #fff; font-size: .8rem; }
+@media (max-width: 1000px) { .igs-table { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .igs-table { grid-template-columns: repeat(2, minmax(0, 1fr)); } .igs-cap { font-size: .95rem; } }
+@media (prefers-reduced-motion: reduce) { .igs-table, .igs-card { transition: none; } }
