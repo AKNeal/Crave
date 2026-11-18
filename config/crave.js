@@ -20,6 +20,12 @@ module.exports = {
     address: "235 N Santa Claus Ln, Suite 8, North Pole, AK 99705",
     instagram: "crave.907",
     website: "",
+    // Google Business Profile ("Crave.", found on Google Maps Nov 17, 2026). The review button and the home page use these.
+    googlePlaceId: "ChIJcbLQccxNMlER_M0KyQsJ_SA",
+    googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJcbLQccxNMlER_M0KyQsJ_SA",
+    googleReviewsUrl: "https://www.google.com/maps/place/?q=place_id:ChIJcbLQccxNMlER_M0KyQsJ_SA",
+    // Shown until the morning Google check has a newer number (then the button updates itself).
+    googleRating: { rating: 4.6, reviews: 50, date: "2026-11-17" },
   },
   theme: { mode: "light", accent: "#a8582a", logo: "/assets/crave-logo.png" },
   calendarDefaults: {

@@ -149,6 +149,7 @@ for (const file of fs.readdirSync(SRC).filter((f) => f.endsWith(".html"))) {
     .replace(/<!--#special-->/g, specialBanner())
     .replace(/<!--#jsonld-->/g, jsonLd())
     .replace(/%MAP%/g, MAP)
+    .replace(/%GREVIEWS%/g, esc(S.googleReviewsUrl || MAP))
     .replace(/%ADDRESS%/g, esc(S.address))
     .replace(/%MENUNOTE%/g, esc(MENU.note));
   fs.writeFileSync(path.join(OUT, file), html);
