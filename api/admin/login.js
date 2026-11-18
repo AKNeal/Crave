@@ -87,7 +87,7 @@ async function forgot(req, res, b) {
   const email = str(b.email, 120).toLowerCase();
   if (!EMAIL_RE.test(email)) return send(res, 400, { error: "Enter the email you log in with." });
   if (!emailReady()) return send(res, 200, { ok: true, emailed: false,
-    message: "Email isn't connected yet, so reset links can't be sent. Ask the shop owner to make you one from the Team screen." });
+    message: "Email isn't connected yet, so reset links can't be sent. Ask the shop owner to make you one from the Team screen. Owner locked out? Go back, leave Email blank, and log in with the shop key (ADMIN_PASSWORD in Vercel). Then set a new password under Team." });
   const u = (await auth.users()).find((x) => x.email === email && x.active !== false);
   if (u) {
     const link = await auth.makeResetLink(baseUrl(req), u, FORGOT_HOURS);

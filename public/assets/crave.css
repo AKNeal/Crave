@@ -668,3 +668,30 @@ body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
   .wl-tour > li { grid-template-columns: 1fr; }
   .wl-pic { max-width: 220px; }
 }
+
+/* ---------- Floating Google review (Black Wolf's template, drawn in crayon) ---------- */
+.crayon-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.g-rating { position: fixed; right: 22px; bottom: 22px; z-index: 40; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px;
+  color: #2a1d16; text-decoration: none; isolation: isolate; transform: rotate(2deg); transition: transform .2s; }
+/* The paper and its wobbly crayon outline sit behind the text, so the words stay crisp. */
+.g-rating::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 999px 960px 999px 940px;
+  background: #fffdf6 repeating-linear-gradient(-28deg, rgba(168,88,42,.06) 0 2px, transparent 2px 5px);
+  border: 2.5px solid #a8582a; box-shadow: 0 10px 26px -12px rgba(40,20,5,.55); filter: url(#crayon); }
+.g-rating:hover, .g-rating:focus-visible { transform: rotate(0deg) scale(1.05); color: #2a1d16; }
+.g-rating:focus-visible { outline: 2px dashed #a8582a; outline-offset: 5px; }
+.g-mark { position: relative; z-index: 0; height: 34px; padding: 0 13px; display: grid; place-items: center; color: #fffaf1;
+  font: 400 1.25rem/1 "Gochi Hand", cursive; letter-spacing: .02em; }
+.g-mark::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 22px 16px 20px 14px; filter: url(#crayon);
+  background: repeating-linear-gradient(62deg, #a8582a 0 3px, #b9693a 3px 4px, #96491f 4px 6px); }
+.g-body { display: flex; flex-direction: column; line-height: 1.05; }
+.g-top { display: flex; align-items: center; gap: 6px; } .g-top strong { font: 400 1.35rem/1 "Gochi Hand", cursive; color: #2a1d16; }
+.g-stars { color: #e0a419; font-size: 14px; letter-spacing: 1px; text-shadow: .5px .5px 0 #c0392b; }
+.g-star { display: none; color: #e0a419; font-size: 16px; line-height: 1; }
+.g-label { font: 400 .95rem/1.2 "Gochi Hand", cursive; color: #8a4520; }
+@media (max-width: 860px) { .g-rating { right: 16px; bottom: 18px; padding: 4px 12px 4px 4px; gap: 7px; } .g-mark { height: 28px; padding: 0 10px; font-size: 1.05rem; } .g-top strong { font-size: 1.15rem; } .g-stars, .g-label { display: none; } .g-star { display: inline; } .g-top { gap: 4px; } }
+/* Order page on phones: sit above the cart bar. */
+@media (max-width: 680px) { body:has(.mobile-cart:not([hidden])) .g-rating { bottom: 84px; } }
+@media print { .g-rating { display: none; } }
+/* Room under the footer so the floating "Meet us!" card and Google button never cover the copyright and credit. */
+.crave-footer { padding-bottom: 110px; }
+@media (max-width: 860px) { .crave-footer { padding-bottom: 150px; } }

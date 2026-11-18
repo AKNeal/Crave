@@ -64,12 +64,27 @@ const footer = () => `<footer class="site-footer crave-footer">
     </div>
     <div class="footer-bottom">
       <span>© <span data-shop="year">${new Date().getFullYear()}</span> Crave Coffee &amp; Bakery · North Pole, AK</span>
-      <a href="https://nealmedia.app" rel="noopener">Site by Neal Media &amp; Production</a>
+      <a class="credit" href="https://nealmedia.app" rel="noopener"><img src="/assets/nealmedia-logo.webp" alt="" width="11" height="22" loading="lazy">Site by NealMedia</a>
     </div>
   </div>
 </footer>
 <script src="/assets/site.js" defer></script>
-<script src="/assets/team.js" defer></script>`;
+<script src="/assets/team.js" defer></script>
+${googleReview()}`;
+
+// Floating Google review button: same template as Black Wolf's, drawn in crayon to match the "Meet us!" card.
+// Set studio.googleReviewUrl (Google's "write a review" link) and studio.googleRating ({ rating, reviews }) in config/crave.js.
+function googleReview() {
+  const url = S.googleReviewUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Crave. ${S.address}`)}`;
+  const g = S.googleRating;
+  const r = g && Number(g.rating), f = r ? Math.round(r) : 5;
+  const label = r ? `Google rating ${r.toFixed(1)} out of 5 from ${g.reviews} reviews. Leave Crave a Google review` : "Leave Crave a Google review";
+  return `<svg class="crayon-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="crayon" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<a class="g-rating crayon" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc(label)}">
+  <span class="g-mark" aria-hidden="true">Google</span>
+  <span class="g-body"><span class="g-top"><span class="g-star" aria-hidden="true">★</span><strong>${r ? r.toFixed(1) : "Review"}</strong><span class="g-stars" aria-hidden="true">${"★".repeat(f)}${"☆".repeat(5 - f)}</span></span><span class="g-label">${r ? "Rating" : "Tell us how we did"}</span></span>
+</a>`;
+}
 
 const poweredBy = `<p class="poweredby"><a href="https://beam.nealmedia.app" rel="noopener" target="_blank">Scheduling powered by: <img class="pb-on-light" src="/assets/brand/beam-book-logo.svg" alt="Beam" width="123" height="22"></a></p>`;
 
