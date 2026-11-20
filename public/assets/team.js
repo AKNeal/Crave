@@ -8,7 +8,7 @@
   // "Team member" cards hold the spots for the rest of the team: swap in each person's name, bio and photo as their crew
   // onboarding answers come in. (A card can still use a drawing instead of a photo: add doodle: "baker" etc.)
   var CREW = [
-    { name: "Rhonda", role: "Owner, head chef", line: "Runs the kitchen and the counter at Crave, and bakes everything from scratch.", photo: "", color: "#c46a2c" },
+    { name: "Rhonda", role: "Owner, head chef, baker, cake decorator, barista, cashier, bookkeeper, payroll, marketing agent, social media manager, scheduler, HR department, buyer, delivery driver, IT help desk, repair crew, dishwasher, janitor and chief taste tester", line: "Runs the kitchen and the counter at Crave, and bakes everything from scratch.", photo: "", color: "#c46a2c" },
     { name: "Team member", role: "", line: "", photo: "", color: "#c46a2c" },
     { name: "Team member", role: "", line: "", photo: "", color: "#c46a2c" },
   ];
