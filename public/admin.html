@@ -171,7 +171,7 @@
   <nav id="nav" hidden><a href="#" id="viewToday">Today</a><a href="#" id="viewReq">Catering</a><a href="#" id="viewCal">Calendar</a><a href="#" id="viewSched">Schedule</a><a href="#" id="viewArt" hidden>Books and waitlist</a><a href="#" id="viewForm" hidden>Booking form</a><a href="#" id="viewTeam" hidden>Team</a><a href="#" id="viewSite" hidden>Website</a><a href="#" id="viewAcct">Account</a><a href="#" id="logout">Log out</a></nav>
 </div></header>
 <div class="sitebar" id="sitebar" hidden><div class="shell sitebar-in">
-  <span class="sb-label">Checklist <button class="linkbtn" type="button" id="sbList"><span id="sbProgress"></span></button></span>
+  <span class="sb-label">Website checklist <button class="linkbtn" type="button" id="sbList"><span id="sbProgress"></span></button></span>
   <a class="btn sm sign" href="/?edit=1" target="_blank" rel="noopener" id="sbEdit">✎ Edit the website</a>
   <button class="btn sm line" type="button" id="sbChange">Request a change</button>
 </div></div>
@@ -1238,7 +1238,7 @@
       const c = SITE.checklist;
       box.append(
         el("section", { class: "dash-card" },
-          el("header", {}, el("h2", {}, "Checklist"), el("span", { class: "dash-sum" }, `${c.done} of ${c.total} done`)),
+          el("header", {}, el("h2", {}, "Website checklist"), el("span", { class: "dash-sum" }, `${c.done} of ${c.total} done`)),
           progressBar(c),
           el("p", { class: "muted small" }, c.total - c.done - c.review > 0 ? `${c.total - c.done - c.review} still needed from Crave. ${c.review ? `${c.review} sent and being worked in.` : ""}` : "Everything's in. Neal Media is finishing up."),
           el("p", { style: "margin:12px 0 0;display:flex;gap:10px;flex-wrap:wrap" },
