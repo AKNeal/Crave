@@ -768,6 +768,8 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 .st-review .led { background: #e0a419; box-shadow: 0 0 0 3px rgba(224,164,25,.18), 0 0 8px rgba(224,164,25,.5); }
 .st-done .led { background: #2d8a4e; box-shadow: 0 0 0 3px rgba(45,138,78,.15), 0 0 8px rgba(45,138,78,.45); }
 .chk-item.neal:not(.st-done) .led { background: #8c8a85; box-shadow: none; }
+.st-later .led { background: #c9c5bd; box-shadow: none; } .st-later .chk-st { color: #8c8a85; } .st-later .chk-title strong, .st-later .chk-why { opacity: .7; }
+.chk-later-note { margin: -4px 0 6px; font-size: 14px; }
 .chk-title { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .chk-why { color: var(--graphite); font-size: .95rem; margin-top: 2px; }
 .chk-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .85rem; margin-top: 6px; color: var(--graphite); }

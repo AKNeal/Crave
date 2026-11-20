@@ -1317,7 +1317,7 @@
   }
 
   // ----- checklist -----
-  const STATUS_WORD = { done: "Done", review: "Sent · Neal Media is working it in", waiting: "Still needed" };
+  const STATUS_WORD = { done: "Done", review: "Sent · Neal Media is working it in", waiting: "Still needed", later: "After the agreement is signed" };
   function checklistPanel() {
     const c = SITE.checklist;
     const p = el("section", { class: "panel site-panel", id: "chkBox" },
@@ -1325,7 +1325,10 @@
       progressBar(c), el("p", { class: "muted" }, c.intro));
     for (const g of c.groups) {
       const items = c.items.filter((i) => i.group === g);
-      p.append(el("h3", { class: "chk-group" }, g), el("ul", { class: "chk" }, items.map(chkItem)));
+      const wait = items.length && items.every((i) => i.after) && !c.agreementSigned;
+      p.append(el("h3", { class: "chk-group" }, g),
+        wait ? el("p", { class: "muted chk-later-note" }, "These start once Crave and Neal Media have signed the website agreement. Nothing to do here yet.") : null,
+        el("ul", { class: "chk" }, items.map(chkItem)));
     }
     return p;
   }
@@ -1336,15 +1339,15 @@
       el("div", { class: "chk-main" },
         el("div", { class: "chk-title" }, el("strong", {}, it.title), it.neal ? el("span", { class: "chip" }, "Neal Media") : null),
         el("div", { class: "chk-why" }, it.why),
-        el("div", { class: "chk-meta" }, el("span", { class: "chk-st" }, it.neal && it.status !== "done" ? "In progress" : STATUS_WORD[it.status]),
+        el("div", { class: "chk-meta" }, el("span", { class: "chk-st" }, it.neal && it.status !== "done" && it.status !== "later" ? "In progress" : STATUS_WORD[it.status]),
           it.detail ? el("span", {}, it.detail) : null,
           it.sentAt && it.status !== "waiting" ? el("span", {}, `from ${it.sentBy}, ${datetime(it.sentAt)}`) : null,
           it.where ? el("a", { href: it.where.href, target: "_blank", rel: "noopener" }, `${it.where.label} ↗`) : null,
-          it.href ? el("a", { href: it.href, target: "_blank", rel: "noopener" }, `${it.action || "Open"} ↗`) : null,
-          it.view === "account" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null,
+          it.href && it.status !== "later" ? el("a", { href: it.href, target: "_blank", rel: "noopener" }, `${it.action || "Open"} ↗`) : null,
+          it.view === "account" && it.status !== "later" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null,
           it.view === "hours" ? el("button", { class: "linkbtn", type: "button", onclick: () => $("hoursBox").scrollIntoView({ behavior: "smooth", block: "start" }) }, `${it.action} ↓`) : null),
         it.note ? el("div", { class: "chk-note" }, el("strong", {}, "Neal Media: "), it.note) : null),
-      el("div", { class: "chk-side" }, it.kind ? open : null, signOff(it)));
+      el("div", { class: "chk-side" }, it.kind && it.status !== "later" ? open : null, it.status === "later" ? null : signOff(it)));
     const box = el("div", { class: "chk-edit", hidden: true });
     li.querySelector(".chk-main").append(box);
     open.addEventListener("click", () => { box.hidden = !box.hidden; if (!box.hidden && !box.children.length) chkEditor(it, box); });
