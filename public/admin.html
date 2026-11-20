@@ -1344,7 +1344,7 @@
           it.sentAt && it.status !== "waiting" ? el("span", {}, `from ${it.sentBy}, ${datetime(it.sentAt)}`) : null,
           it.where ? el("a", { href: it.where.href, target: "_blank", rel: "noopener" }, `${it.where.label} ↗`) : null,
           it.href && it.status !== "later" ? el("a", { href: it.href, target: "_blank", rel: "noopener" }, `${it.action || "Open"} ↗`) : null,
-          it.view === "account" && it.status !== "later" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.action) : null,
+          it.view === "account" && it.status !== "later" ? el("button", { class: "linkbtn", type: "button", onclick: showAccount }, it.href ? "Account" : it.action) : null,
           it.view === "hours" ? el("button", { class: "linkbtn", type: "button", onclick: () => $("hoursBox").scrollIntoView({ behavior: "smooth", block: "start" }) }, `${it.action} ↓`) : null),
         it.note ? el("div", { class: "chk-note" }, el("strong", {}, "Neal Media: "), it.note) : null),
       el("div", { class: "chk-side" }, it.kind && it.status !== "later" ? open : null, it.status === "later" ? null : signOff(it)));

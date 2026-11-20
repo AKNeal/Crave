@@ -42,10 +42,8 @@ module.exports = {
       { id: "email", title: "Connect email", why: "So the site can send order and catering emails, password links, and copies of these answers.", neal: true, auto: "email" },
     ] },
     { name: "After the agreement is signed", items: [
-      { id: "googleAccess", title: "Add Neal Media as a Google profile manager", why: "Starts the Google ranking work. On your Business Profile: tap More, Business Profile settings, People and access, Add, then artemis.nealmedia@gmail.com as Manager. Type Done here when it's added.", kind: "text", href: "https://business.google.com/", action: "Google", after: true },
-      { id: "instagramConnect", title: "Connect the Crave Instagram", why: "Puts your newest posts on the home page by themselves. Account, then Connect Instagram.", auto: "instagram", view: "account", action: "Account", after: true },
-      { id: "texts", title: "Connect text alerts", why: "New Crave Curbside orders and catering requests by text. Carrier registration is part of the agreement.", neal: true, auto: "sms", after: true },
-      { id: "rankTracking", title: "Google ranking work and monthly reports", why: "Business Profile care, search work and reviews, with four searches checked every night; results show on Today and in the Website tab.", neal: true, auto: "ranking", after: true },
+      { id: "domain", title: "Hand Neal Media the keys: web address, Google and Instagram", why: "Three quick things, any order. 1) Web address: if you own one (like cravenorthpole.com), type it here with where it's registered; if not, we'll buy one in Crave's name. 2) Google: on your Business Profile tap More, Business Profile settings, People and access, Add, then artemis.nealmedia@gmail.com as Manager. 3) Instagram: Account, then Connect Instagram. Type what's done here.", kind: "text", href: "https://business.google.com/", action: "Google", view: "account", after: true },
+      { id: "nealSetup", title: "Neal Media sets up the web address, text alerts and Google ranking", why: "Connecting the web address, carrier registration for text alerts, then Business Profile care, search work, reviews and nightly ranking checks with a monthly report.", neal: true, after: true },
     ] },
   ],
 };
