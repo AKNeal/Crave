@@ -12,7 +12,7 @@
 // Answers and uploads live in the store under "chk:<id>"; editing this file never loses them.
 
 module.exports = {
-  heading: "Finish the website",
+  heading: "Checklist",
   intro: "What Neal Media still needs to finish crave.nealmedia.app. Red is still needed, yellow is sent and being worked in, green is done. Type an answer or add photos right here; it saves for Neal Media.",
   // Neal Media's logins: always see the checklist and can sign items off (the shop password login counts too).
   nealMedia: ["nealmedia@yahoo.com", "artemis.nealmedia@gmail.com"],
