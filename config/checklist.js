@@ -32,7 +32,7 @@ module.exports = {
       { id: "logo", title: "Your logo files", why: "The biggest, sharpest versions you have (PNG, SVG or PDF). The site uses the coffee-ring logo now.", kind: "files" },
     ] },
     { name: "Google, Instagram and giving back", items: [
-      { id: "googleAccess", title: "Add Neal Media as a Google profile manager", why: "Starts the Google ranking work. On your Business Profile: tap More, Business Profile settings, People and access, Add, then artemis.nealmedia@gmail.com as Manager. Type Done here when it's added.", kind: "text", href: "https://business.google.com/", action: "Google" },
+      { id: "googleAccess", title: "After the agreement is signed: add Neal Media as a Google profile manager", why: "Wait until we've both signed the Neal Media agreement, then do this; it starts the Google ranking work. On your Business Profile: tap More, Business Profile settings, People and access, Add, then artemis.nealmedia@gmail.com as Manager. Type Done here when it's added.", kind: "text", href: "https://business.google.com/", action: "Google" },
       { id: "instagramConnect", title: "Connect the Crave Instagram", why: "Puts your newest posts on the home page by themselves. Account, then Connect Instagram.", auto: "instagram", view: "account", action: "Account" },
       { id: "giving", title: "Hometown Crave: who you give back to", why: "The groups and causes you support, so the Giving back page tells the real story.", kind: "long", where: { href: "/give", label: "Giving back" } },
     ] },
