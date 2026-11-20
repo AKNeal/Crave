@@ -884,3 +884,20 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 .crew-photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px 8px 14px 6px; margin: 4px 0 8px; }
 .crew-nophoto { display: grid; place-items: center; border: 3px dashed #b9a48c; background: rgba(239,230,216,.45); color: #8c7a66; text-align: center; padding: 10px; }
 .crew-nophoto span { font: 400 1.25rem/1.15 "Gochi Hand", cursive; }
+/* Crew window: tighter header and square photo boxes so the cards are in view without scrolling */
+.crew-paper { padding-top: 22px; }
+.crew-paper h2 { font-size: clamp(2rem, 4vw, 2.6rem); margin-bottom: 2px; }
+.crew-intro { font-size: 1.12rem; margin-bottom: 14px; max-width: 60ch; }
+.crew-sun { width: 70px; height: 70px; top: 4px; }
+.crew-photo { aspect-ratio: 1 / 1; margin-bottom: 6px; }
+.crew-card h3 { font-size: 1.4rem; }
+.crew-town { margin-top: 18px; } .crew-shop { width: 120px; }
+@media (max-height: 760px) { .crew-photo { aspect-ratio: 4 / 3; } }
+@media (max-width: 640px) {
+  .crew-grid { grid-template-columns: 1fr; gap: 10px; }
+  .crew-card { display: grid; grid-template-columns: 92px 1fr; column-gap: 12px; align-items: start; padding: 10px 12px; }
+  .crew-card .crew-photo { grid-row: 1 / span 3; width: 92px; aspect-ratio: 1 / 1; margin: 0; }
+  .crew-nophoto span { font-size: .9rem; }
+  .crew-card h3 { margin-top: 2px; }
+  .crew-paper h2 { font-size: 1.9rem; padding-right: 44px; } .crew-intro { font-size: 1rem; }
+}
