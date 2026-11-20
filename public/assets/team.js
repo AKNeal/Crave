@@ -5,12 +5,12 @@
 (function () {
   // Real people: photo is a file in /assets/crew/ (e.g. "/assets/crew/rhonda.jpg"); until there is one, a dashed
   // "Photo not uploaded" box shows. role and line are the short bio under the name (optional).
-  // Placeholders (doodle set): the drawn cards hold the spots for the rest of the team. Replace one with a real person
-  // (name, role, line, photo; no doodle) as their crew onboarding answers come in.
+  // "Team member" cards hold the spots for the rest of the team: swap in each person's name, bio and photo as their crew
+  // onboarding answers come in. (A card can still use a drawing instead of a photo: add doodle: "baker" etc.)
   var CREW = [
     { name: "Rhonda", role: "", line: "", photo: "", color: "#c46a2c" },
-    { name: "Team member", role: "Cinnamon rolls, cakes & cupcakes", line: "Up before the sun so the rolls are warm when you walk in. Pipes every sunflower by hand.", doodle: "baker", color: "#c46a2c" },
-    { name: "Team member", role: "Burritos, wraps & breakfast", line: "Runs the griddle and times your Crave Curbside order so it's hot the minute you pull up.", doodle: "cook", color: "#2f6b8a" },
+    { name: "Team member", role: "", line: "", photo: "", color: "#c46a2c" },
+    { name: "Team member", role: "", line: "", photo: "", color: "#c46a2c" },
   ];
 
   // Wax-crayon look: wobble the lines, then eat holes in them so paper shows through like real crayon.
