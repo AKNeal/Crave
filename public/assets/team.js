@@ -3,11 +3,10 @@
 // To change who's on the team, edit CREW below: name, role, a line about them, and which doodle to use
 // (baker, cook, barista, kids). Names are roles for now until Crave sends the real ones.
 (function () {
+  // photo: a file in /assets/crew/ (e.g. "/assets/crew/rhonda.jpg"); until there is one, a dashed "Photo not uploaded" box shows.
+  // role and line are optional: the short bio under the name. Add people as their crew onboarding answers come in.
   var CREW = [
-    { name: "The Baker", role: "Cinnamon rolls, cakes & cupcakes", line: "Up before the sun so the rolls are warm when you walk in. Pipes every sunflower by hand.", doodle: "baker", color: "#c46a2c" },
-    { name: "The Cook", role: "Burritos, wraps & breakfast", line: "Runs the griddle and times your Crave Curbside order so it's hot the minute you pull up.", doodle: "cook", color: "#2f6b8a" },
-    { name: "The Barista", role: "Coffee & a friendly hello", line: "Knows your order by the second visit. Will absolutely talk about the weather.", doodle: "barista", color: "#7a4a2a" },
-    { name: "The Taste Testers", role: "Quality control (the kids)", line: "Very serious about cookies. Have never once said no to a new flavor.", doodle: "kids", color: "#b8332a" },
+    { name: "Rhonda", role: "", line: "", photo: "", color: "#c46a2c" },
   ];
 
   // Wax-crayon look: wobble the lines, then eat holes in them so paper shows through like real crayon.
@@ -101,9 +100,11 @@
   SHOP = crayonize(SHOP);
 
   function crewCard(m, i) {
-    return '<article class="crew-card" style="--tilt:' + (i % 2 ? 1.6 : -1.4) + 'deg">' +
-      crayonize('<svg viewBox="0 0 170 170" class="crew-doodle" aria-hidden="true">' + DEFS + '<g filter="url(#crayon)">' + DOODLES[m.doodle](m.color) + '</g></svg>') +
-      '<h3 style="color:' + m.color + '">' + m.name + '</h3><p class="crew-role">' + m.role + '</p><p>' + m.line + '</p></article>';
+    var pic = m.photo ? '<img class="crew-photo" src="' + m.photo + '" alt="' + m.name + '" loading="lazy">'
+      : '<div class="crew-photo crew-nophoto" role="img" aria-label="Photo of ' + m.name + ' not uploaded yet"><span>Photo not uploaded</span></div>';
+    return '<article class="crew-card" style="--tilt:' + (i % 2 ? 1.6 : -1.4) + 'deg">' + pic +
+      '<h3 style="color:' + m.color + '">' + m.name + '</h3>' +
+      (m.role ? '<p class="crew-role">' + m.role + '</p>' : '') + (m.line ? '<p>' + m.line + '</p>' : '') + '</article>';
   }
 
   function open() {

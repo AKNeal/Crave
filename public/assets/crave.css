@@ -688,7 +688,7 @@ body.admin .cb-wday h3 { font: 700 .78rem/1 var(--body); }
 .g-stars { color: #e0a419; font-size: 14px; letter-spacing: 1px; text-shadow: .5px .5px 0 #c0392b; }
 .g-star { display: none; color: #e0a419; font-size: 16px; line-height: 1; }
 .g-label { font: 400 .95rem/1.2 "Gochi Hand", cursive; color: #8a4520; }
-@media (max-width: 860px) { .g-rating { right: 16px; bottom: 18px; padding: 4px 12px 4px 4px; gap: 7px; } .g-mark { height: 28px; padding: 0 10px; font-size: 1.05rem; } .g-top strong { font-size: 1.15rem; } .g-stars, .g-label { display: none; } .g-star { display: inline; } .g-top { gap: 4px; } }
+@media (max-width: 860px) { .g-rating { right: 16px; bottom: 18px; padding: 4px 12px 4px 4px; gap: 7px; } .g-mark { height: 28px; padding: 0 10px; font-size: 1.05rem; } .g-top strong { font-size: 1.15rem; } .g-stars { display: none; } .g-star { display: inline; } .g-label { font-size: .85rem; } .g-top { gap: 4px; } }
 /* Order page on phones: sit above the cart bar. */
 @media (max-width: 680px) { body:has(.mobile-cart:not([hidden])) .g-rating { bottom: 84px; } }
 @media print { .g-rating { display: none; } }
@@ -880,3 +880,7 @@ ul.chk { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--li
 .intro-feats strong { display: block; } .intro-feats .muted { display: block; font-size: .92rem; }
 .hours-form .btn { justify-self: start; }
 .intro-feats button.linkbtn, .intro-feats a { font-size: .9rem; padding: 0; margin-top: 4px; }
+/* Meet the crew: a photo per person; a dashed box until one is uploaded */
+.crew-photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px 8px 14px 6px; margin: 4px 0 8px; }
+.crew-nophoto { display: grid; place-items: center; border: 3px dashed #b9a48c; background: rgba(239,230,216,.45); color: #8c7a66; text-align: center; padding: 10px; }
+.crew-nophoto span { font: 400 1.25rem/1.15 "Gochi Hand", cursive; }
