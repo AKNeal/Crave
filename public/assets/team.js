@@ -9,10 +9,8 @@
   // (name, role, line, photo; no doodle) as their crew onboarding answers come in.
   var CREW = [
     { name: "Rhonda", role: "", line: "", photo: "", color: "#c46a2c" },
-    { name: "The Baker", role: "Cinnamon rolls, cakes & cupcakes", line: "Up before the sun so the rolls are warm when you walk in. Pipes every sunflower by hand.", doodle: "baker", color: "#c46a2c" },
-    { name: "The Cook", role: "Burritos, wraps & breakfast", line: "Runs the griddle and times your Crave Curbside order so it's hot the minute you pull up.", doodle: "cook", color: "#2f6b8a" },
-    { name: "The Barista", role: "Coffee & a friendly hello", line: "Knows your order by the second visit. Will absolutely talk about the weather.", doodle: "barista", color: "#7a4a2a" },
-    { name: "The Taste Testers", role: "Quality control (the kids)", line: "Very serious about cookies. Have never once said no to a new flavor.", doodle: "kids", color: "#b8332a" },
+    { name: "Team member", role: "Cinnamon rolls, cakes & cupcakes", line: "Up before the sun so the rolls are warm when you walk in. Pipes every sunflower by hand.", doodle: "baker", color: "#c46a2c" },
+    { name: "Team member", role: "Burritos, wraps & breakfast", line: "Runs the griddle and times your Crave Curbside order so it's hot the minute you pull up.", doodle: "cook", color: "#2f6b8a" },
   ];
 
   // Wax-crayon look: wobble the lines, then eat holes in them so paper shows through like real crayon.
