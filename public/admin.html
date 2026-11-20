@@ -93,7 +93,7 @@
   .hours-edit input:disabled { opacity: .4; }
   .linkbtn { background: none; border: 0; padding: 0; color: var(--sign-dark); text-decoration: underline; font: inherit; cursor: pointer; }
   @media (max-width: 480px) { .agenda-row { flex-direction: column; align-items: flex-start; } .hours-edit { grid-template-columns: 1fr 1fr; } .hours-edit .hd { grid-column: 1 / -1; } .hours-edit span { display: none; } }
-  /* ---- Google ranking: Black Wolf's 8-bit medal and torn-paper sheet (same code, Crave colors for links) ---- */
+  /* ---- Google ranking: Black Wolf's 8-bit medal, ribbon and notebook sheet (same code as Black Wolf, Crave colors for links) ---- */
   /* Google ranking panel: an award per search. Gold #1, silver #2, bronze #3, blue ribbon #4-5 (still earns a fee), grey #6 and below. */
   .awards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 10px 0 16px; }
   .award { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
@@ -125,6 +125,7 @@
   .tier-grey .px-shine { opacity: .45; }
   .px-font { font-family: "Press Start 2P", monospace; letter-spacing: 0; }
   /* Floating medal (bottom left): bobs slowly and shimmers. */
+  body.has-rank { padding-bottom: 110px; }
   .rank-float { position: fixed; left: 14px; bottom: 16px; z-index: 60; }
   @media (min-width: 861px) { .rank-float { left: 34px; bottom: 30px; } }
   .rank-badge { position: relative; border: 0; background: none; padding: 0; cursor: pointer; animation: px-bob 2.8s steps(4, jump-none) infinite alternate; filter: drop-shadow(3px 3px 0 rgba(0,0,0,.25)); }
@@ -132,8 +133,22 @@
   .rank-badge:focus-visible { outline: 3px dashed var(--sign); outline-offset: 4px; }
   .rank-badge .pxmedal { position: relative; z-index: 1; }
   .rank-badge { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-  .rank-cap { font: 600 9.5px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: #4b4a47;
-    background: rgba(255,255,255,.88); padding: 3px 6px 2px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
+  /* "Google ranking" banner: a red 8-bit ribbon. The band is built from one block per letter, and each block (and the two
+     notched tails folded behind it) steps up and down a little later than the one before, so a wave flows along the ribbon.
+     One wave takes 2.25s, double the speed of the medal shine (4.5s). */
+  .rcap { display: flex; align-items: flex-start; margin-top: 3px; }
+  .rcap-band { display: flex; position: relative; z-index: 1; }
+  .rcap-ch, .rcap-tail { animation: rcap-wave 2.25s steps(1, end) infinite; }
+  .rcap-ch { display: block; min-width: 8px; padding: 5px 0 4px; text-align: center; white-space: pre;
+    font: 7px/1 "Press Start 2P", monospace; color: #fff; text-shadow: 1px 1px 0 #7f1d1d; text-transform: uppercase;
+    background: #dc2626; box-shadow: 0 -2px 0 #f87171, 0 2px 0 #991b1b; }
+  .rcap-ch:first-child { padding-left: 6px; } .rcap-ch:last-child { padding-right: 6px; }
+  .rcap-tail { width: 14px; height: 18px; margin-top: 6px; position: relative; z-index: 0; }
+  .rcap-tail.l { margin-right: -4px; background: linear-gradient(90deg, #b91c1c 0 10px, #7f1d1d 10px);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 16px, 2px 16px, 2px 13px, 4px 13px, 4px 11px, 6px 11px, 6px 7px, 4px 7px, 4px 5px, 2px 5px, 2px 2px, 0 2px); }
+  .rcap-tail.r { margin-left: -4px; background: linear-gradient(90deg, #7f1d1d 0 4px, #b91c1c 4px);
+    clip-path: polygon(0 0, 100% 0, 100% 2px, calc(100% - 2px) 2px, calc(100% - 2px) 5px, calc(100% - 4px) 5px, calc(100% - 4px) 7px, calc(100% - 6px) 7px, calc(100% - 6px) 11px, calc(100% - 4px) 11px, calc(100% - 4px) 13px, calc(100% - 2px) 13px, calc(100% - 2px) 16px, 100% 16px, 100% 100%, 0 100%); }
+  @keyframes rcap-wave { 0% { transform: translateY(0); } 25% { transform: translateY(-2px); } 50% { transform: translateY(0); } 75% { transform: translateY(2px); } }
   .rank-float.open .rank-badge { animation-play-state: paused; }
   /* The torn sheet: tears out to the right from the medal. */
   .rank-fly { position: absolute; left: 84px; bottom: 0; width: min(440px, calc(100vw - 92px)); pointer-events: none;
@@ -153,16 +168,30 @@
   .fly-q { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .dot { flex: none; min-width: 40px; height: 22px; display: grid; place-items: center; font: 9px/1 "Press Start 2P", monospace; color: var(--px-o); background: var(--px-m); box-shadow: 0 0 0 2px var(--px-o); }
   .dot.tier-blue, .dot.tier-bronze { color: #fff; }
-  .fly-rev { font-size: 13px; margin-top: 8px; } .fly-rev .up { color: #15803d; font-weight: 700; }
+  .fly-rev { font-size: 18px; margin-top: 10px; } /* Google reviews line: bigger so it stands out (Neal, Nov 19) */ .fly-rev .up { color: #15803d; font-weight: 700; }
+  .fly-reports { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 2px dashed #d9cfb5; font-size: 12px; color: #6b6250; }
+  .fly-reports span { margin-right: auto; font-weight: 600; }
+  .fly-reports a { font: 600 12px/1 var(--body); color: #fff; background: var(--sign); padding: 7px 10px; text-decoration: none; box-shadow: 2px 2px 0 #5a2e14; }
+  .fly-reports a:hover { background: var(--sign-dark); }
   .fly-more { display: block; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--sign); text-align: right; }
-  @media (prefers-reduced-motion: reduce) { .rank-badge, .pxmedal .px-shine { animation: none; } .rank-fly { transition: none; } }
+  /* Notebook lines: one ruled line every 48px and every section of the sheet exactly 48px tall, so each section sits
+     between two ruled lines and none runs through the text (Neal, Nov 19). The row dividers sit on the ruled lines. */
+  .fly-paper { padding-top: 0; padding-bottom: 0; background-image: repeating-linear-gradient(transparent 0 47px, rgba(80,120,200,.16) 47px 48px); }
+  .fly-paper > * { box-sizing: border-box; margin: 0 !important; }
+  .fly-head, .fly-avg, .fly-rev, .fly-more, .fly-reports { display: flex; align-items: center; height: 48px; padding: 0; border: 0; }
+  .fly-head { justify-content: space-between; }
+  .fly-more { justify-content: flex-end; }
+  .fly-fee { height: 48px; align-items: center; box-shadow: none; outline: 2px solid #b9b3a4; outline-offset: -8px; padding: 0 16px; }
+  .fly-fee.earning { box-shadow: none; outline-color: #22c55e; }
+  .fly-rows { border-top: 0; }
+  .fly-row { height: 48px; padding: 0; border-bottom: 0; background: linear-gradient(transparent 46px, #d9cfb5 46px 48px) no-repeat; }
+  .fly-rev { font-size: 18px; }
+  @media (prefers-reduced-motion: reduce) { .rank-badge, .pxmedal .px-shine, .rcap-ch, .rcap-tail { animation: none; } .rank-fly { transition: none; } }
   .rank-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
   @media (max-width: 640px) {
     .awards { gap: 8px; } .award { padding: 10px 4px 10px; }
     .award-q { font-size: 12px; } .award-ahead { display: none; }
   }
-
-  body.has-rank { padding-bottom: 120px; }
 </style>
 </head>
 <body class="admin">
@@ -1425,7 +1454,7 @@
 
   // Google ranking: a floating award (bottom left). Click it for key numbers; the link at the bottom opens the full page.
   const rkFmt = (d) => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  // Award tier by place: gold, silver, bronze, blue ribbon for #4-5, grey for #6 and below (same as Black Wolf).
+  // Award tier by place (matches the fee tiers): gold, silver, bronze, blue ribbon for #4-5, grey for #6 and below.
   const rkTier = (r) => r == null ? ["grey", "No rank"] : r <= 1 ? ["gold", "Gold"] : r === 2 ? ["silver", "Silver"] : r === 3 ? ["bronze", "Bronze"] : r <= 5 ? ["blue", "Top 5"] : ["grey", r > 10 ? "Not top 10" : `${r}th place`];
   const rkLabel = (r) => r == null ? "–" : r > 10 ? ">10" : `#${r}`;
   // The badge shows this month's Friday average (what the fee is based on), or the latest check's average before the first Friday.
@@ -1478,15 +1507,28 @@
     return `polygon(${pts.join(", ")})`;
   }
   function closeRankFly() { const w = document.getElementById("rankFloat"); if (w) { w.classList.remove("open"); w.querySelector(".rank-badge")?.setAttribute("aria-expanded", "false"); } }
-
+  // The red 8-bit ribbon under the medal: one block per letter so the wave can flow along it (see .rcap in the styles).
+  function capBanner(text) {
+    const step = 2.25 / (text.length + 2), d = (i) => `animation-delay:${(-(i * step)).toFixed(3)}s`;
+    return el("span", { class: "rcap", "aria-hidden": "true" },
+      el("span", { class: "rcap-tail l", style: d(0) }),
+      el("span", { class: "rcap-band" }, [...text].map((c, i) => el("span", { class: "rcap-ch", style: d(i + 1) }, c))),
+      el("span", { class: "rcap-tail r", style: d(text.length + 1) }));
+  }
+  // Reviews since the previous check: green ▲ when up, red ▼ when down, grey – when the same (like the rank rows).
+  function revCh(k, long) {
+    const n = k.reviewsChange, since = long && k.changeSince ? ` since ${rkFmt(k.changeSince)}` : "";
+    if (!n) return el("span", { class: "award-ch same", title: "No new reviews", "aria-label": "No new reviews", style: "margin-left:8px" }, long ? `– No change${since}` : "–");
+    return el("span", { class: `award-ch ${n > 0 ? "up" : "down"}`, style: "margin-left:8px", "aria-label": `${Math.abs(n)} review${Math.abs(n) === 1 ? "" : "s"} ${n > 0 ? "more" : "fewer"}` }, `${n > 0 ? "▲" : "▼"}${long ? " " : ""}${Math.abs(n)}${since}`);
+  }
   function rankBadge() {
-    document.getElementById("rankFloat")?.remove(); document.body.classList.remove("has-rank");
+    document.getElementById("rankFloat")?.remove();
     const k = SITE && SITE.rankings;
     if (!k || !k.date) return;
     const o = rkOverall(k);
     const btn = el("button", { class: "rank-badge", type: "button", "aria-expanded": "false", "aria-controls": "rankFly", "aria-label": `Google ranking: #${o.exact ?? "–"}. Show details` },
       medal(o.n, 3, o.exact == null ? null : o.exact > 10 ? "10+" : String(o.exact)),
-      el("span", { class: "rank-cap", "aria-hidden": "true" }, "Google ranking"));
+      capBanner("Google ranking"));
     const rows = k.searches.map((x) => el("div", { class: "fly-row" },
       el("span", { class: `dot tier-${rkTier(x.rank)[0]}` }, rkLabel(x.rank)),
       el("span", { class: "fly-q" }, x.q),
@@ -1495,9 +1537,15 @@
     const paper = el("div", { class: "fly-paper" },
       el("div", { class: "fly-head" }, el("span", { class: "px-font" }, "GOOGLE RANK"), el("span", { class: "small muted" }, `checked ${rkFmt(k.date)}`)),
       el("div", { class: "fly-avg" }, el("span", { class: "px-font" }, o.exact != null ? `#${o.exact}` : "–"), el("span", { class: "fly-avg-l" }, o.what)),
+      false && k.fee !== undefined ? el("div", { class: `fly-fee${k.fee > 0 ? " earning" : ""}` }, el("span", { class: "px-font" }, `$${k.fee}`), el("span", {}, k.fee > 0 ? (k.feeProjected ? "fee this month (projected)" : "fee this month") : "fee · earns at #5 or better")) : null,
       el("div", { class: "fly-rows" }, rows),
-      k.reviews != null ? el("div", { class: "fly-rev" }, el("strong", {}, `${k.reviews} reviews`), ` · ${Number(k.rating).toFixed(1)}★`) : null,
-      el("a", { href: "#", class: "fly-more", onclick: (e) => { e.preventDefault(); closeRankFly(); showSite("rank"); } }, "See full details →"));
+      k.reviews != null ? el("div", { class: "fly-rev" }, el("strong", {}, `${k.reviews} reviews`), ` · ${Number(k.rating).toFixed(1)}★`, revCh(k)) : null,
+      el("a", { href: "#", class: "fly-more", onclick: (e) => { e.preventDefault(); closeRankFly(); showSite("rank"); } }, "See full details →"),
+      // Whitespark's official reports for Crave (Neal's LocalData campaigns): one button each.
+      el("div", { class: "fly-reports" },
+        el("span", {}, "Official reports"),
+        el("a", { href: "https://localdata.tools/results/52806", target: "_blank", rel: "noopener" }, "Maps report"),
+        el("a", { href: "https://localdata.tools/results/52807?type=google-organic", target: "_blank", rel: "noopener" }, "Organic report")));
     const fly = el("div", { class: "rank-fly", id: "rankFly", role: "dialog", "aria-label": "Google ranking" }, paper);
     const wrap = el("div", { class: "rank-float", id: "rankFloat" }, btn, fly);
     btn.addEventListener("click", () => {
@@ -1509,14 +1557,13 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRankFly(); });
     document.body.append(wrap); document.body.classList.add("has-rank");
   }
-
   // Full details (Website tab): one award per search, like Black Wolf's ranking page.
   function rankPanel() {
     const k = SITE.rankings;
     const refresh = el("button", { class: "btn sm line", type: "button", onclick: async () => { try { const r = await api(SITE_API("rankRefresh"), { body: {} }); SITE.rankings = r.rankings; toast("Asked for a fresh check. It runs with the next morning check."); showSite("rank"); } catch (e) { toast(e.message); } } }, "Check again");
     const body = el("section", { class: "panel site-panel", id: "rankBox" },
       el("div", { class: "sp-head" }, el("h2", {}, "Google ranking"), el("span", { class: "sp-count" }, k.date ? `checked ${rkFmt(k.date)}` : "no checks yet")),
-      el("p", { class: "muted", style: "max-width:680px" }, "Where Crave shows in the business list of a real Google search from North Pole. #1 is the top. Searched every night at 1:50 AM."));
+      el("p", { class: "muted", style: "max-width:680px" }, "Where Crave shows in the Google business list, from Whitespark's local rank tracker. #1 is the top."));
     if (k.date) body.append(el("div", { class: "awards" }, k.searches.map((x) => {
       const [t, word] = rkTier(x.rank);
       const ch = x.change == null ? "–" : x.change > 0 ? `▲ ${x.change}` : x.change < 0 ? `▼ ${-x.change}` : "– No change";
@@ -1529,9 +1576,13 @@
     })));
     else body.append(el("p", { class: "muted" }, k.tracking ? "The first check runs tonight at 1:50 AM." : "Daily checks aren't switched on yet (Neal Media)."));
     body.append(el("div", { class: "rank-foot" },
-      k.reviews != null ? el("span", {}, el("strong", {}, `${k.reviews} Google reviews`), ` · ${Number(k.rating).toFixed(1)}★`) : null,
+      k.reviews != null ? el("span", {}, el("strong", {}, `${k.reviews} Google reviews`), ` · ${Number(k.rating).toFixed(1)}★`, revCh(k, true)) : null,
       k.avg != null ? el("span", {}, `Average spot #${k.avg}`) : null,
       k.requestedAt && (!k.at || k.at < k.requestedAt) ? el("span", {}, `Fresh check asked for ${datetime(k.requestedAt)}`) : null, refresh));
+    body.append(el("div", { class: "rank-foot", style: "margin-top:10px" },
+      el("span", { class: "muted" }, "Whitespark reports:"),
+      el("a", { href: "https://localdata.tools/results/52806", target: "_blank", rel: "noopener" }, "Google Maps rankings"),
+      el("a", { href: "https://localdata.tools/results/52807?type=google-organic", target: "_blank", rel: "noopener" }, "Organic report (website results)")));
     return body;
   }
 
