@@ -877,11 +877,11 @@
     const roleSel = el("select", { name: "role", required: true }, Object.entries(T.roles).map(([k, l]) => el("option", { value: k }, `${l} — ${roleHelp[k]}`)));
     roleSel.value = "artist";
     const free = T.artists.filter((a) => !T.users.some((u) => u.role === "artist" && u.artist === a.slug && u.active));
-    const artSel = el("select", { name: "artist" }, free.map((a) => el("option", { value: a.slug }, a.name)), el("option", { value: "__new" }, "A new artist…"));
+    const artSel = el("select", { name: "artist" }, free.map((a) => el("option", { value: a.slug }, a.name)), el("option", { value: "__new" }, "A new staff member…"));
     if (!free.length) artSel.value = "__new";
-    const newArt = el("div", { class: "field" }, el("label", {}, "New artist's name (as clients will see it)"), el("input", { type: "text", name: "newArtist", maxlength: 60 }),
+    const newArt = el("div", { class: "field" }, el("label", {}, "New staff member's name (as clients will see it)"), el("input", { type: "text", name: "newArtist", maxlength: 60 }),
       el("p", { class: "hint" }, "They won't show on the public booking form until you switch them on in Books and waitlist."));
-    const artField = el("div", { class: "field" }, el("label", {}, "Which artist"), artSel);
+    const artField = el("div", { class: "field" }, el("label", {}, "Which staff member"), artSel);
     const sync = () => { const isA = roleSel.value === "artist"; artField.hidden = !isA; newArt.hidden = !isA || artSel.value !== "__new"; };
     roleSel.addEventListener("change", sync); artSel.addEventListener("change", sync);
     const err = el("p", { class: "form-error", role: "alert", hidden: true });
@@ -941,10 +941,10 @@
   function roleEditor(u, row) {
     row.querySelector(".confirm")?.remove();
     const rs = el("select", { "aria-label": "Role" }, Object.entries(T.roles).map(([k, l]) => el("option", { value: k }, l))); rs.value = u.role;
-    const as = el("select", { "aria-label": "Artist" }, T.artists.map((a) => el("option", { value: a.slug }, a.name))); if (u.artist) as.value = u.artist;
+    const as = el("select", { "aria-label": "Staff member" }, T.artists.map((a) => el("option", { value: a.slug }, a.name))); if (u.artist) as.value = u.artist;
     const sync = () => { as.hidden = rs.value !== "artist"; }; rs.addEventListener("change", sync); sync();
     row.append(el("div", { class: "confirm act-form", style: "grid-column:1/-1;margin:8px 0 0" },
-      el("div", { class: "row" }, el("div", { class: "field" }, el("label", {}, "Role"), rs), el("div", { class: "field" }, el("label", {}, "Artist"), as)),
+      el("div", { class: "row" }, el("div", { class: "field" }, el("label", {}, "Role"), rs), el("div", { class: "field" }, el("label", {}, "Staff member"), as)),
       el("div", { class: "actions", style: "margin:0" },
         el("button", { class: "btn sm", type: "button", onclick: () => teamCall({ action: "update", id: u.id, role: rs.value, artist: rs.value === "artist" ? as.value : undefined }, "Role changed") }, "Save"),
         el("button", { class: "btn sm line", type: "button", onclick: (e) => e.target.closest(".confirm").remove() }, "Cancel"))));
