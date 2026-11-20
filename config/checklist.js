@@ -42,6 +42,7 @@ module.exports = {
       { id: "email", title: "Connect email", why: "So the site can send order and catering emails, password links, and copies of these answers.", neal: true, auto: "email" },
     ] },
     { name: "After the agreement is signed", items: [
+      { id: "domain", title: "Connect or buy Crave's web address", why: "If you already own one (like cravenorthpole.com), type it here with where it's registered, and Neal Media connects it to the site. If not, Neal Media buys one in Crave's name and points it at the site. Your onboarding page asks this too.", kind: "text", after: true },
       { id: "googleAccess", title: "Add Neal Media as a Google profile manager", why: "Starts the Google ranking work. On your Business Profile: tap More, Business Profile settings, People and access, Add, then artemis.nealmedia@gmail.com as Manager. Type Done here when it's added.", kind: "text", href: "https://business.google.com/", action: "Google", after: true },
       { id: "instagramConnect", title: "Connect the Crave Instagram", why: "Puts your newest posts on the home page by themselves. Account, then Connect Instagram.", auto: "instagram", view: "account", action: "Account", after: true },
       { id: "texts", title: "Connect text alerts", why: "New Crave Curbside orders and catering requests by text. Carrier registration is part of the agreement.", neal: true, auto: "sms", after: true },
